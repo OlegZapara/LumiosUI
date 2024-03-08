@@ -6,16 +6,17 @@ import { Timetable, columns } from "./columns";
 import { DataTable } from "./data-table";
 import SettingsSheet from "./settings-sheet";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
-import { setTimetable } from "@/slices/timetable-slice";
+import { setCurrentDayAndWeek, setTimetable } from "@/slices/timetable-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { data, weeks, days, words } from './data';
 import Loading from './loading';
-import JsonEditor from "@/components/timetable/json-editor";
+import JsonEditor from "@/app/timetable/json-editor";
+import AboutTimetable from "./about-timetable";
 
 export default function TimetablePage() {
-  const [activeWeek, setActiveWeek] = useState<string>(weeks[0])
-  const [activeDay, setActiveDay] = useState<string>(days[0])
+  const currentWeek = useSelector<RootState, number>((state) => state.timetable.currentWeek);
+  const currentDay = useSelector<RootState, number>((state) => state.timetable.currentDay);
   const dispatch = useDispatch()
   const timetable = useSelector<RootState, Timetable[] | null>((state) => state.timetable.timetable)
   useEffect(() => {
@@ -30,14 +31,18 @@ export default function TimetablePage() {
       <div className="w-5/6 flex justify-center items-center flex-col gap-4">
         <div className="w-full flex justify-between">
           <div className="w-full flex justify-start flex-row gap-4">
-            <ToggleGroup type="single" defaultValue={weeks[0]} onValueChange={(e) => setActiveWeek(e)}>
+            <ToggleGroup type="single" defaultValue={weeks[0]} onValueChange={(e) => {
+              dispatch(setCurrentDayAndWeek({week: weeks.indexOf(e), day: currentDay}))
+            }}>
               {weeks.map((week, i) => (
                 <ToggleGroupItem key={week} value={week} aria-label="Toggle bold">
                   <div>{week}</div>
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
-            <ToggleGroup type="single" defaultValue={days[0]} onValueChange={(e) => setActiveDay(e)}>
+            <ToggleGroup type="single" defaultValue={days[0]} onValueChange={(e) => {
+              dispatch(setCurrentDayAndWeek({week: currentWeek, day: days.indexOf(e)}))
+            }}>
               {days.map((day, i) => (
                 <ToggleGroupItem key={day} value={day} aria-label="Toggle bold">
                   <div>{day}</div>
@@ -48,14 +53,16 @@ export default function TimetablePage() {
           <div className="mr-4 flex justify-start flex-row gap-4">
             <JsonEditor data={JSON.stringify(data, null, 2)}></JsonEditor>
             <SettingsSheet></SettingsSheet>
+            <AboutTimetable></AboutTimetable>
           </div>
         </div>
         <div className="w-full">
           <DataTable 
           columns={columns} 
-          weekIndex = {weeks.indexOf(activeWeek)}
-          dayIndex = {days.indexOf(activeDay)}
-          data={timetable[weeks.indexOf(activeWeek)].days[days.indexOf(activeDay)].classEntries}/>
+          weekIndex = {currentWeek}
+          dayIndex = {currentDay}
+          data={timetable[currentWeek].days[currentDay].classEntries}
+          />
         </div>
       </div>
     </div>

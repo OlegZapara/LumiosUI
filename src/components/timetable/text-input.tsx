@@ -14,7 +14,7 @@ export default function TextInput({isFocused, editingRow, columnId} : TextInputP
   const dispatch = useDispatch();
   return <Input
     autoFocus={isFocused}
-    className='p-0 w-full'
+    className='px-2 w-full'
     value={editingRow[columnId]}
     size={1}
     onChange={(e) => {

@@ -11,31 +11,11 @@ export function Navbar({ className }: { className?: string }) {
     >
       <Menu setActive={setActive}>
         <MenuItem setActive={setActive} active={active} item="About">
-          <div className="  text-sm grid grid-cols-2 gap-10 p-4">
-            <ProductItem
-              title="Project"
-              href="/"
-              src="/telegram.png"
-              description="Why do you need this bot"
-            />
-            <ProductItem
-              title="Authors"
-              href="/authors"
-              src="/Bogdan.jpg"
-              description="Who made this"
-            />
-            <ProductItem
-              title="Technologies"
-              href="/technologies"
-              src="/next.webp"
-              description="How this project was made"
-            />
-            <ProductItem
-              title="IP-32"
-              href="/ip-32"
-              src="/IP-32.jpg"
-              description="Why this project was made"
-            />
+          <div className="flex flex-col space-y-4 text-sm">
+            <HoveredLink href="/">Project</HoveredLink>
+            <HoveredLink href="/authors">Authors</HoveredLink>
+            <HoveredLink href="/technologies">Technologies</HoveredLink>
+            <HoveredLink href="/ip-32">IP-32</HoveredLink>
           </div>
         </MenuItem>
         <HoveredLink href="/timetable">Timetable</HoveredLink>
@@ -44,18 +24,8 @@ export function Navbar({ className }: { className?: string }) {
         <HoveredLink href="/queues">Queues</HoveredLink>
         <MenuItem setActive={setActive} active={active} item="Settings">
           <div className="flex flex-col space-y-4 text-sm">
-            <ProductItem
-              title="Appearance"
-              href="/appearance-settings"
-              src="/settings.jpeg"
-              description="Setup website appearance"
-            />
-            <ProductItem
-              title="Bot settings"
-              href="/bot-settings"
-              src="/bot.webp"
-              description="Change bot behaviour"
-            />
+            <HoveredLink href="/appearance-settings">Appearance</HoveredLink>
+            <HoveredLink href="/bot-settings">Bot</HoveredLink>
           </div>
         </MenuItem>
       </Menu>

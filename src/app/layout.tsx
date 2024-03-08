@@ -1,11 +1,10 @@
+import { Navbar } from "@/components/navbar";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Navbar } from "@/components/navbar";
-import { RootState, store } from "./store";
 import AppProvider from "./app-provider";
-import { useSelector } from "react-redux";
+import "./globals.css";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,7 +23,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className}`} suppressHydrationWarning={true}>
         <AppProvider>
-          <ThemeProvider attribute="class" defaultTheme={"white"}>
+          <ThemeProvider attribute="class" defaultTheme={"system"}>
+          <Toaster />
           <div className="relative w-full flex items-center justify-center">
             <Navbar className="top-2" />
           </div>

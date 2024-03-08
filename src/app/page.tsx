@@ -45,18 +45,18 @@ const items = [
 export default function Home() {
   return (
     <div className="overflow-hidden dark:bg-[#0B0B0F] bg-white w-full">
-      <BentoGrid className="max-w-6xl mx-auto">
-        {items.map((item, i) => (
-          <BentoGridItem
-            key={i}
-            title={item.title}
-            description={item.description}
-            header={item.header}
-            icon={item.icon}
-            className={i === 0? "md:col-span-3" : i === 2 || i == 3 ? "md:col-span-2" : ""}
-          />
-        ))}
-      </BentoGrid>
+        <BentoGrid className="max-w-6xl mx-auto">
+          {items.map((item, i) => (
+            <BentoGridItem
+              key={i}
+              title={item.title}
+              description={item.description}
+              header={item.header}
+              icon={item.icon}
+              className={i === 0? "md:col-span-3" : i === 2 || i == 3 ? "md:col-span-2" : ""}
+            />
+          ))}
+        </BentoGrid>
     </div>
   );
 }

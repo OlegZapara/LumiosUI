@@ -34,14 +34,14 @@ export default function TypeInput({ isFocused, editingRow, columnId }: TypeInput
       const updatedEntry = { ...editingRow, [columnId]: e };
       dispatch(updateEntry(updatedEntry as TimetableEntry));
     }}>
-      <SelectTrigger autoFocus={isFocused} className='p-0 w-full flex justify-around'>
-        <SelectValue placeholder={getBadge(editingRow[columnId])} />
+      <SelectTrigger autoFocus={isFocused} className='px-2 w-full'>
+        <SelectValue placeholder={editingRow[columnId]} />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value='LAB'>{getBadge("LAB")}</SelectItem>
-        <SelectItem value='PRACTICE'>{getBadge("PRACTICE")}</SelectItem>
-        <SelectItem value='LECTURE'>{getBadge("LECTURE")}</SelectItem>
-        <SelectItem value='OTHER'>{getBadge("OTHER")}</SelectItem>
+        <SelectItem value='LAB'>LAB</SelectItem>
+        <SelectItem value='PRACTICE'>PRACTICE</SelectItem>
+        <SelectItem value='LECTURE'>LECTURE</SelectItem>
+        <SelectItem value='OTHER'>OTHER</SelectItem>
       </SelectContent>
     </Select>
   )

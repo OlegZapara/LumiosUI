@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { RootState } from '../store'
 import { useDispatch, useSelector } from 'react-redux'
-import { completeEdit, discardEdit, startEditRow, updateEntry } from '@/slices/timetable-slice'
+import { addRow, completeEdit, discardEdit, startEditRow, updateEntry } from '@/slices/timetable-slice'
 import { useEffect, useState } from 'react'
 import { Column, TimetableEntry } from './columns'
 import TextInput from '@/components/timetable/text-input'
@@ -129,7 +129,7 @@ export function DataTable<TData, TValue>({
                   }}>
                     {row.index === editingRowIndex? 
                       getInputForCell(cell, i) 
-                      : flexRender(cell.column.columnDef.cell, cell.getContext())
+                      : <div className='px-2'>{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
                     }
                   </TableCell>
                 ))}
@@ -144,7 +144,9 @@ export function DataTable<TData, TValue>({
           )}
           <TableRow>
             <TableCell colSpan={columns.length}>
-              <div className="cursor-pointer flex flex-row items-center justify-center w-full h-full">
+              <div 
+              className="cursor-pointer flex flex-row items-center justify-center w-full h-full" 
+              onClick={() => dispatch(addRow())}>
                 Add new row <Plus></Plus>
               </div>
             </TableCell>

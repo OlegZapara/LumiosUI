@@ -9,10 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { completeEdit, discardEdit } from "@/slices/timetable-slice"
+import { completeEdit, deleteRow, discardEdit, startEditRow } from "@/slices/timetable-slice"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../store"
 import { Badge } from "@/components/ui/badge"
+import { useToast } from "@/components/ui/use-toast"
 
 export type Timetable = {
   weekType: string;
@@ -76,7 +77,6 @@ export const columns: ColumnDef<TimetableEntry>[] = [
   {
     accessorKey: Column.ClassType,
     header: "Class type",
-    cell: c => getBadge(c.getValue<string>()),
     maxSize: 200,
     minSize: 100
   },
@@ -98,8 +98,11 @@ interface CellProps {
 }
 
 function Dropdown({ row }: CellProps) {
+  const { toast } = useToast()
   const entry = row.original
   const editingRowIndex = useSelector<RootState>((state) => state.timetable.editingRowIndex)
+  const currentWeek = useSelector<RootState, number>((state) => state.timetable.currentWeek);
+  const currentDay = useSelector<RootState, number>((state) => state.timetable.currentDay);
   const dispatch = useDispatch()
   if(row.index == editingRowIndex){
     return <OnEditButtons row={row}></OnEditButtons>
@@ -115,13 +118,24 @@ function Dropdown({ row }: CellProps) {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem
-          onClick={() => navigator.clipboard.writeText(entry.url)}
+          onClick={() => {
+            toast({
+              title: "Link copied to clipboard",
+              description: entry.url,
+              duration: 3000
+            })
+            navigator.clipboard.writeText(entry.url)
+          }}
         >
           Copy URL
         </DropdownMenuItem>
         <DropdownMenuSeparator></DropdownMenuSeparator>
-        <DropdownMenuItem>Edit row</DropdownMenuItem>
-        <DropdownMenuItem>Delete row</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => {
+          dispatch(startEditRow({weekIndex: currentWeek, dayIndex: currentDay, rowIndex: row.index}))
+        }}>Edit row</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => {
+          dispatch(deleteRow(row.index))
+        }}>Delete row</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
