@@ -25,12 +25,7 @@ export function Navbar({ className }: { className?: string }) {
         <HoveredLink href="/rating">Rating</HoveredLink>
         <HoveredLink href="/tasks">Tasks</HoveredLink>
         <HoveredLink href="/queues">Queues</HoveredLink>
-        <MenuItem setActive={setActive} active={active} item="Settings">
-          <div className="flex flex-col space-y-4 text-sm">
-            <HoveredLink href="/appearance-settings">Appearance</HoveredLink>
-            <HoveredLink href="/bot-settings">Bot</HoveredLink>
-          </div>
-        </MenuItem>
+        <HoveredLink href="/settings">Settings</HoveredLink>
       </Menu>
     </div>
   );
