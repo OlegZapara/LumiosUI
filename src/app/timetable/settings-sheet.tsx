@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import {
   Sheet,
   SheetContent,
@@ -6,15 +6,16 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-
+} from "@/components/ui/sheet";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function SettingsSheet() {
   return (
     <Sheet>
-      <SheetTrigger className='font-medium text-sm inline-flex h-12 items-center justify-center rounded-md bg-muted px-6 py-1'>Settings</SheetTrigger>
+      <SheetTrigger className="font-medium text-sm inline-flex h-12 items-center justify-center rounded-md bg-muted px-6 py-1">
+        Settings
+      </SheetTrigger>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Timetable settings</SheetTitle>
@@ -38,5 +39,5 @@ export default function SettingsSheet() {
         </SheetHeader>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

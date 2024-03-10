@@ -6,7 +6,6 @@ import { Inter } from "next/font/google";
 import AppProvider from "./app-provider";
 import "./globals.css";
 
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,16 +20,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className}`} suppressHydrationWarning={true}>
+      <body className={`${inter.className}`}>
         <AppProvider>
           <ThemeProvider attribute="class" defaultTheme={"system"}>
-          <Toaster />
-          <div className="relative w-full flex items-center justify-center">
-            <Navbar className="top-2" />
-          </div>
-            <div className="mt-28">
-              {children}
+            <Toaster />
+            <div className="relative w-full flex items-center justify-center">
+              <Navbar className="top-2" />
             </div>
+            <div className="mt-28">{children}</div>
           </ThemeProvider>
         </AppProvider>
       </body>

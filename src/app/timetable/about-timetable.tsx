@@ -1,5 +1,4 @@
-import { Button } from '@/components/ui/button'
-import { HelpCircle } from 'lucide-react'
+import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetContent,
@@ -7,15 +6,15 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import React from 'react'
+} from "@/components/ui/sheet";
+import { HelpCircle } from "lucide-react";
 
 export default function AboutTimetable() {
   return (
     <Sheet>
-      <SheetTrigger className='font-medium text-sm inline-flex w-12 h-12 items-center justify-center rounded-md bg-muted'><HelpCircle></HelpCircle></SheetTrigger>
+      <SheetTrigger className="font-medium text-sm inline-flex w-12 h-12 items-center justify-center rounded-md bg-muted">
+        <HelpCircle></HelpCircle>
+      </SheetTrigger>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Shortcut reference</SheetTitle>
@@ -32,5 +31,5 @@ export default function AboutTimetable() {
         </SheetHeader>
       </SheetContent>
     </Sheet>
-  )
+  );
 }
