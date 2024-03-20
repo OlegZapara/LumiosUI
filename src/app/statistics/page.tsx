@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { data, improvement } from "./data";
+import { data, improvement, messageDataHardcoded } from "./data";
 
 import { CardBody, CardItem } from "@/components/ui/3d-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,32 +26,40 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import MessagePieChart from "./MessagePieChart";
 
 export default function Rating() {
   const [activeLabel, setActiveLabel] = useState<string>("");
+  const [messageData, setMessageData] = useState<
+    { name: string; value: number }[]
+  >(messageDataHardcoded.sort((a, b) => b.value - a.value).slice(0, 10));
 
   function handleClick(data: any, index: number) {
     setActiveLabel(data.activeLabel);
   }
 
-  function getIconForImprovement(improvement: number){
-    if(improvement > 0){
-      return <div className="flex flex-row justify-between w-16 gap-2">
-        <ChevronUp className="stroke-green-500 scale-125"></ChevronUp>
-        <div className="text-green-500 text-lg">{improvement}</div>
-      </div>
-    }
-    else if (improvement == 0){
-      return <div className="flex flex-row justify-between w-16 gap-2">
-      <ChevronsUpDown className="stroke-gray-500 scale-125"></ChevronsUpDown>
-      <div className="text-gray-500 text-lg">{improvement}</div>
-    </div>
-    }
-    else{
-      return <div className="flex flex-row justify-between w-16 gap-2">
-      <ChevronDown className="stroke-red-500 scale-125"></ChevronDown>
-      <div className="text-red-500 text-lg">{improvement}</div>
-    </div>
+  function getIconForImprovement(improvement: number) {
+    if (improvement > 0) {
+      return (
+        <div className="flex flex-row justify-between w-16 gap-2">
+          <ChevronUp className="stroke-green-500 scale-125"></ChevronUp>
+          <div className="text-green-500 text-lg">{improvement}</div>
+        </div>
+      );
+    } else if (improvement == 0) {
+      return (
+        <div className="flex flex-row justify-between w-16 gap-2">
+          <ChevronsUpDown className="stroke-gray-500 scale-125"></ChevronsUpDown>
+          <div className="text-gray-500 text-lg">{improvement}</div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex flex-row justify-between w-16 gap-2">
+          <ChevronDown className="stroke-red-500 scale-125"></ChevronDown>
+          <div className="text-red-500 text-lg">{improvement}</div>
+        </div>
+      );
     }
   }
 
@@ -59,12 +67,12 @@ export default function Rating() {
     <div>
       <Card className="w-[calc(100% - 3rem)] mx-6 my-2">
         <CardHeader>
-          <CardTitle>Rating for IP-32</CardTitle>
+          <CardTitle>Statistics for IP-32</CardTitle>
         </CardHeader>
         <CardBody className="w-[calc(100%-2rem)] grid grid-cols-4 gap-4 mx-4 mb-4 h-full">
           <Card className="col-span-3 h-full">
             <CardHeader>
-              <CardTitle>Overview</CardTitle>
+              <CardTitle>Rating overview</CardTitle>
             </CardHeader>
             <CardBody className="w-full">
               <Sheet>
@@ -123,13 +131,48 @@ export default function Rating() {
             </CardHeader>
             <CardBody className="w-full m-4">
               <ScrollArea className="w-full h-full">
-                {improvement.sort((a, b) => b.rating - a.rating).map((data) => (
-                  <div key={data.name} className="w-full py-2 px-4 flex justify-start gap-4">
-                    {getIconForImprovement(data.rating)}
-                    <div>{data.name}</div>
-                  </div>
-                ))}
+                {improvement
+                  .sort((a, b) => b.rating - a.rating)
+                  .map((data) => (
+                    <div
+                      key={data.name}
+                      className="w-full py-2 px-4 flex justify-start gap-4"
+                    >
+                      {getIconForImprovement(data.rating)}
+                      <div>{data.name}</div>
+                    </div>
+                  ))}
               </ScrollArea>
+            </CardBody>
+          </Card>
+          <Card className="col-span-4">
+            <CardHeader>
+              <CardTitle>Message overview (number of messages per person in last week)</CardTitle>
+            </CardHeader>
+            <CardBody className="grid grid-cols-4 gap-4 w-full">
+              <div className="col-span-1 flex flex-col justify-center items-end">
+                <div className="flex flex-col items-start w-auto">
+                  {messageData.slice(0, 5).map((data, i) => (
+                    <div className="py-2 px-4 font-semibold text-lg flex flex-row justify-between gap-6 w-full" key={data.name}>
+                      <div>{i + 1}. {data.name}</div>
+                      <div className="underline">{data.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="col-span-2">
+                <MessagePieChart data={messageData}></MessagePieChart>
+              </div>
+              <div className="col-span-1 flex flex-col justify-center items-start">
+                <div className="flex flex-col items-start w-auto">
+                  {messageData.slice(5, 10).map((data, i) => (
+                    <div className="py-2 px-4 font-semibold text-lg flex flex-row justify-between gap-6 w-full" key={data.name}>
+                    <div>{i + 6}. {data.name}</div>
+                    <div className="underline">{data.value}</div>
+                  </div>
+                  ))}
+                </div>
+              </div>
             </CardBody>
           </Card>
         </CardBody>
