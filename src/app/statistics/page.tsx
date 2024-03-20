@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { data, improvement, messageDataHardcoded } from "./data";
+import { data, dayMessageData, improvement, messageDataHardcoded } from "./data";
 
 import { CardBody, CardItem } from "@/components/ui/3d-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +27,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import MessagePieChart from "./MessagePieChart";
+import MessageLineChart from "./MessageLineChart";
 
 export default function Rating() {
   const [activeLabel, setActiveLabel] = useState<string>("");
@@ -172,6 +173,16 @@ export default function Rating() {
                   </div>
                   ))}
                 </div>
+              </div>
+            </CardBody>
+          </Card>
+          <Card className="col-span-4">
+            <CardHeader>
+              <CardTitle>Number of messages throughout the day (total: {dayMessageData.reduce((acc, { value }) => acc + value, 0)})</CardTitle>
+            </CardHeader>
+            <CardBody className="w-full">
+              <div className="w-full h-full">
+                <MessageLineChart data={dayMessageData}></MessageLineChart>
               </div>
             </CardBody>
           </Card>

@@ -58,7 +58,6 @@ const renderCustomizedLabel = ({
 };
 
 export default function MessagePieChart(props: MessagePieChartProps) {
-  console.log(props.data);
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart width={500} height={500}>

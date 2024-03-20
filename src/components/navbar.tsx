@@ -22,7 +22,7 @@ export function Navbar({ className }: { className?: string }) {
           </div>
         </MenuItem>
         <HoveredLink href="/timetable">Timetable</HoveredLink>
-        <HoveredLink href="/statistics">Rating</HoveredLink>
+        <HoveredLink href="/statistics">Statistics</HoveredLink>
         <HoveredLink href="/tasks">Tasks</HoveredLink>
         <HoveredLink href="/queues">Queues</HoveredLink>
         <HoveredLink href="/settings">Settings</HoveredLink>
