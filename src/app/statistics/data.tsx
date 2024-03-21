@@ -132,3 +132,23 @@ export const dayMessageData = [
   { time: 23, value: 52 },
   { time: 24, value: 47 },
 ];
+
+export const weekMessageData = [
+  {day: "MON", value: 456},
+  {day: "TUE", value: 552},
+  {day: "WED", value: 836},
+  {day: "THU", value: 156},
+  {day: "FRI", value: 322},
+  {day: "SAT", value: 126},
+  {day: "SUN", value: 266},
+];
+
+export const averageWeekResults = [
+  {day: "MON", value: 456, average: 568},
+  {day: "TUE", value: 552, average: 489},
+  {day: "WED", value: 836 , average: 520},
+  {day: "THU", value: 156 , average: 340},
+  {day: "FRI", value: 322, average: 360},
+  {day: "SAT", value: 126, average: 219},
+  {day: "SUN", value: 266, average: 209},
+]
