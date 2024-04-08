@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import AppProvider from "./app-provider";
 import "./globals.css";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,7 +28,9 @@ export default function RootLayout({
             <div className="relative w-full flex items-center justify-center">
               <Navbar className="top-2" />
             </div>
-            <div className="mt-28">{children}</div>
+            <Suspense>
+              <div className="mt-28">{children}</div>
+            </Suspense>
           </ThemeProvider>
         </AppProvider>
       </body>
