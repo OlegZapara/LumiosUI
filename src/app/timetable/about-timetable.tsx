@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import {
   Sheet,
@@ -12,7 +13,7 @@ import { HelpCircle } from "lucide-react";
 export default function AboutTimetable() {
   return (
     <Sheet>
-      <SheetTrigger className="font-medium text-sm inline-flex w-12 h-12 items-center justify-center rounded-md bg-muted">
+      <SheetTrigger className="text-nowrap inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors  disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground hover:bg-background bg-transparent h-10 px-3">
         <HelpCircle></HelpCircle>
       </SheetTrigger>
       <SheetContent>
@@ -20,12 +21,24 @@ export default function AboutTimetable() {
           <SheetTitle>Shortcut reference</SheetTitle>
           <SheetDescription>
             <div className="grid w-full max-w-sm items-center gap-2 m-3">
-              <Label>Edit row: Double click</Label>
-              <Label>Save row: Shift-Enter</Label>
-              <Label>Move to next row: Tab</Label>
-              <Label>Move to previous row: Shift-Tab</Label>
-              <Label>Move to left cell: Left arrow</Label>
-              <Label>Move to right cell: Right arrow</Label>
+              <Label className="flex justify-between">
+                Edit row: <Badge>Double click</Badge>
+              </Label>
+              <Label className="flex justify-between">
+                Save row: <Badge>Shift-Enter</Badge>
+              </Label>
+              <Label className="flex justify-between">
+                Move to next row: <Badge>Tab</Badge>
+              </Label>
+              <Label className="flex justify-between">
+                Move to previous row: <Badge>Shift-Tab</Badge>
+              </Label>
+              <Label className="flex justify-between">
+                Move to left cell: <Badge>Left arrow</Badge>
+              </Label>
+              <Label className="flex justify-between">
+                Move to right cell: <Badge>Right arrow</Badge>
+              </Label>
             </div>
           </SheetDescription>
         </SheetHeader>

@@ -1,5 +1,3 @@
-import { ColumnDef, Row } from "@tanstack/react-table";
-import { Check, MoreHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,18 +7,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
 import {
   completeEdit,
   deleteRow,
   discardEdit,
   startEditRow,
 } from "@/slices/timetable-slice";
+import { ColumnDef, Row } from "@tanstack/react-table";
+import { Check, MoreHorizontal, X } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/components/ui/use-toast";
-import { useSearchParams } from "next/navigation";
-import { days, weeks } from "./data";
+// import { days, weeks } from "./data";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import useTimetableSettings from "@/hooks/useTimetableSettings";
 
 export type Timetable = {
   weekType: string;
@@ -48,28 +60,6 @@ export enum Column {
   URL = "url",
 }
 
-function getBadge(classType: string) {
-  switch (classType) {
-    case "LAB":
-      return (
-        <Badge className="bg-green-500 hover:bg-green-400">{classType}</Badge>
-      );
-    case "PRACTICE":
-      return (
-        <Badge className="bg-orange-400 hover:bg-orange-300">{classType}</Badge>
-      );
-    case "LECTURE":
-      return (
-        <Badge className="bg-blue-500 hover:bg-blue-400">{classType}</Badge>
-      );
-    case "OTHER":
-      return (
-        <Badge className="bg-violet-500 hover:bg-violet-400">{classType}</Badge>
-      );
-    default:
-      return <Badge>{classType}</Badge>;
-  }
-}
 export const columns: ColumnDef<TimetableEntry>[] = [
   {
     accessorKey: Column.ClassName,
@@ -104,9 +94,11 @@ export const columns: ColumnDef<TimetableEntry>[] = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <div className="flex justify-end">
-        <Dropdown row={row}></Dropdown>
-      </div>
+      <AlertDialog>
+        <div className="flex justify-end">
+          <RowAction row={row}></RowAction>
+        </div>
+      </AlertDialog>
     ),
     size: 150,
   },
@@ -116,18 +108,40 @@ interface CellProps {
   row: Row<TimetableEntry>;
 }
 
-function Dropdown({ row }: CellProps) {
+function RowAction({ row }: CellProps) {
   const { toast } = useToast();
-  const searchParams = useSearchParams();
-  const entry = row.original;
-  const editingRowIndex = useSelector<RootState>(
-    (state) => state.timetable.editingRowIndex
-  );
-  const currentWeek = searchParams.get("week");
-  const currentDay = searchParams.get("day");
   const dispatch = useDispatch();
-  if (row.index == editingRowIndex) {
-    return <OnEditButtons row={row}></OnEditButtons>;
+  const searchParams = useSearchParams();
+  const isEdit = useSelector<RootState, boolean>(
+    (state) => state.timetable.editRowInfo.row === row.index
+  );
+
+  const [{ weeks: weeks, days }, _] = useTimetableSettings();
+
+  const entryInfo = {
+    week: weeks.indexOf(searchParams.get("week")!),
+    day: days.indexOf(searchParams.get("day")!),
+    row: row.index,
+    index: 0,
+  };
+
+  if (isEdit) {
+    return (
+      <div className="flex flex-row">
+        <Button variant="ghost" onClick={() => {
+          dispatch(completeEdit());
+          toast({
+            title: "Timetable updated",
+            description: `${row.getAllCells()[0].getValue<string>()} was updated`
+          })
+          }}>
+          <Check className="stroke-green-500"></Check>
+        </Button>
+        <Button variant="ghost" onClick={() => dispatch(discardEdit())}>
+          <X className="stroke-red-500"></X>
+        </Button>
+      </div>
+    );
   }
   return (
     <DropdownMenu>
@@ -143,62 +157,51 @@ function Dropdown({ row }: CellProps) {
           onClick={() => {
             toast({
               title: "Link copied to clipboard",
-              description: entry.url,
+              description: row.original.url,
               duration: 3000,
             });
-            navigator.clipboard.writeText(entry.url);
+            navigator.clipboard.writeText(row.original.url);
           }}
         >
           Copy URL
         </DropdownMenuItem>
         <DropdownMenuSeparator></DropdownMenuSeparator>
-        <DropdownMenuItem
-          onClick={() => {
-            dispatch(
-              startEditRow({
-                weekIndex: weeks.indexOf(currentWeek!),
-                dayIndex: days.indexOf(currentDay!),
-                rowIndex: row.index,
-              })
-            );
-          }}
-        >
+        <DropdownMenuItem onClick={() => dispatch(startEditRow(entryInfo))}>
           Edit row
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => {
-            dispatch(
-              deleteRow({
-                weekIndex: weeks.indexOf(currentWeek!),
-                dayIndex: days.indexOf(currentDay!),
-                rowIndex: row.index,
-              })
-            );
-          }}
-        >
-          Delete row
+        <DropdownMenuItem>
+          <AlertDialogTrigger>Delete row</AlertDialogTrigger>
         </DropdownMenuItem>
       </DropdownMenuContent>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            Are you sure you want to delete{" "}
+            {row.getAllCells()[0].getValue<string>()}?
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently remove timetable
+            entry from database
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => {
+              dispatch(deleteRow(entryInfo));
+              const rowName = row.getAllCells()[0].getValue<string>();
+              toast({
+                title: "Row deleted",
+                description: `${
+                  rowName ? rowName : "Row"
+                } was removed from timetable`,
+              });
+            }}
+          >
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
     </DropdownMenu>
-  );
-}
-
-function OnEditButtons({ row }: CellProps) {
-  const editingRowIndex = useSelector<RootState>(
-    (state) => state.timetable.editingRowIndex
-  );
-  const dispatch = useDispatch();
-  if (editingRowIndex !== row.index) {
-    return <></>;
-  }
-  return (
-    <div className="flex flex-row">
-      <Button variant="ghost" onClick={() => dispatch(completeEdit())}>
-        <Check className="stroke-green-500"></Check>
-      </Button>
-      <Button variant="ghost" onClick={() => dispatch(discardEdit())}>
-        <X className="stroke-red-500"></X>
-      </Button>
-    </div>
   );
 }

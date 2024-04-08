@@ -10,6 +10,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Appearance from "./appearance";
+import Timetable from "./timetable";
 
 export default function Settings() {
   return (
@@ -36,9 +37,9 @@ export default function Settings() {
               </TabsTrigger>
               <TabsTrigger
                 className="flex justify-start w-full h-9 hover:underline data-[state=active]:bg-muted rounded-md"
-                value="account"
+                value="timetable"
               >
-                Account
+                Timetable
               </TabsTrigger>
               <TabsTrigger
                 className="flex justify-start w-full h-9 hover:underline data-[state=active]:bg-muted rounded-md"
@@ -47,8 +48,8 @@ export default function Settings() {
                 Password
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="account">
-              <div>Account</div>
+            <TabsContent value="timetable">
+              <Timetable />
             </TabsContent>
             <TabsContent value="password">
               <div>Password</div>

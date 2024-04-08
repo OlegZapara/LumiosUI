@@ -1,80 +1,107 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import JsonEditor from "@/app/timetable/json-editor";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useCallback, useEffect, useState } from "react";
-import { Timetable, columns } from "./columns";
-import { DataTable } from "./data-table";
-import SettingsSheet from "./settings-sheet";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
-import { setTimetable } from "@/slices/timetable-slice";
+import useTimetableQueryParams from "@/hooks/useTimetableQueryParams";
+import { syncSettings } from "@/slices/settings-slice";
+import { completeUpdate, setTimetable } from "@/slices/timetable-slice";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
-import { data, weeks, days, words } from "./data";
-import Loading from "./loading";
-import JsonEditor from "@/app/timetable/json-editor";
 import AboutTimetable from "./about-timetable";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Timetable, columns } from "./columns";
+import { words } from "./data";
+import { DataTable } from "./data-table";
+import Loading from "./loading-page";
+import NoTimetablePage from "./no-timetable-page";
+import Settings, { TimetableSettings } from "./settings";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function TimetablePage() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams]
-  );
+  const { get, update } = useTimetableQueryParams();
+  const { toast } = useToast();
+  const day = get("day");
+  const week = get("week");
   const dispatch = useDispatch();
   const timetable = useSelector<RootState, Timetable[] | null>(
     (state) => state.timetable.timetable
   );
+  const requireUpdate = useSelector<RootState, boolean>(
+    (state) => state.timetable.requireUpdate
+  );
+  const settings = useSelector<RootState, TimetableSettings>(
+    (state) => state.settings
+  );
+  const getTimetable = useCallback(
+    async (chatId: string) => {
+      try {
+        const res = await fetch(`/api/timetables?chatId=${chatId}`);
+        const jsonData = res.ok ? await res.json() : [];
+        dispatch(setTimetable(jsonData));
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [dispatch]
+  );
+  const updateTimetable = useCallback(
+    async (chatId: string) => {
+      try {
+        await fetch(`/api/timetables?chatId=${chatId}`, {
+          method: "PUT",
+          body: JSON.stringify(timetable),
+        });
+      } catch (err) {
+        toast({
+          title: "Timetable was not updated",
+          description: "Unexpected error, timetable was not updated",
+          variant: "destructive",
+        });
+      } finally {
+      }
+    },
+    [timetable, toast]
+  );
 
   useEffect(() => {
-    dispatch(setTimetable(data));
+    if (!settings.chatId || !requireUpdate) return;
+    updateTimetable(settings.chatId);
+    dispatch(completeUpdate());
+  }, [dispatch, requireUpdate, settings.chatId, updateTimetable]);
+
+  useEffect(() => {
+    dispatch(syncSettings());
   }, [dispatch]);
 
   useEffect(() => {
-    console.log(pathname);
-    if (!searchParams.get("week")) {
-      router.push(pathname + "?" + createQueryString("week", weeks[0]));
-    }
-    if (!searchParams.get("day")) {
-      router.push(pathname + "?" + createQueryString("day", days[0]));
-    }
-  }, [createQueryString, pathname, router, searchParams]);
+    if(settings.chatId === null) return;
+    getTimetable(settings.chatId);
+  }, [getTimetable, settings.chatId]);
 
-  if (
-    timetable == null ||
-    !searchParams.get("week") ||
-    !searchParams.get("day")
-  ) {
-    return <Loading></Loading>;
+  if (!timetable || !day || !week) {
+    return <Loading />;
+  }
+  if (timetable.length == 0) {
+    return <NoTimetablePage />;
   }
   return (
     <div className="w-full h-full flex items-center flex-col">
-      <TypewriterEffectSmooth words={words} className="mb-12" />
+      {settings.enableTimetableHeader && (
+        <TypewriterEffectSmooth words={words} className="mb-12" />
+      )}
       <div className="w-5/6 flex justify-center items-center flex-col gap-4">
         <div className="w-full flex justify-between">
           <div className="w-full flex justify-start flex-row gap-4">
             <ToggleGroup
               type="single"
-              defaultValue={weeks[0]}
-              onValueChange={(e) => {
-                if (e) {
-                  router.push(pathname + "?" + createQueryString("week", e));
-                }
-              }}
+              defaultValue={settings.timetableWeeks[0]}
+              onValueChange={(e) => update("week", e)}
             >
-              {weeks.map((week, i) => (
+              {settings.timetableWeeks.map((week, i) => (
                 <ToggleGroupItem
                   key={week}
                   value={week}
-                  data-state={week == searchParams.get("week") ? "on" : "off"}
+                  data-state={week == get("week") ? "on" : "off"}
                   aria-label="Change week"
                 >
                   <div>{week}</div>
@@ -83,18 +110,14 @@ export default function TimetablePage() {
             </ToggleGroup>
             <ToggleGroup
               type="single"
-              defaultValue={days[0]}
-              onValueChange={(e) => {
-                if (e) {
-                  router.push(pathname + "?" + createQueryString("day", e));
-                }
-              }}
+              defaultValue={settings.timetableDays[0]}
+              onValueChange={(e) => update("day", e)}
             >
-              {days.map((day, i) => (
+              {settings.timetableDays.map((day, i) => (
                 <ToggleGroupItem
                   key={day}
                   value={day}
-                  data-state={day == searchParams.get("day") ? "on" : "off"}
+                  data-state={day == get("day") ? "on" : "off"}
                   aria-label="Change day"
                 >
                   <div>{day}</div>
@@ -102,20 +125,20 @@ export default function TimetablePage() {
               ))}
             </ToggleGroup>
           </div>
-          <div className="mr-4 flex justify-start flex-row gap-4">
-            <JsonEditor data={JSON.stringify(data, null, 2)}></JsonEditor>
-            <SettingsSheet></SettingsSheet>
+          <div className="gap-2 inline-flex h-12 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
+            <JsonEditor></JsonEditor>
+            <Settings></Settings>
             <AboutTimetable></AboutTimetable>
           </div>
         </div>
-        <div className="w-full">
+        <div className="w-full mb-6">
           <DataTable
             columns={columns}
-            weekIndex={weeks.indexOf(searchParams.get("week")!)}
-            dayIndex={days.indexOf(searchParams.get("day")!)}
+            weekIndex={settings.timetableWeeks.indexOf(week)}
+            dayIndex={settings.timetableDays.indexOf(day)}
             data={
-              timetable[weeks.indexOf(searchParams.get("week")!)].days[
-                days.indexOf(searchParams.get("day")!)
+              timetable[settings.timetableWeeks.indexOf(week)].days[
+                settings.timetableDays.indexOf(day)
               ].classEntries
             }
           />

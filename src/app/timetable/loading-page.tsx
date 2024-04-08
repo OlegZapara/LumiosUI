@@ -10,8 +10,7 @@ export default function Loading() {
           <Skeleton className="w-96 h-full"></Skeleton>
         </div>
         <div className="flex flex-row gap-4 h-full">
-          <Skeleton className="w-24 h-full"></Skeleton>
-          <Skeleton className="w-24 h-full"></Skeleton>
+          <Skeleton className="w-48 h-full"></Skeleton>
         </div>
       </div>
       <Skeleton className="inline-block rounded-sm w-5/6 h-48"></Skeleton>

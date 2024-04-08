@@ -3,8 +3,8 @@
 import { Plus } from "lucide-react";
 
 import {
-  Cell,
   ColumnDef,
+  Row,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -19,19 +19,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import TextInput from "@/components/timetable/text-input";
-import TimeInput from "@/components/timetable/time-input";
-import TypeInput from "@/components/timetable/type-input";
 import {
   addRow,
   completeEdit,
   discardEdit,
   startEditRow,
 } from "@/slices/timetable-slice";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
-import { Column, TimetableEntry } from "./columns";
+import { TimetableEntry } from "./columns";
+import EntryForm from "./entry-form";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -51,13 +49,9 @@ export function DataTable<TData, TValue>({
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-  const editingRowIndex = useSelector<RootState>(
-    (state) => state.timetable.editingRowIndex
-  );
   const editingRow = useSelector<RootState, TimetableEntry | null>(
     (state) => state.timetable.editingRow
   );
-  const [focusedCell, setFocusedCell] = useState(-1);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -75,41 +69,7 @@ export function DataTable<TData, TValue>({
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
     };
-  }, [dispatch, editingRow, focusedCell]);
-
-  const getInputForCell = (cell: Cell<TData, unknown>, i: number) => {
-    console.log(cell);
-    switch (cell.column.id) {
-      case Column.ClassName:
-      case Column.URL:
-        return (
-          <TextInput
-            isFocused={i == focusedCell}
-            editingRow={editingRow}
-            columnId={cell.column.id}
-          />
-        );
-      case Column.StartTime:
-      case Column.EndTime:
-        return (
-          <TimeInput
-            isFocused={i == focusedCell}
-            editingRow={editingRow}
-            columnId={cell.column.id}
-          />
-        );
-      case Column.ClassType:
-        return (
-          <TypeInput
-            isFocused={i == focusedCell}
-            editingRow={editingRow}
-            columnId={cell.column.id}
-          />
-        );
-      default:
-        return flexRender(cell.column.columnDef.cell, cell.getContext());
-    }
-  };
+  }, [dispatch, editingRow]);
 
   return (
     <div className="rounded-md border">
@@ -134,42 +94,16 @@ export function DataTable<TData, TValue>({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-                tabIndex={row.index + 1}
-              >
-                {row.getVisibleCells().map((cell, i) => (
-                  <TableCell
-                    key={cell.id}
-                    style={{ width: cell.column.getSize() }}
-                    className="cursor-default"
-                    onDoubleClick={() => {
-                      dispatch(
-                        startEditRow({
-                          weekIndex: weekIndex,
-                          dayIndex: dayIndex,
-                          rowIndex: row.index,
-                        })
-                      );
-                      setFocusedCell(i);
-                    }}
-                  >
-                    {row.index === editingRowIndex ? (
-                      getInputForCell(cell, i)
-                    ) : (
-                      <div className="px-2">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </div>
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+            table
+              .getRowModel()
+              .rows.map((row) => (
+                <DataTableRow
+                  key={row.id}
+                  row={row}
+                  week={weekIndex}
+                  day={dayIndex}
+                ></DataTableRow>
+              ))
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
@@ -178,15 +112,14 @@ export function DataTable<TData, TValue>({
             </TableRow>
           )}
           <TableRow>
-            <TableCell colSpan={columns.length}>
-              <div
-                className="cursor-pointer flex flex-row items-center justify-center w-full h-full"
-                onClick={() =>
-                  dispatch(
-                    addRow({ currentWeek: weekIndex, currentDay: dayIndex })
-                  )
-                }
-              >
+            <TableCell
+              onClick={() =>
+                dispatch(addRow({ week: weekIndex, day: dayIndex }))
+              }
+              className="cursor-pointer"
+              colSpan={columns.length}
+            >
+              <div className="flex flex-row items-center justify-center w-full h-full">
                 Add new row <Plus></Plus>
               </div>
             </TableCell>
@@ -194,5 +127,45 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
     </div>
+  );
+}
+
+interface DataTableRowProps<TData> {
+  week: number;
+  day: number;
+  row: Row<TData>;
+}
+
+function DataTableRow<TData>(props: DataTableRowProps<TData>) {
+  const dispatch = useDispatch();
+  const isEdit = useSelector<RootState, boolean>(
+    (state) => state.timetable.editRowInfo.row === props.row.index
+  );
+
+  if (isEdit) {
+    return <EntryForm {...props}></EntryForm>;
+  }
+
+  return (
+    <TableRow
+      key={props.row.id}
+      data-state={props.row.getIsSelected() && "selected"}
+      tabIndex={props.row.index + 1}
+    >
+      {props.row.getVisibleCells().map((cell, i) => (
+        <TableCell
+          key={cell.id}
+          style={{ width: cell.column.getSize() }}
+          className="cursor-default"
+          onDoubleClick={() =>
+            dispatch(startEditRow({ ...props, row: props.row.index, index: i }))
+          }
+        >
+          <div className="px-2">
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </div>
+        </TableCell>
+      ))}
+    </TableRow>
   );
 }

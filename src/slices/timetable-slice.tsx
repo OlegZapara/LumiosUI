@@ -1,49 +1,58 @@
 import { Timetable, TimetableEntry } from "@/app/timetable/columns";
 import { createSlice } from "@reduxjs/toolkit";
 
-type EditRowInfo = {
-  weekIndex: number;
-  dayIndex: number;
-  rowIndex: number;
+type RowInfo = {
+  week: number;
+  day: number;
+  row: number;
+  index: number;
 };
+
+const NO_EDIT_ROW: RowInfo = { week: -1, day: -1, row: -1, index: -1 };
 
 interface TimetableState {
   timetable: Timetable[] | null;
   editingRow: TimetableEntry | null;
-  editingRowIndex: number;
-  editRowInfo: EditRowInfo;
+  editRowInfo: RowInfo;
+  requireUpdate: boolean;
 }
 
 const initialState: TimetableState = {
   timetable: null,
-  editRowInfo: { weekIndex: -1, dayIndex: -1, rowIndex: -1 },
+  editRowInfo: NO_EDIT_ROW,
   editingRow: null,
-  editingRowIndex: -1,
+  requireUpdate: false,
 } as TimetableState;
+
+const emptyRow = {
+  className: "",
+  startTime: "",
+  endTime: "",
+  classType: "",
+  url: "",
+};
 
 export const timetableSlice = createSlice({
   name: "timetable",
   initialState,
   reducers: {
-    startEditRow: (state, action: { payload: EditRowInfo }) => {
+    startEditRow: (state, action: { payload: RowInfo }) => {
+      const { week, day, row } = action.payload;
       state.editRowInfo = action.payload;
-      state.editingRow =
-        state.timetable![action.payload.weekIndex].days[
-          action.payload.dayIndex
-        ].classEntries[action.payload.rowIndex];
-      state.editingRowIndex = action.payload.rowIndex;
+      state.editingRow = state.timetable![week].days[day].classEntries[row];
     },
     completeEdit: (state) => {
-      state.timetable![state.editRowInfo.weekIndex].days[
-        state.editRowInfo.dayIndex
-      ].classEntries[state.editRowInfo.rowIndex] = state.editingRow!;
-      state.editRowInfo = { weekIndex: -1, dayIndex: -1, rowIndex: -1 };
-      state.editingRowIndex = -1;
+      const { week, day, row } = state.editRowInfo;
+      state.timetable![week].days[day].classEntries[row] = state.editingRow!;
+      state.editRowInfo = NO_EDIT_ROW;
       state.editingRow = null;
+      state.requireUpdate = true;
+    },
+    completeUpdate: (state) => {
+      state.requireUpdate = false;
     },
     discardEdit: (state) => {
-      state.editRowInfo = { weekIndex: -1, dayIndex: -1, rowIndex: -1 };
-      state.editingRowIndex = -1;
+      state.editRowInfo = NO_EDIT_ROW;
       state.editingRow = null;
     },
     updateEntry: (state, action: { payload: TimetableEntry }) => {
@@ -52,31 +61,24 @@ export const timetableSlice = createSlice({
     setTimetable: (state, action: { payload: Timetable[] }) => {
       state.timetable = JSON.parse(JSON.stringify(action.payload));
     },
-    addRow: (
-      state,
-      action: { payload: { currentWeek: number; currentDay: number } }
-    ) => {
-      state.timetable![action.payload.currentWeek].days[
-        action.payload.currentDay
-      ].classEntries = [
-        ...state.timetable![action.payload.currentWeek].days[
-          action.payload.currentDay
-        ].classEntries,
-        {
-          className: "",
-          startTime: "",
-          endTime: "",
-          classType: "",
-          url: "",
-        },
+    addRow: (state, action: { payload: { week: number; day: number } }) => {
+      const { week, day } = action.payload;
+      state.timetable![week].days[day].classEntries = [
+        ...state.timetable![week].days[day].classEntries,
+        emptyRow,
       ];
+      const lastItemIndex =
+        state.timetable![week].days[day].classEntries.length - 1;
+      state.editRowInfo = { ...action.payload, row: lastItemIndex, index: 0 };
+      state.editingRow =
+        state.timetable![week].days[day].classEntries[lastItemIndex];
     },
-    deleteRow: (state, action: { payload: EditRowInfo }) => {
-      state.timetable![action.payload.weekIndex].days[
-        action.payload.dayIndex
-      ].classEntries = state.timetable![action.payload.weekIndex].days[
-        action.payload.dayIndex
-      ].classEntries.filter((_, i) => i != action.payload.rowIndex);
+    deleteRow: (state, action: { payload: RowInfo }) => {
+      const { week, day, row } = action.payload;
+      state.timetable![week].days[day].classEntries = state.timetable![
+        week
+      ].days[day].classEntries.filter((_, i) => i != row);
+      state.requireUpdate = true;
     },
   },
 });
@@ -84,6 +86,7 @@ export const timetableSlice = createSlice({
 export const {
   startEditRow,
   completeEdit,
+  completeUpdate,
   discardEdit,
   updateEntry,
   setTimetable,
