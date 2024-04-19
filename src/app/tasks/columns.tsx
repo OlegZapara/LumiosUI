@@ -1,17 +1,24 @@
-"use client"
-
-import { Button } from "@/components/ui/button"
-import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-import { Checkbox } from "@/components/ui/checkbox"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+"use client";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 export type Task = {
-  name: string
-  date: string
-  time: string
-  url: string
-}
+  id: string;
+  taskName: string;
+  dueDate: Date;
+  dueTime: string;
+  url: string;
+};
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -37,11 +44,16 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
+    accessorKey: "id",
+    header: "ID",
+    enableHiding: true,
+  },
+  {
+    accessorKey: "taskName",
     header: "Name",
   },
   {
-    accessorKey: "date",
+    accessorKey: "dueDate",
     header: ({ column }) => {
       return (
         <Button
@@ -51,12 +63,16 @@ export const columns: ColumnDef<Task>[] = [
           Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
   },
   {
-    accessorKey: "time",
+    accessorKey: "dueTime",
     header: "Time",
+    cell: ({ row }) => {
+      const time = row.original.dueTime;
+      return time.slice(0, 5);
+    },
   },
   {
     accessorKey: "url",
@@ -65,8 +81,8 @@ export const columns: ColumnDef<Task>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const task = row.original
- 
+      const task = row.original;
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -83,13 +99,13 @@ export const columns: ColumnDef<Task>[] = [
               Copy task URL
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Do something</DropdownMenuItem>
-            <DropdownMenuItem>Do something else</DropdownMenuItem>
+            <DropdownMenuItem>Edit task</DropdownMenuItem>
+            <DropdownMenuItem>Delete task</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
     enableSorting: false,
     enableHiding: false,
   },
-]
+];

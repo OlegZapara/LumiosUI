@@ -3,13 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 const chatIdKey = "chatId";
 const enableTimetableHeaderKey = "enableHeader";
 
-interface SettingsState {
+export interface SettingsState {
   chatId: string | null;
   enableTimetableHeader: boolean;
   timetableWeeks: string[];
   timetableDays: string[];
 }
-
 
 const initialState: SettingsState = {
   chatId: null,
@@ -24,11 +23,12 @@ export const settingsSlice = createSlice({
   reducers: {
     syncSettings: (state) => {
       state.chatId = localStorage.getItem(chatIdKey);
-      if(state.chatId === null){
+      if (state.chatId === null) {
         localStorage.setItem(chatIdKey, "");
-        state.chatId = ""
+        state.chatId = "";
       }
-      state.enableTimetableHeader = localStorage.getItem(enableTimetableHeaderKey) == "off" ? false : true
+      state.enableTimetableHeader =
+        localStorage.getItem(enableTimetableHeaderKey) == "off" ? false : true;
     },
     updateChatId: (state, action: { payload: string }) => {
       state.chatId = action.payload;
@@ -44,5 +44,6 @@ export const settingsSlice = createSlice({
   },
 });
 
-export const { syncSettings, updateChatId, updateTimetableHeader} = settingsSlice.actions;
+export const { syncSettings, updateChatId, updateTimetableHeader } =
+  settingsSlice.actions;
 export default settingsSlice.reducer;

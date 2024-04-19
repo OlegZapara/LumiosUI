@@ -2,15 +2,15 @@
 
 import {
   ColumnDef,
+  ColumnFiltersState,
   SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-  ColumnFiltersState,
 } from "@tanstack/react-table";
 
 import {
@@ -31,8 +31,11 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Task } from "@/shared/types";
+import { Settings2 } from "lucide-react";
 import React from "react";
-import { Edit, Settings2, Trash2 } from "lucide-react";
+import DeleteDialog from "./delete-dialog";
+import TaskDialog from "./task-dialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -48,7 +51,7 @@ export function DataTable<TData, TValue>({
     []
   );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({ id: false });
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
@@ -70,43 +73,65 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  function getSelectedTask(): Task {
+    const selectedTaskValues = table.getFilteredSelectedRowModel().rows[0]
+      .original as {
+      id: string;
+      taskName: string;
+      dueTime: string;
+      dueDate: string;
+      url: string;
+    };
+    const task: Task = {
+      ...selectedTaskValues,
+      dueDate: new Date(selectedTaskValues.dueDate),
+    } as Task;
+    return task;
+  }
+
   return (
     <div>
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter tasks..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          value={
+            (table.getColumn("taskName")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table.getColumn("taskName")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-        {table.getFilteredSelectedRowModel().rows.length > 0 &&
-        <>
-        <div className="flex-1 text-sm text-muted-foreground ml-4">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <Button variant="outline" className="mr-4">
-          <Trash2></Trash2>
-        </Button>
-        </>
-        }
-        {table.getFilteredSelectedRowModel().rows.length == 1 && 
-        <Button variant="outline" className="mr-4">
-          <Edit></Edit>
-        </Button>}
+        {table.getFilteredSelectedRowModel().rows.length > 0 && (
+          <>
+            <div className="flex-1 text-sm text-muted-foreground ml-4">
+              {table.getFilteredSelectedRowModel().rows.length} of{" "}
+              {table.getFilteredRowModel().rows.length} row(s) selected.
+            </div>
+            <DeleteDialog
+              tasks={table
+                .getFilteredSelectedRowModel()
+                .rows.map((x) => x.original as Task)}
+            ></DeleteDialog>
+          </>
+        )}
+        {table.getFilteredSelectedRowModel().rows.length == 1 && (
+          <TaskDialog type="edit" task={getSelectedTask()}>
+            Edit
+          </TaskDialog>
+        )}
+        <TaskDialog type="create">Create</TaskDialog>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto relative">
-              <Settings2 className="absolute left-2"></Settings2>
+            <Button variant="outline" className="relative">
+              <Settings2 className="absolute h-5 w-5 left-3"></Settings2>
               <div className="pl-6">View</div>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()
-              .filter((column) => column.getCanHide())
+              .filter((column) => column.getCanHide() && column.id != "id")
               .map((column) => {
                 return (
                   <DropdownMenuCheckboxItem

@@ -128,13 +128,18 @@ function RowAction({ row }: CellProps) {
   if (isEdit) {
     return (
       <div className="flex flex-row">
-        <Button variant="ghost" onClick={() => {
-          dispatch(completeEdit());
-          toast({
-            title: "Timetable updated",
-            description: `${row.getAllCells()[0].getValue<string>()} was updated`
-          })
-          }}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            dispatch(completeEdit());
+            toast({
+              title: "Timetable updated",
+              description: `${row
+                .getAllCells()[0]
+                .getValue<string>()} was updated`,
+            });
+          }}
+        >
           <Check className="stroke-green-500"></Check>
         </Button>
         <Button variant="ghost" onClick={() => dispatch(discardEdit())}>
