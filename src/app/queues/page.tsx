@@ -3,14 +3,21 @@
 import { CardBody } from "@/components/ui/3d-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Plus, PlusCircle, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQueuesStore } from "../stores/queues";
 import { Queue } from "@/shared/types";
 import QueueCard from "./queue";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import CreateQueuePopover from "./create-popover";
 
 export default function Queues() {
-  const { queues, fetchQueues } = useQueuesStore();
+  const { queues, fetchQueues, createQueue } = useQueuesStore();
   const [filteredData, setFilteredData] = useState<Queue[]>([]);
 
   useEffect(() => {
@@ -45,13 +52,16 @@ export default function Queues() {
           <CardTitle>
             <div className="flex gap-6 flex-col md:flex-row w-full justify-between">
               <span className="mt-3 ml-2">List of group queues</span>
-              <div className="relative">
-                <Search className="absolute left-2 top-3 h-4 w-4 text-muted-foreground"></Search>
-                <Input
-                  className="pl-8 font-normal w-80"
-                  placeholder="Search queue by name"
-                  onChange={(e) => filterData(e.target.value)}
-                ></Input>
+              <div className="flex flex-row gap-4 flex-wrap">
+                <CreateQueuePopover></CreateQueuePopover>
+                <div className="flex relative">
+                  <Search className="absolute left-2 top-3 h-4 w-4 text-muted-foreground"></Search>
+                  <Input
+                    className="pl-8 font-normal w-80"
+                    placeholder="Search queue by name"
+                    onChange={(e) => filterData(e.target.value)}
+                  ></Input>
+                </div>
               </div>
             </div>
           </CardTitle>

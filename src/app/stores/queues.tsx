@@ -7,7 +7,7 @@ interface QueuesStore {
   pinQueue: (id: string) => void;
   unpinQueue: (id: string) => void;
   fetchQueues: () => Promise<Queue[]>;
-  createQueue: (task: Queue) => Promise<void>;
+  createQueue: (title: string) => Promise<void>;
   updateQueue: (queue: Queue) => Promise<void>;
   removeQueue: (queueId: string) => Promise<void>;
 }
@@ -55,7 +55,7 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
     set({ queues: data });
     return data;
   },
-  createQueue: async (task: Queue) => {},
+  createQueue: async (title: string) => {},
   updateQueue: async (queue: Queue) => {
     const chatId = localStorage.getItem("chatId");
     await fetch(`/api/queues?chatId=${chatId}`, {
