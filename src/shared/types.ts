@@ -23,3 +23,17 @@ export type Task = {
   dueTime: string;
   url: string;
 };
+
+export type User = {
+  username: string;
+  name: string;
+  accountId: number;
+};
+
+export type Queue = {
+  alias: string;
+  id: string;
+  pinned?: boolean;
+  shuffled?: boolean;
+  contents: User[];
+};

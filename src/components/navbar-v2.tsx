@@ -52,7 +52,6 @@ export default function Navbar({ className }: { className?: string }) {
           <Link href="/">
             <div className="transition-colors flex flex-row items-center justify-center gap-2 px-4 py-2 rounded-lg title">
               <Image
-                className="border-2 hover:border-blue-500 border-transparent rounded-full"
                 src="/lumios.png"
                 width="30"
                 height="30"

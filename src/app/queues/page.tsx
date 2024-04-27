@@ -1,37 +1,41 @@
-"use client"
+"use client";
 
 import { CardBody } from "@/components/ui/3d-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import React, { useEffect, useState } from "react";
-import Queue from "./queue";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-
-const queues = [
-  "АСД-1",
-  "Оксім",
-  "АСД-3",
-  "кпі",
-  "КПІ",
-  "к_п_і",
-  "АСД-7",
-  "asdfasdfsadf",
-  "АСД-9",
-]
+import { useEffect, useState } from "react";
+import { useQueuesStore } from "../stores/queues";
+import { Queue } from "@/shared/types";
+import QueueCard from "./queue";
 
 export default function Queues() {
-  const [data, setData] = useState<string[]>([])
-  const [filteredData, setFilteredData] = useState<string[]>([])
+  const { queues, fetchQueues } = useQueuesStore();
+  const [filteredData, setFilteredData] = useState<Queue[]>([]);
 
   useEffect(() => {
-    setData(queues);
-    setFilteredData(queues);
-  }, [])
+    fetchQueues();
 
-  function filterData(filter: string){
-    setFilteredData(data.filter(x => x.toLowerCase().includes(filter)))
+    // const interval = setInterval(fetchQueues, 5000);
+    // return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setFilteredData([
+      ...queues.filter((x) => x.pinned),
+      ...queues.filter((x) => !x.pinned),
+    ]);
+  }, [queues]);
+
+  function filterData(filter: string) {
+    const filteredRecords = queues.filter((x) =>
+      x.alias.toUpperCase().includes(filter.toUpperCase())
+    );
+    setFilteredData([
+      ...filteredRecords.filter((x) => x.pinned),
+      ...filteredRecords.filter((x) => !x.pinned),
+    ]);
   }
 
   return (
@@ -40,29 +44,39 @@ export default function Queues() {
         <CardHeader>
           <CardTitle>
             <div className="flex gap-6 flex-col md:flex-row w-full justify-between">
-              <span>Queues</span>
+              <span className="mt-3 ml-2">List of group queues</span>
               <div className="relative">
                 <Search className="absolute left-2 top-3 h-4 w-4 text-muted-foreground"></Search>
-                <Input className="pl-8 font-normal w-80" placeholder="Search queue by name" onChange={(e) => filterData(e.target.value)}></Input>
+                <Input
+                  className="pl-8 font-normal w-80"
+                  placeholder="Search queue by name"
+                  onChange={(e) => filterData(e.target.value)}
+                ></Input>
               </div>
             </div>
           </CardTitle>
         </CardHeader>
         <CardBody className="w-full justify-center gap-6 rounded-lg p-8 grid grid-cols-6 h-auto">
           <div className="col-span-6 grid gap-6 md:col-span-3 lg:col-span-2 w-full h-auto">
-            {filteredData.filter((_, i) => i % 3 == 0).map(x => (
-              <Queue key={x} title={x}></Queue>
-            ))}
+            {filteredData
+              .filter((_, i) => i % 3 == 0)
+              .map((x) => (
+                <QueueCard key={x.id} {...x}></QueueCard>
+              ))}
           </div>
           <div className="col-span-6 grid gap-6 md:col-span-3 lg:col-span-2 w-full h-auto">
-            {filteredData.filter((_, i) => (i + 2) % 3 == 0).map(x => (
-              <Queue key={x} title={x}></Queue>
-            ))}
+            {filteredData
+              .filter((_, i) => (i + 2) % 3 == 0)
+              .map((x) => (
+                <QueueCard key={x.id} {...x}></QueueCard>
+              ))}
           </div>
           <div className="col-span-6 grid gap-6 md:col-span-3 lg:col-span-2 w-full h-auto">
-            {filteredData.filter((_, i) => (i + 1) % 3 == 0).map(x => (
-              <Queue key={x} title={x}></Queue>
-            ))}
+            {filteredData
+              .filter((_, i) => (i + 1) % 3 == 0)
+              .map((x) => (
+                <QueueCard key={x.id} {...x}></QueueCard>
+              ))}
           </div>
         </CardBody>
       </Card>

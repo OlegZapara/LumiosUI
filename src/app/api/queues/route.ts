@@ -1,8 +1,8 @@
 import {
-  CREATE_TASK,
-  DELETE_TASK,
-  GET_TASKS,
-  UPDATE_TASK,
+  CREATE_QUEUE,
+  DELETE_QUEUE,
+  GET_QUEUES,
+  UPDATE_QUEUE,
 } from "@/shared/endpoints";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,10 +14,10 @@ function getChatId(req: NextRequest): string {
   return chatId;
 }
 
-function getTaskId(req: NextRequest): string {
-  const taskId = req.nextUrl.searchParams.get("taskId");
+function getQueueId(req: NextRequest): string {
+  const taskId = req.nextUrl.searchParams.get("queueId");
   if (taskId == null) {
-    throw new Error("Request should contain taskId");
+    throw new Error("Request should contain queueId");
   }
   return taskId;
 }
@@ -31,7 +31,7 @@ function getApiKey() {
 }
 
 export async function GET(req: NextRequest) {
-  const apiResponse = await fetch(GET_TASKS, {
+  const apiResponse = await fetch(GET_QUEUES, {
     method: "GET",
     headers: {
       "content-type": "application/json",
@@ -48,12 +48,11 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  const apiResponse = await fetch(UPDATE_TASK, {
+  const apiResponse = await fetch(UPDATE_QUEUE, {
     method: "PUT",
     headers: {
       "content-type": "application/json",
       chatId: getChatId(req),
-      taskId: getTaskId(req),
       "X-API-KEY": getApiKey(),
     },
     body: JSON.stringify(await req.json()),
@@ -64,7 +63,7 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const apiResponse = await fetch(CREATE_TASK, {
+  const apiResponse = await fetch(CREATE_QUEUE, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -79,8 +78,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const taskId = getTaskId(req);
-  const apiResponse = await fetch(DELETE_TASK(taskId), {
+  const queueId = getQueueId(req);
+  const apiResponse = await fetch(DELETE_QUEUE(queueId), {
     method: "DELETE",
     headers: {
       "content-type": "application/json",

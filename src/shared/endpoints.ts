@@ -13,6 +13,8 @@ export const DELETE_TASK = (id: string) => `${API_BASE}/tasks/${id}`;
 export const GET_SHOTS = API_BASE + "/statistics/shots";
 export const GET_MESSAGES = API_BASE + "/statistics/messages";
 
-export const GET_QUEUES = API_BASE + "/queues/retrieve";
-export const UPDATE_QUEUE = API_BASE + "/queues/update";
-export const CREATE_QUEUE = API_BASE + "/queues/create";
+export const GET_QUEUES = API_BASE + "/queues";
+export const GET_QUEUE = (id: string) => `${API_BASE}/queues/${id}`;
+export const UPDATE_QUEUE = API_BASE + "/queues";
+export const CREATE_QUEUE = API_BASE + "/queues";
+export const DELETE_QUEUE = (id: string) => `${API_BASE}/queues/${id}`;
