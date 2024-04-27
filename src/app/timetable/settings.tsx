@@ -12,14 +12,8 @@ import {
 } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  syncSettings,
-  updateChatId,
-  updateTimetableHeader,
-} from "@/slices/settings-slice";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
+import { useSettingsStore } from "../stores/settings";
 
 export interface TimetableSettings {
   chatId: string | null;
@@ -29,18 +23,13 @@ export interface TimetableSettings {
 }
 
 export default function Settings() {
-  const timetableSettings = useSelector<RootState, TimetableSettings>(
-    (state) => state.settings
-  );
-  const dispatch = useDispatch();
+  const settingsStore = useSettingsStore();
+
   const { toast } = useToast();
   const [chatId, setChatId] = useState<string>("");
   useEffect(() => {
-    dispatch(syncSettings());
-  }, [dispatch]);
-  useEffect(() => {
-    setChatId(timetableSettings.chatId || "");
-  }, [timetableSettings.chatId]);
+    setChatId(localStorage.getItem("chatId") ?? "");
+  }, []);
   return (
     <Sheet>
       <SheetTrigger className="text-nowrap inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors  disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground hover:bg-background bg-transparent h-10 px-3">
@@ -51,13 +40,7 @@ export default function Settings() {
           <SheetTitle>Timetable header</SheetTitle>
           <SheetDescription>
             <div className="flex items-center space-x-2">
-              <Switch
-                id="timetable-header"
-                checked={timetableSettings.enableTimetableHeader}
-                onCheckedChange={(e) => {
-                  dispatch(updateTimetableHeader(e));
-                }}
-              />
+              <Switch id="timetable-header" checked={true} />
               <Label htmlFor="timetable-header">Display timetable header</Label>
             </div>
           </SheetDescription>
@@ -79,7 +62,7 @@ export default function Settings() {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    dispatch(updateChatId(chatId));
+                    localStorage.setItem("chatId", chatId);
                     toast({
                       title: "Chat ID updated",
                       description: `Chat ID is now set to ${chatId}`,
@@ -94,7 +77,7 @@ export default function Settings() {
           <Separator></Separator>
           <SheetTitle>Weeks</SheetTitle>
           <SheetDescription className="flex flex-col gap-2">
-            {timetableSettings.timetableWeeks.map((week) => (
+            {settingsStore.weeks.map((week) => (
               <div key={week} className="flex flex-row gap-1">
                 <Input key={week} value={week} disabled></Input>
                 <Button variant="outline" disabled>
@@ -109,7 +92,7 @@ export default function Settings() {
           <Separator></Separator>
           <SheetTitle>Days</SheetTitle>
           <SheetDescription className="flex flex-col gap-2">
-            {timetableSettings.timetableDays.map((day) => (
+            {settingsStore.days.map((day) => (
               <div key={day} className="flex flex-row gap-1">
                 <Input key={day} value={day} disabled></Input>
                 <Button variant="outline" disabled>

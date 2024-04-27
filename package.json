@@ -35,6 +35,7 @@
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.0.8",
+    "immer": "^10.0.4",
     "lucide-react": "^0.338.0",
     "mini-svg-data-uri": "^1.4.4",
     "next": "14.1.0",

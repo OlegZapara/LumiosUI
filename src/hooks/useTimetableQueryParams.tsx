@@ -1,9 +1,6 @@
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useSettingsStore } from "@/app/stores/settings";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect } from "react";
-import useTimetableSettings from "./useTimetableSettings";
-import { useSelector } from "react-redux";
-import { TimetableSettings } from "@/app/timetable/settings";
-import { RootState } from "@/app/store";
 
 type PeriodType = "week" | "day";
 
@@ -11,8 +8,7 @@ export default function useTimetableQueryParams() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  // const [{weeks: weeks, days}, _] = useTimetableSettings();
-  const {timetableDays, timetableWeeks} = useSelector<RootState, TimetableSettings>(state => state.settings)
+  const { days, weeks } = useSettingsStore();
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -39,9 +35,9 @@ export default function useTimetableQueryParams() {
   );
 
   useEffect(() => {
-    if (!get("week")) update("week", timetableWeeks[0]);
-    if (!get("day")) update("day", timetableDays[0]);
-  }, [get, timetableDays, timetableWeeks, update]);
+    if (!get("week")) update("week", weeks[0]);
+    if (!get("day")) update("day", days[0]);
+  }, [get, days, weeks, update]);
 
   return { get, update };
 }

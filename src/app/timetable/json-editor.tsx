@@ -1,53 +1,52 @@
-import React, { useCallback, useState } from "react";
-import { Textarea } from "../../components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
-import { Timetable } from "./columns";
-import { setTimetable } from "@/slices/timetable-slice";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { Timetable } from "@/shared/types";
+import { useState } from "react";
+import { Textarea } from "../../components/ui/textarea";
+import { useTimetableStore } from "../stores/timetable";
 
 export default function JsonEditor(props: any) {
-  const dispatch = useDispatch();
+  const timetableStore = useTimetableStore();
+
   const { toast } = useToast();
   const [valid, setValid] = useState<boolean>(true);
-  const timetable = useSelector<RootState, Timetable[] | null>(
-    (state) => state.timetable.timetable
-  );
+  const timetable = timetableStore.timetable;
   const [timetableString, setTimetableString] = useState<string>(
     JSON.stringify(timetable, null, 2)
   );
-  const updateTimetable = useCallback(() => {
-    fetch(`/api/timetables?chatId=${"-1001767321866"}`, {
-      method: "PUT",
-      body: JSON.stringify(timetable),
-    })
-      .then((res) => res.text())
-      .then((text) =>
-        toast({
-          title: "Timetable updated",
-          description: text,
-        })
-      )
-      .catch((err) =>
-        toast({
-          title: "Timetable was not updated updated",
-          variant: "destructive",
-          description: err,
-        })
-      );
-  }, [timetable, toast]);
+  // const updateTimetable = useCallback(() => {
+  //   fetch(`/api/timetables?chatId=${"-1001767321866"}`, {
+  //     method: "PUT",
+  //     body: JSON.stringify(timetable),
+  //   })
+  //     .then((res) => res.text())
+  //     .then((text) =>
+  //       toast({
+  //         title: "Timetable updated",
+  //         description: text,
+  //       })
+  //     )
+  //     .catch((err) =>
+  //       toast({
+  //         title: "Timetable was not updated updated",
+  //         variant: "destructive",
+  //         description: err,
+  //       })
+  //     );
+  // }, [timetable, toast]);
   return (
     <Sheet>
-      <SheetTrigger {...props} className="text-nowrap inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors  disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground hover:bg-background bg-transparent h-10 px-3">
+      <SheetTrigger
+        {...props}
+        className="text-nowrap inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors  disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground hover:bg-background bg-transparent h-10 px-3"
+      >
         Edit JSON
       </SheetTrigger>
       <SheetContent className="w-[60vw] !max-w-[60vw] min-w-[300px] flex gap-4 flex-col pr-12">
@@ -59,7 +58,7 @@ export default function JsonEditor(props: any) {
             )}
             <div className="flex flex-row gap-2">
               <Button
-                onClick={() => updateTimetable()}
+                onClick={() => timetableStore.updateTimetable(timetable!)}
                 variant="outline"
                 disabled={!valid}
                 className="border-green-500 text-green-500 hover:text-green-600 hover:border-green-600"
@@ -84,7 +83,6 @@ export default function JsonEditor(props: any) {
             onChange={(e) => {
               try {
                 const timetable: Timetable[] = JSON.parse(e.target.value);
-                dispatch(setTimetable(timetable));
                 setValid(true);
               } catch {
                 setValid(false);

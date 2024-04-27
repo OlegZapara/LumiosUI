@@ -19,16 +19,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  addRow,
-  completeEdit,
-  discardEdit,
-  startEditRow,
-} from "@/slices/timetable-slice";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
-import { TimetableEntry } from "./columns";
+import { useTimetableStore } from "../stores/timetable";
 import EntryForm from "./entry-form";
 
 interface DataTableProps<TData, TValue> {
@@ -49,19 +41,17 @@ export function DataTable<TData, TValue>({
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-  const editingRow = useSelector<RootState, TimetableEntry | null>(
-    (state) => state.timetable.editingRow
-  );
-  const dispatch = useDispatch();
+  const timetableStore = useTimetableStore();
+  const editingRow = timetableStore.editingRow;
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (editingRow == null) return;
       if (event.shiftKey && event.key === "Enter") {
-        dispatch(completeEdit());
+        timetableStore.completeEdit();
       }
       if (event.key == "Escape") {
-        dispatch(discardEdit());
+        timetableStore.discardEdit();
       }
     };
 
@@ -69,7 +59,7 @@ export function DataTable<TData, TValue>({
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
     };
-  }, [dispatch, editingRow]);
+  }, [editingRow, timetableStore]);
 
   return (
     <div className="rounded-md border">
@@ -114,7 +104,7 @@ export function DataTable<TData, TValue>({
           <TableRow>
             <TableCell
               onClick={() =>
-                dispatch(addRow({ week: weekIndex, day: dayIndex }))
+                timetableStore.addRow({ week: weekIndex, day: dayIndex })
               }
               className="cursor-pointer"
               colSpan={columns.length}
@@ -137,10 +127,9 @@ interface DataTableRowProps<TData> {
 }
 
 function DataTableRow<TData>(props: DataTableRowProps<TData>) {
-  const dispatch = useDispatch();
-  const isEdit = useSelector<RootState, boolean>(
-    (state) => state.timetable.editRowInfo.row === props.row.index
-  );
+  const timetableStore = useTimetableStore();
+
+  const isEdit = timetableStore.editRowInfo.row === props.row.index;
 
   if (isEdit) {
     return <EntryForm {...props}></EntryForm>;
@@ -158,7 +147,11 @@ function DataTableRow<TData>(props: DataTableRowProps<TData>) {
           style={{ width: cell.column.getSize() }}
           className="cursor-default"
           onDoubleClick={() =>
-            dispatch(startEditRow({ ...props, row: props.row.index, index: i }))
+            timetableStore.startEdit({
+              ...props,
+              row: props.row.index,
+              index: i,
+            })
           }
         >
           <div className="px-2">

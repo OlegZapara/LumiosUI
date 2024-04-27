@@ -2,11 +2,9 @@ import TextInput from "@/components/timetable/text-input";
 import TimeInput from "@/components/timetable/time-input";
 import TypeInput from "@/components/timetable/type-input";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { startEditRow } from "@/slices/timetable-slice";
 import { Cell, Row, flexRender } from "@tanstack/react-table";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
-import { Column, TimetableEntry } from "./columns";
+import { useTimetableStore } from "../stores/timetable";
+import { Column } from "./columns";
 
 interface EntryFormProps<TData> {
   week: number;
@@ -15,18 +13,14 @@ interface EntryFormProps<TData> {
 }
 
 export default function EntryForm<TData>(props: EntryFormProps<TData>) {
-  const dispatch = useDispatch();
-  const focusedCellIndex = useSelector<RootState, number>(
-    (state) => state.timetable.editRowInfo.index
-  );
+  const timetableStore = useTimetableStore();
+  const focusedCellIndex = timetableStore.editRowInfo.index;
+  const editingRow = timetableStore.editingRow;
 
   const startEdit = (i: number) => {
-    dispatch(startEditRow({ ...props, row: props.row.index, index: i }));
+    timetableStore.startEdit({ ...props, row: props.row.index, index: i });
   };
 
-  const editingRow = useSelector<RootState, TimetableEntry | null>(
-    (state) => state.timetable.editingRow
-  );
   const renderCell = (cell: Cell<TData, unknown>, i: number) => {
     const inputProps = {
       isFocused: i == focusedCellIndex,

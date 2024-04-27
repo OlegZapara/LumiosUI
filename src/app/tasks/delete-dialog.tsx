@@ -7,25 +7,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import useSettings from "@/hooks/useSettings";
 import { Task } from "@/shared/types";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Trash2 } from "lucide-react";
-import { deleteTask } from "./api";
+import { useTasksStore } from "../stores/tasks";
 
 interface DeleteDialogProps {
   tasks: Task[];
 }
 
 export default function DeleteDialog(props: DeleteDialogProps) {
-  const { chatId } = useSettings();
+  const { removeTask } = useTasksStore();
 
   function deleteAllTasks(tasks: Task[]) {
-    if (chatId === null) return;
     tasks.forEach((task) => {
-      deleteTask(chatId, task.id);
+      removeTask(task.id);
     });
-    window.location.reload(); // TODO replace reload
   }
 
   return (

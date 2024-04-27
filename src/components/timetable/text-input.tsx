@@ -1,7 +1,5 @@
-import { TimetableEntry } from "@/app/timetable/columns";
-import { updateEntry } from "@/slices/timetable-slice";
-import React from "react";
-import { useDispatch } from "react-redux";
+import { useTimetableStore } from "@/app/stores/timetable";
+import { TimetableEntry } from "@/shared/types";
 import { Input } from "../ui/input";
 
 interface TextInputProps {
@@ -15,7 +13,8 @@ export default function TextInput({
   editingRow,
   columnId,
 }: TextInputProps) {
-  const dispatch = useDispatch();
+  const timetableStore = useTimetableStore();
+
   return (
     <Input
       autoFocus={isFocused}
@@ -24,7 +23,7 @@ export default function TextInput({
       size={1}
       onChange={(e) => {
         const updatedEntry = { ...editingRow, [columnId]: e.target.value };
-        dispatch(updateEntry(updatedEntry as TimetableEntry));
+        timetableStore.updateRow(updatedEntry as TimetableEntry);
       }}
     />
   );

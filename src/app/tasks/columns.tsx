@@ -9,16 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Task } from "@/shared/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-
-export type Task = {
-  id: string;
-  taskName: string;
-  dueDate: Date;
-  dueTime: string;
-  url: string;
-};
+import { useState } from "react";
+import { useTasksStore } from "../stores/tasks";
+import TaskDialog from "./task-dialog";
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -82,30 +78,47 @@ export const columns: ColumnDef<Task>[] = [
     id: "actions",
     cell: ({ row }) => {
       const task = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(task.url)}
-            >
-              Copy task URL
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit task</DropdownMenuItem>
-            <DropdownMenuItem>Delete task</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      return <TasksDropdown task={task} />;
     },
     enableSorting: false,
     enableHiding: false,
   },
 ];
+
+function TasksDropdown(props: { task: Task }) {
+  const { removeTask } = useTasksStore();
+  const [editWindowOpen, setEditWindowOpen] = useState<boolean>(false);
+
+  return (
+    <>
+      <TaskDialog
+        type="edit"
+        task={props.task}
+        open={editWindowOpen}
+      ></TaskDialog>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() => navigator.clipboard.writeText(props.task.url)}
+          >
+            Copy task URL
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => setEditWindowOpen(true)}>
+            Edit task
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => removeTask(props.task.id)}>
+            Delete task
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+}

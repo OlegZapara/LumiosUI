@@ -8,18 +8,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  completeEdit,
-  deleteRow,
-  discardEdit,
-  startEditRow,
-} from "@/slices/timetable-slice";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Check, MoreHorizontal, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
 // import { days, weeks } from "./data";
 import {
   AlertDialog,
@@ -32,25 +23,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import useTimetableSettings from "@/hooks/useTimetableSettings";
-
-export type Timetable = {
-  weekType: string;
-  days: TimetableDay[];
-};
-
-export type TimetableDay = {
-  dayName: string;
-  classEntries: TimetableEntry[];
-};
-
-export type TimetableEntry = {
-  className: string;
-  startTime: string;
-  endTime: string;
-  classType: string;
-  url: string;
-};
+import { TimetableEntry } from "@/shared/types";
+import { useTimetableStore } from "../stores/timetable";
+import { useSettingsStore } from "../stores/settings";
 
 export enum Column {
   ClassName = "className",
@@ -109,14 +84,12 @@ interface CellProps {
 }
 
 function RowAction({ row }: CellProps) {
+  const timetableStore = useTimetableStore();
   const { toast } = useToast();
-  const dispatch = useDispatch();
   const searchParams = useSearchParams();
-  const isEdit = useSelector<RootState, boolean>(
-    (state) => state.timetable.editRowInfo.row === row.index
-  );
+  const isEdit = timetableStore.editRowInfo.row === row.index;
 
-  const [{ weeks: weeks, days }, _] = useTimetableSettings();
+  const { weeks, days } = useSettingsStore();
 
   const entryInfo = {
     week: weeks.indexOf(searchParams.get("week")!),
@@ -131,7 +104,7 @@ function RowAction({ row }: CellProps) {
         <Button
           variant="ghost"
           onClick={() => {
-            dispatch(completeEdit());
+            timetableStore.completeEdit();
             toast({
               title: "Timetable updated",
               description: `${row
@@ -142,7 +115,7 @@ function RowAction({ row }: CellProps) {
         >
           <Check className="stroke-green-500"></Check>
         </Button>
-        <Button variant="ghost" onClick={() => dispatch(discardEdit())}>
+        <Button variant="ghost" onClick={() => timetableStore.discardEdit()}>
           <X className="stroke-red-500"></X>
         </Button>
       </div>
@@ -171,7 +144,7 @@ function RowAction({ row }: CellProps) {
           Copy URL
         </DropdownMenuItem>
         <DropdownMenuSeparator></DropdownMenuSeparator>
-        <DropdownMenuItem onClick={() => dispatch(startEditRow(entryInfo))}>
+        <DropdownMenuItem onClick={() => timetableStore.startEdit(entryInfo)}>
           Edit row
         </DropdownMenuItem>
         <DropdownMenuItem>
@@ -193,7 +166,7 @@ function RowAction({ row }: CellProps) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              dispatch(deleteRow(entryInfo));
+              timetableStore.removeRow(entryInfo);
               const rowName = row.getAllCells()[0].getValue<string>();
               toast({
                 title: "Row deleted",

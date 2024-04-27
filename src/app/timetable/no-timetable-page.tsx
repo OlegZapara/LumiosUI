@@ -1,19 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 import { ArrowRight, Check, CircleOff, Sheet } from "lucide-react";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { useEffect, useState } from "react";
 import { words } from "./data";
 import JsonEditor from "./json-editor";
-import Settings, { TimetableSettings } from "./settings";
+import Settings from "./settings";
 
 export default function NoTimetablePage() {
-  const settings = useSelector<RootState, TimetableSettings>(
-    (state) => state.settings
-  );
+  const [chatId, setChatId] = useState<string | null>(null);
   const [timetableCreated, setTimetableCreated] = useState<boolean>(false);
   const [jsonEdited, setJsonEdited] = useState<boolean>(false);
+
+  useEffect(() => {
+    setChatId(localStorage.getItem("chatId"));
+  }, []);
+
   return (
     <div className="w-full h-full flex items-center flex-col">
       <TypewriterEffectSmooth words={words} className="mb-12" />
@@ -24,13 +25,13 @@ export default function NoTimetablePage() {
           </h1>
           <div
             className={`flex px-3 py-1 flex-row gap-2 justify-center items-center ${
-              settings.chatId ? "ring-2 ring-green-500 rounded-lg" : ""
+              chatId ? "ring-2 ring-green-500 rounded-lg" : ""
             }`}
           >
             1. Go to settings and set chat ID
             <ArrowRight className="ml-2"></ArrowRight>
             <Settings />
-            {settings.chatId && <Check className="stroke-green-500"></Check>}
+            {chatId && <Check className="stroke-green-500"></Check>}
           </div>
           <div
             className={`flex px-3 py-1 flex-row gap-2 justify-center items-center ${
@@ -40,7 +41,7 @@ export default function NoTimetablePage() {
             2. Click here to start creating a new timetable
             <ArrowRight className="ml-2"></ArrowRight>
             <Button
-              disabled = {settings.chatId == ""}
+              disabled={chatId == "" || chatId == null}
               onClick={() => setTimetableCreated(true)}
               className="text-black dark:text-white text-nowrap inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors  disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground hover:bg-background bg-transparent h-10 px-3"
             >
@@ -56,7 +57,10 @@ export default function NoTimetablePage() {
             3. <span className="text-gray-500">(Optional)</span> Paste JSON data
             of new timetable
             <ArrowRight className="ml-2"></ArrowRight>
-              <JsonEditor onClick={() => setJsonEdited(true)} disabled={!timetableCreated}/>
+            <JsonEditor
+              onClick={() => setJsonEdited(true)}
+              disabled={!timetableCreated}
+            />
             {jsonEdited && <Check className="stroke-green-500"></Check>}
           </div>
         </div>

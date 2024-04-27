@@ -1,25 +1,20 @@
 "use client";
 
-import useSettings from "@/hooks/useSettings";
-import { useEffect, useState } from "react";
-import { getAllTasks } from "./api";
+import { useEffect } from "react";
+import { useTasksStore } from "../stores/tasks";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
 export default function Tasks() {
-  const [data, setData] = useState([]);
-  const { chatId } = useSettings();
+  const { tasks, fetchTasks } = useTasksStore((state) => state);
 
   useEffect(() => {
-    if (!chatId) return;
-    getAllTasks(chatId)
-      .then((res) => setData(res))
-      .catch((err) => console.error(err));
-  }, [chatId]);
+    fetchTasks();
+  }, [fetchTasks]);
 
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={tasks} />
     </div>
   );
 }

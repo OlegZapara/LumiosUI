@@ -3,90 +3,42 @@ import JsonEditor from "@/app/timetable/json-editor";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 import useTimetableQueryParams from "@/hooks/useTimetableQueryParams";
-import { syncSettings } from "@/slices/settings-slice";
-import { completeUpdate, setTimetable } from "@/slices/timetable-slice";
-import { useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
+import { useEffect, useState } from "react";
+import { useSettingsStore } from "../stores/settings";
+import { useTimetableStore } from "../stores/timetable";
 import AboutTimetable from "./about-timetable";
-import { Timetable, columns } from "./columns";
+import { columns } from "./columns";
 import { words } from "./data";
 import { DataTable } from "./data-table";
 import Loading from "./loading-page";
 import NoTimetablePage from "./no-timetable-page";
-import Settings, { TimetableSettings } from "./settings";
-import { useToast } from "@/components/ui/use-toast";
+import Settings from "./settings";
 
 export default function TimetablePage() {
+  const timetableStore = useTimetableStore();
+  const settingsStore = useSettingsStore();
+
+  const [enableHeader, setEnableHeader] = useState(true);
+
   const { get, update } = useTimetableQueryParams();
-  const { toast } = useToast();
   const day = get("day");
   const week = get("week");
-  const dispatch = useDispatch();
-  const timetable = useSelector<RootState, Timetable[] | null>(
-    (state) => state.timetable.timetable
-  );
-  const requireUpdate = useSelector<RootState, boolean>(
-    (state) => state.timetable.requireUpdate
-  );
-  const settings = useSelector<RootState, TimetableSettings>(
-    (state) => state.settings
-  );
-  const getTimetable = useCallback(
-    async (chatId: string) => {
-      try {
-        const res = await fetch(`/api/timetables?chatId=${chatId}`);
-        const jsonData = res.ok ? await res.json() : [];
-        dispatch(setTimetable(jsonData));
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    [dispatch]
-  );
-  const updateTimetable = useCallback(
-    async (chatId: string) => {
-      try {
-        await fetch(`/api/timetables?chatId=${chatId}`, {
-          method: "PUT",
-          body: JSON.stringify(timetable),
-        });
-      } catch (err) {
-        toast({
-          title: "Timetable was not updated",
-          description: "Unexpected error, timetable was not updated",
-          variant: "destructive",
-        });
-      } finally {
-      }
-    },
-    [timetable, toast]
-  );
 
   useEffect(() => {
-    if (!settings.chatId || !requireUpdate) return;
-    updateTimetable(settings.chatId);
-    dispatch(completeUpdate());
-  }, [dispatch, requireUpdate, settings.chatId, updateTimetable]);
+    setEnableHeader(localStorage.getItem("enableTimetableHeader") != "off");
+    timetableStore.fetchTimetable();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  useEffect(() => {
-    dispatch(syncSettings());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if(settings.chatId === null) return;
-    getTimetable(settings.chatId);
-  }, [getTimetable, settings.chatId]);
-
-  if (!timetable || !day || !week) {
+  if (!timetableStore.timetable || !day || !week) {
     return <Loading />;
   }
-  if (timetable.length == 0) {
+  if (timetableStore.timetable.length == 0) {
     return <NoTimetablePage />;
   }
   return (
     <div className="w-full h-full flex items-center flex-col">
-      {settings.enableTimetableHeader && (
+      {enableHeader && (
         <TypewriterEffectSmooth words={words} className="mb-12" />
       )}
       <div className="w-5/6 flex justify-center items-center flex-col gap-4">
@@ -94,10 +46,10 @@ export default function TimetablePage() {
           <div className="w-full flex justify-start flex-row gap-4">
             <ToggleGroup
               type="single"
-              defaultValue={settings.timetableWeeks[0]}
+              defaultValue={settingsStore.weeks[0]}
               onValueChange={(e) => update("week", e)}
             >
-              {settings.timetableWeeks.map((week, i) => (
+              {settingsStore.weeks.map((week, i) => (
                 <ToggleGroupItem
                   key={week}
                   value={week}
@@ -110,10 +62,10 @@ export default function TimetablePage() {
             </ToggleGroup>
             <ToggleGroup
               type="single"
-              defaultValue={settings.timetableDays[0]}
+              defaultValue={settingsStore.days[0]}
               onValueChange={(e) => update("day", e)}
             >
-              {settings.timetableDays.map((day, i) => (
+              {settingsStore.days.map((day, i) => (
                 <ToggleGroupItem
                   key={day}
                   value={day}
@@ -134,11 +86,11 @@ export default function TimetablePage() {
         <div className="w-full mb-6">
           <DataTable
             columns={columns}
-            weekIndex={settings.timetableWeeks.indexOf(week)}
-            dayIndex={settings.timetableDays.indexOf(day)}
+            weekIndex={settingsStore.weeks.indexOf(week)}
+            dayIndex={settingsStore.days.indexOf(day)}
             data={
-              timetable[settings.timetableWeeks.indexOf(week)].days[
-                settings.timetableDays.indexOf(day)
+              timetableStore.timetable[settingsStore.weeks.indexOf(week)].days[
+                settingsStore.days.indexOf(day)
               ].classEntries
             }
           />

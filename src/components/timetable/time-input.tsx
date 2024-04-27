@@ -1,7 +1,6 @@
-import { TimetableEntry } from "@/app/timetable/columns";
-import { updateEntry } from "@/slices/timetable-slice";
+import { useTimetableStore } from "@/app/stores/timetable";
+import { TimetableEntry } from "@/shared/types";
 import { useMask } from "@react-input/mask";
-import { useDispatch } from "react-redux";
 import { Input } from "../ui/input";
 
 interface TimeInputProps {
@@ -15,7 +14,8 @@ export default function TimeInput({
   editingRow,
   columnId,
 }: TimeInputProps) {
-  const dispatch = useDispatch();
+  const timetableStore = useTimetableStore();
+
   const inputRef = useMask({
     mask: "__:__:__",
     replacement: { _: /\d/ },
@@ -30,7 +30,7 @@ export default function TimeInput({
       size={1}
       onChange={(e) => {
         const updatedEntry = { ...editingRow, [columnId]: e.target.value };
-        dispatch(updateEntry(updatedEntry as TimetableEntry));
+        timetableStore.updateRow(updatedEntry as TimetableEntry);
       }}
     />
   );

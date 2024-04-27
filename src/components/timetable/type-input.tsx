@@ -1,4 +1,4 @@
-import { TimetableEntry } from "@/app/timetable/columns";
+import { useTimetableStore } from "@/app/stores/timetable";
 import {
   Select,
   SelectContent,
@@ -6,9 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { updateEntry } from "@/slices/timetable-slice";
-import { useDispatch } from "react-redux";
-import { Badge } from "../ui/badge";
+import { TimetableEntry } from "@/shared/types";
 
 interface TypeInputProps {
   isFocused: boolean;
@@ -21,40 +19,13 @@ export default function TypeInput({
   editingRow,
   columnId,
 }: TypeInputProps) {
-  const dispatch = useDispatch();
-
-  function getBadge(classType: string) {
-    switch (classType) {
-      case "LAB":
-        return (
-          <Badge className="bg-green-500 hover:bg-green-400">{classType}</Badge>
-        );
-      case "PRACTICE":
-        return (
-          <Badge className="bg-orange-400 hover:bg-orange-300">
-            {classType}
-          </Badge>
-        );
-      case "LECTURE":
-        return (
-          <Badge className="bg-blue-500 hover:bg-blue-400">{classType}</Badge>
-        );
-      case "OTHER":
-        return (
-          <Badge className="bg-violet-500 hover:bg-violet-400">
-            {classType}
-          </Badge>
-        );
-      default:
-        return <Badge>{classType}</Badge>;
-    }
-  }
+  const timetableStore = useTimetableStore();
 
   return (
     <Select
       onValueChange={(e) => {
         const updatedEntry = { ...editingRow, [columnId]: e };
-        dispatch(updateEntry(updatedEntry as TimetableEntry));
+        timetableStore.updateRow(updatedEntry as TimetableEntry);
       }}
     >
       <SelectTrigger autoFocus={isFocused} className="px-2 w-full">

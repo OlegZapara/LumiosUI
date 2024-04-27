@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
-import { CalendarIcon, PlusCircle, SquarePen } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -28,11 +28,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import useSettings from "@/hooks/useSettings";
 import { Task } from "@/shared/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { createTask, updateTask } from "./api";
+import { useTasksStore } from "../stores/tasks";
 
 const formSchema = z.object({
   taskName: z.string().trim().min(2, {
@@ -64,14 +63,17 @@ const formSchema = z.object({
 });
 
 interface TaskDialogProps {
-  children: ReactNode;
+  open?: boolean;
+  children?: ReactNode;
+  className?: string;
   type: "edit" | "create";
   task?: Task;
 }
 
 export default function TaskDialog(props: TaskDialogProps) {
+  const { updateTask, createTask } = useTasksStore();
+
   const [open, setOpen] = useState(false);
-  const { chatId } = useSettings();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -83,27 +85,27 @@ export default function TaskDialog(props: TaskDialogProps) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     setOpen(false);
     const task: Task = { ...values, id: props.task?.id! };
+    task.dueDate.setMinutes(
+      task.dueDate.getMinutes() - task.dueDate.getTimezoneOffset()
+    );
     if (props.type == "create") {
-      createTask(chatId!, task)
-        .then((res) => console.log(res))
-        .catch((err) => console.error(err));
+      createTask(task);
     } else {
-      updateTask(chatId!, task)
-        .then((res) => console.log(res))
-        .catch((err) => console.error(err));
+      updateTask(task);
     }
   }
+
+  useEffect(() => {
+    setOpen(props.open ?? false);
+  }, [props.open]);
+
   useEffect(() => {
     form.reset();
   }, [form, open]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {props.type == "create" ? (
-        <CreateTaskButton>{props.children}</CreateTaskButton>
-      ) : (
-        <UpdateTaskButton>{props.children}</UpdateTaskButton>
-      )}
+      <DialogTrigger asChild>{props.children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="mb-4">
@@ -209,23 +211,5 @@ export default function TaskDialog(props: TaskDialogProps) {
         </DialogHeader>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function CreateTaskButton(props: { children: ReactNode }) {
-  return (
-    <DialogTrigger className="border-green-500 ml-auto h-10 px-4 py-2 relative mr-4 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:bg-accent hover:text-accent-foreground">
-      <PlusCircle className="absolute h-5 w-5 left-3 stroke-green-500"></PlusCircle>
-      <div className="pl-6 text-green-500">{props.children}</div>
-    </DialogTrigger>
-  );
-}
-
-function UpdateTaskButton(props: { children: ReactNode }) {
-  return (
-    <DialogTrigger className="border-blue-500 ml-auto h-10 px-4 py-2 relative mr-4 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:bg-accent hover:text-accent-foreground">
-      <SquarePen className="absolute h-5 w-5 left-3 stroke-blue-500"></SquarePen>
-      <div className="pl-6 text-blue-500">{props.children}</div>
-    </DialogTrigger>
   );
 }

@@ -3,9 +3,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import AppProvider from "./app-provider";
-import "./globals.css";
 import { Suspense } from "react";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,17 +21,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className}`}>
-        <AppProvider>
-          <ThemeProvider attribute="class" defaultTheme={"system"}>
-            <Toaster />
-            <div className="relative w-full flex items-center justify-center">
-              <Navbar className="top-2" />
-            </div>
-            <Suspense>
-              <div className="mt-28">{children}</div>
-            </Suspense>
-          </ThemeProvider>
-        </AppProvider>
+        <ThemeProvider attribute="class" defaultTheme={"system"}>
+          <Toaster />
+          <div className="relative w-full flex items-center justify-center">
+            <Navbar className="top-2" />
+          </div>
+          <Suspense>
+            <div className="mt-28">{children}</div>
+          </Suspense>
+        </ThemeProvider>
       </body>
     </html>
   );
