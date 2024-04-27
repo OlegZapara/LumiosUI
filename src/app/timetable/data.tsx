@@ -9,7 +9,7 @@ export const words = [
     text: "with",
   },
   {
-    text: "Queue-up-now Bot.",
+    text: "Lumios Bot.",
     className: "text-blue-500 dark:text-blue-500",
   },
 ];
