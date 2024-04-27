@@ -12,6 +12,7 @@ import {
   PinOff,
   Shuffle,
   Trash2,
+  UserRoundMinus,
 } from "lucide-react";
 import { useQueuesStore } from "../stores/queues";
 
@@ -83,10 +84,14 @@ export default function QueueCard(props: QueueProps) {
     });
   };
 
+  const removeUser = (index: number) => {
+    setUsers((users) => users.filter((_, i) => i !== index));
+  };
+
   return (
     <Card className="flex justify-start [&>div]:w-full flex-col">
       <CardHeader>
-        <CardTitle className="flex flex-row justify-between items-center">
+        <CardTitle className="flex flex-col-reverse sm:flex-row justify-between items-center gap-2">
           <div className="pl-4 flex-row items-end">
             <span>{props.alias}</span>
             {isDraft() && (
@@ -155,13 +160,27 @@ export default function QueueCard(props: QueueProps) {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           className={cn(
-                            "rounded-lg px-3 py-1 select-none",
-                            snapshot.isDragging ? "bg-muted" : ""
+                            "rounded-lg px-3 py-1 select-none hover:shadow",
+                            snapshot.isDragging ? "bg-muted shadow-lg" : ""
                           )}
                         >
-                          <div className="flex flex-row gap-2 items-center h-8">
-                            <GripVertical size={16}></GripVertical>@
-                            {user.username}
+                          <div className="group flex flex-row gap-2 items-center h-8 justify-between">
+                            <div className="flex flex-row gap-2 items-center">
+                              <GripVertical size={16}></GripVertical>@
+                              {user.username}
+                            </div>
+                            <Button
+                              variant="ghost"
+                              title="Remove user"
+                              onClick={() => removeUser(index)}
+                              className="h-8 py-0 hidden group-hover:flex"
+                            >
+                              <UserRoundMinus
+                                className="stroke-red-500"
+                                size={16}
+                              ></UserRoundMinus>
+                              <span className="ml-2 text-red-500">Remove</span>
+                            </Button>
                           </div>
                         </div>
                       );
