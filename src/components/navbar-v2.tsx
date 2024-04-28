@@ -1,44 +1,45 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { IconBrandGithub, IconQuestionMark } from "@tabler/icons-react";
-import { HelpCircle, Moon, Settings, Sun } from "lucide-react";
+import { HelpCircle, Menu, Moon, Settings, Sun, X } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
+const links = [
+  {
+    href: "/",
+    title: "About",
+  },
+  {
+    href: "/authors",
+    title: "Authors",
+  },
+  {
+    href: "/timetable",
+    title: "Timetable",
+  },
+  {
+    href: "/statistics",
+    title: "Statistics",
+  },
+  {
+    href: "/tasks",
+    title: "Tasks",
+  },
+  {
+    href: "/queues",
+    title: "Queues",
+  },
+];
+
 export default function Navbar({ className }: { className?: string }) {
   const pathname = usePathname();
   const theme = useTheme();
-  const links = [
-    {
-      href: "/",
-      title: "About",
-    },
-    {
-      href: "/authors",
-      title: "Authors",
-    },
-    {
-      href: "/timetable",
-      title: "Timetable",
-    },
-    {
-      href: "/statistics",
-      title: "Statistics",
-    },
-    {
-      href: "/tasks",
-      title: "Tasks",
-    },
-    {
-      href: "/queues",
-      title: "Queues",
-    },
-  ];
 
   function getTheme() {
     if (theme.theme == "system") return theme.systemTheme;
@@ -46,18 +47,19 @@ export default function Navbar({ className }: { className?: string }) {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm dark:shadow-muted">
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
-        <div className="flex flex-row justify-center items-center gap-4">
+        <div className="flex flex-row justify-center items-center gap-1 sm:gap-2 md:gap-4">
+          <NavbarMenu></NavbarMenu>
           <Link href="/">
-            <div className="transition-colors flex flex-row items-center justify-center gap-2 px-4 py-2 rounded-lg title">
+            <div className="transition-colors flex flex-row items-center justify-center gap-2 px-2 sm:px-4 py-2 rounded-lg title">
               <Image
                 src="/lumios.png"
                 width="30"
                 height="30"
                 alt="Lumios logo"
               ></Image>
-              <p className="font-bold text-2xl relative w-max">
+              <p className="font-bold text-xl sm:text-2xl relative w-max">
                 <span>Lumios Bot</span>
                 <span className="absolute -bottom-1 left-0 w-0 transition-all h-1 bg-blue-500"></span>
               </p>
@@ -66,7 +68,7 @@ export default function Navbar({ className }: { className?: string }) {
           {links.map((link) => (
             <Link
               className={cn(
-                "hover:text-foreground/80",
+                "hover:text-foreground/80 hidden md:flex",
                 link.href == pathname
                   ? "text-foreground"
                   : "text-muted-foreground"
@@ -87,13 +89,13 @@ export default function Navbar({ className }: { className?: string }) {
           </Link>
           <Link
             href="https://github.com/OlegZapara/LumiosUI"
-            className="aspect-square rounded-md hover:bg-muted p-2"
+            className="aspect-square rounded-md hover:bg-muted p-2 hidden sm:flex"
           >
             <IconBrandGithub className="p-[2px]"></IconBrandGithub>
           </Link>
           <Button
             variant="ghost"
-            className="aspect-square rounded-md hover:bg-muted p-2"
+            className="aspect-square rounded-md hover:bg-muted p-2 hidden sm:flex"
             onClick={() => {
               theme.setTheme(theme.theme == "dark" ? "white" : "dark");
             }}
@@ -113,5 +115,84 @@ export default function Navbar({ className }: { className?: string }) {
         </div>
       </div>
     </header>
+  );
+}
+
+function NavbarMenu() {
+  const pathname = usePathname();
+  const [toggled, setToggled] = useState(false);
+  const theme = useTheme();
+
+  function getTheme() {
+    if (theme.theme == "system") return theme.systemTheme;
+    return theme.theme;
+  }
+
+  return (
+    <div className="md:hidden">
+      <Button
+        variant="ghost"
+        className="aspect-square p-0"
+        onClick={() => setToggled((value) => !value)}
+      >
+        {toggled ? <X></X> : <Menu></Menu>}
+      </Button>
+      {toggled && (
+        <div className="fixed h-screen w-full max-w-96 left-0 top-14 shadow-lg flex flex-col bg-background">
+          {links.map((link) => (
+            <Link
+              className={cn(
+                "h-12 w-full hover:text-foreground/80 text-lg px-4 hover:bg-muted flex items-center",
+                link.href == pathname
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              )}
+              onClick={() => setToggled(false)}
+              key={link.title}
+              href={link.href}
+            >
+              {link.title}
+            </Link>
+          ))}
+          <Link
+            href="/tutorial"
+            onClick={() => setToggled(false)}
+            className="rounded-md hover:bg-muted p-2 px-4 flex flex-row gap-2"
+          >
+            <HelpCircle className="p-[2px]"></HelpCircle>
+            <span>How to use bot?</span>
+          </Link>
+          <Link
+            href="https://github.com/OlegZapara/LumiosUI"
+            className="rounded-md hover:bg-muted p-2 px-4 flex flex-row gap-2"
+          >
+            <IconBrandGithub className="p-[2px]"></IconBrandGithub>
+            <span>Github</span>
+          </Link>
+          <Button
+            variant="ghost"
+            className="rounded-md hover:bg-muted p-2 flex justify-start px-4 font-normal gap-2 text-base"
+            onClick={() => {
+              theme.setTheme(theme.theme == "dark" ? "white" : "dark");
+            }}
+          >
+            {getTheme() == "dark" ? (
+              <Moon className="p-[2px]"></Moon>
+            ) : (
+              <Sun className="p-[2px]"></Sun>
+            )}
+            <span>Toggle theme</span>
+          </Button>
+          <Link
+            href="/settings"
+            onClick={() => setToggled(false)}
+            className="rounded-md hover:bg-muted p-2 px-4 flex flex-row gap-2"
+          >
+            <Settings className="p-[2px]"></Settings>
+            <span>Settings</span>
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }
