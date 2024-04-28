@@ -1,13 +1,12 @@
 "use client";
-import Link from "next/link";
-import Image from "next/image";
-import React, { useState } from "react";
-import { IconBrandGithub, IconQuestionMark } from "@tabler/icons-react";
-import { HelpCircle, Menu, Moon, Settings, Sun, X } from "lucide-react";
-import { Toggle } from "@/components/ui/toggle";
-import { useTheme } from "next-themes";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { IconBrandGithub } from "@tabler/icons-react";
+import { HelpCircle, Menu, Settings, SunMoon, X } from "lucide-react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { Button } from "./ui/button";
 
 const links = [
@@ -40,11 +39,6 @@ const links = [
 export default function Navbar({ className }: { className?: string }) {
   const pathname = usePathname();
   const theme = useTheme();
-
-  function getTheme() {
-    if (theme.theme == "system") return theme.systemTheme;
-    return theme.theme;
-  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm dark:shadow-muted">
@@ -100,11 +94,7 @@ export default function Navbar({ className }: { className?: string }) {
               theme.setTheme(theme.theme == "dark" ? "white" : "dark");
             }}
           >
-            {getTheme() == "dark" ? (
-              <Moon className="p-[2px]"></Moon>
-            ) : (
-              <Sun className="p-[2px]"></Sun>
-            )}
+            <SunMoon className="p-[2px]"></SunMoon>
           </Button>
           <Link
             href="/settings"
@@ -167,7 +157,7 @@ function NavbarMenu() {
             className="rounded-md hover:bg-muted p-2 px-4 flex flex-row gap-2"
           >
             <IconBrandGithub className="p-[2px]"></IconBrandGithub>
-            <span>Github</span>
+            <span>Project Github</span>
           </Link>
           <Button
             variant="ghost"
@@ -176,11 +166,7 @@ function NavbarMenu() {
               theme.setTheme(theme.theme == "dark" ? "white" : "dark");
             }}
           >
-            {getTheme() == "dark" ? (
-              <Moon className="p-[2px]"></Moon>
-            ) : (
-              <Sun className="p-[2px]"></Sun>
-            )}
+            <SunMoon className="p-[2px]"></SunMoon>
             <span>Toggle theme</span>
           </Button>
           <Link

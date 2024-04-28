@@ -1,19 +1,15 @@
+"use client";
+
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
-import { MacbookScroll } from "@/components/ui/macbook-scroll";
-import Image from "next/image";
+import { VortextMain } from "@/components/vortex-main";
 import {
   IconArrowWaveRightUp,
-  IconBoxAlignRightFilled,
-  IconBoxAlignTopLeft,
   IconClipboardCopy,
   IconFileBroken,
   IconSignature,
   IconTableColumn,
 } from "@tabler/icons-react";
-
-const Skeleton = () => (
-  <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100"></div>
-);
+import Image from "next/image";
 
 const GridImage = (props: { img: string }) => (
   <div className="flex flex-1 justify-center relative w-full h-full py-2 lg:py-8 px-6 min-h-[6rem] rounded-xl bg-gradient-to-br from-blue-50 dark:from-blue-900 dark:to-blue-950 to-blue-100">
@@ -60,6 +56,7 @@ const items = [
 export default function Home() {
   return (
     <div className="overflow-hidden dark:bg-[#0B0B0F] bg-white w-full">
+      <VortextMain></VortextMain>
       <BentoGrid className="max-w-6xl mx-auto">
         {items.map((item, i) => (
           <BentoGridItem
