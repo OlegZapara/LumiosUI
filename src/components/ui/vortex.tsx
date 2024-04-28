@@ -44,6 +44,7 @@ export const Vortex = (props: VortexProps) => {
   let tick = 0;
   const noise3D = createNoise3D();
   let particleProps = new Float32Array(particlePropsLength);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   let center: [number, number] = [0, 0];
 
   const HALF_PI: number = 0.5 * Math.PI;
