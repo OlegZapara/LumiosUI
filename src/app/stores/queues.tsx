@@ -7,15 +7,14 @@ interface QueuesStore {
   pinQueue: (id: string) => void;
   unpinQueue: (id: string) => void;
   fetchQueues: () => Promise<Queue[]>;
-  createQueue: (title: string) => Promise<void>;
+  createQueue: (title: string, isMixed: boolean) => Promise<void>;
   updateQueue: (queue: Queue) => Promise<void>;
-  removeQueue: (queueId: string) => Promise<void>;
+  removeQueue: (queueId: string, isMixed: boolean) => Promise<void>;
 }
 
 export const useQueuesStore = create<QueuesStore>((set, get) => ({
   queues: [],
   pinQueue: (id: string) => {
-    console.log("pinned", id);
     const pinnedQueues: string[] = JSON.parse(
       localStorage.getItem("pinnedQueues") ?? "[]"
     );
@@ -29,7 +28,6 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
     }));
   },
   unpinQueue: (id: string) => {
-    console.log("unpinned", id);
     let pinnedQueues: string[] = JSON.parse(
       localStorage.getItem("pinnedQueues") ?? "[]"
     );
@@ -55,7 +53,17 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
     set({ queues: data });
     return data;
   },
-  createQueue: async (title: string) => {},
+  createQueue: async (name: string, isMixed: boolean) => {
+    const chatId = localStorage.getItem("chatId");
+    const res = await fetch(`/api/queues?chatId=${chatId}`, {
+      method: "POST",
+      body: JSON.stringify({
+        name: name,
+        mixed: isMixed,
+      }),
+    });
+    await get().fetchQueues();
+  },
   updateQueue: async (queue: Queue) => {
     const chatId = localStorage.getItem("chatId");
     await fetch(`/api/queues?chatId=${chatId}`, {
@@ -64,11 +72,14 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
     });
     await get().fetchQueues();
   },
-  removeQueue: async (queueId: string) => {
+  removeQueue: async (queueId: string, isMixed: boolean) => {
     const chatId = localStorage.getItem("chatId");
-    await fetch(`/api/queues?chatId=${chatId}&queueId=${queueId}`, {
-      method: "DELETE",
-    });
+    await fetch(
+      `/api/queues?chatId=${chatId}&queueId=${queueId}&isMixed=${isMixed}`,
+      {
+        method: "DELETE",
+      }
+    );
     await get().fetchQueues();
   },
 }));

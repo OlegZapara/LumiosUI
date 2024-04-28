@@ -1,6 +1,7 @@
 import {
   CREATE_QUEUE,
-  DELETE_QUEUE,
+  DELETE_MIXED_QUEUE,
+  DELETE_SIMPLE_QUEUE,
   GET_QUEUES,
   UPDATE_QUEUE,
 } from "@/shared/endpoints";
@@ -79,7 +80,12 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const queueId = getQueueId(req);
-  const apiResponse = await fetch(DELETE_QUEUE(queueId), {
+  const isMixed = req.nextUrl.searchParams.get("isMixed") == "true";
+  const fethcUrl = isMixed
+    ? DELETE_MIXED_QUEUE(queueId)
+    : DELETE_SIMPLE_QUEUE(queueId);
+  console.log(fethcUrl);
+  const apiResponse = await fetch(fethcUrl, {
     method: "DELETE",
     headers: {
       "content-type": "application/json",

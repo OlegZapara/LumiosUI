@@ -10,11 +10,24 @@ import { PopoverClose } from "@radix-ui/react-popover";
 import { Plus, Shuffle } from "lucide-react";
 import { useState } from "react";
 import { useQueuesStore } from "../stores/queues";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function CreateQueuePopover() {
   const [title, setTitle] = useState("");
   const [isMixed, setIsMixed] = useState(false);
   const { createQueue } = useQueuesStore();
+  const { toast } = useToast();
+
+  function create() {
+    createQueue(title, isMixed).then(() => {
+      toast({
+        title: "Queue is successfully created",
+        description: `${
+          isMixed ? "Mixed" : "Simple"
+        } queue with name ${title} was added`,
+      });
+    });
+  }
 
   return (
     <Popover>
@@ -63,9 +76,7 @@ export default function CreateQueuePopover() {
           <Button
             className="flex-grow text-green-500 border-green-500 hover:text-green-600"
             variant="outline"
-            onClick={() => {
-              createQueue(title);
-            }}
+            onClick={create}
           >
             {isMixed ? "Create mixed" : "Create"}
           </Button>

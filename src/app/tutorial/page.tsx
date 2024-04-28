@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 
@@ -25,12 +24,12 @@ export default function TutorialPage() {
   }
 
   return (
-    <div className="container">
+    <div className="md:container">
       <Card className="w-full shadow-md lg:shadow-lg h-auto">
         <CardHeader>
           <CardTitle>How to use Lumios Bot?</CardTitle>
         </CardHeader>
-        <CardBody className="w-full flex flex-col gap-6 rounded-lg p-8 h-auto">
+        <CardBody className="w-full flex flex-col gap-6 rounded-lg p-4 md:p-8 h-auto">
           <div className="flex flex-row justify-center gap-10 flex-wrap md:flex-nowrap">
             <div className="flex flex-col flex-grow px-10 border border-input p-8 rounded-md">
               <div className="text-2xl font-bold">Table of contents</div>
@@ -162,20 +161,14 @@ export default function TutorialPage() {
   );
 }
 
-function TelegramCommand({
-  command,
-  example,
-}: {
-  command: string;
-  example?: string;
-}) {
+function TelegramCommand({ command }: { command: string }) {
   const splitString = command.split(" ");
   const keyword = splitString[0];
   const args = " " + splitString.slice(1).join(" ");
   return (
     <div className="px-4 py-2 flex flex-row bg-muted rounded-md">
       <pre className={`text-blue-500 ${inter.className}`}>{keyword}</pre>
-      <pre className={inter.className}>{args}</pre>
+      <pre className={`text-wrap ${inter.className}`}>{args}</pre>
     </div>
   );
 }
@@ -196,7 +189,7 @@ function TelegramCommandWithExample({
         <AccordionTrigger className="flex flex-row px-4 py-2 bg-muted rounded-md">
           <div className="flex flex-row">
             <pre className={`text-blue-500 ${inter.className}`}>{keyword}</pre>
-            <pre className={inter.className}>{args}</pre>
+            <pre className={`text-wrap ${inter.className}`}>{args}</pre>
           </div>
         </AccordionTrigger>
         <AccordionContent className="pl-4 flex flex-col mt-4 gap-4">
@@ -209,7 +202,7 @@ function TelegramCommandWithExample({
                 <pre className={`text-blue-500 ${inter.className}`}>
                   {example.split(" ")[0]}
                 </pre>
-                <pre className={inter.className}>
+                <pre className={`text-wrap ${inter.className}`}>
                   {" " + example.split(" ").slice(1).join(" ")}
                 </pre>
               </div>

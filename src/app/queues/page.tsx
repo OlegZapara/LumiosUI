@@ -37,18 +37,18 @@ export default function Queues() {
   }
 
   return (
-    <div className="container">
+    <div className="md:container">
       <Card className="w-full shadow-md lg:shadow-lg h-auto">
         <CardHeader>
           <CardTitle>
             <div className="flex gap-6 flex-col md:flex-row w-full justify-between">
               <span className="mt-3 ml-2">List of group queues</span>
-              <div className="flex flex-row gap-4 flex-wrap">
+              <div className="flex flex-row gap-4 flex-wrap md:flex-nowrap">
                 <CreateQueuePopover></CreateQueuePopover>
-                <div className="flex relative">
+                <div className="flex relative w-full sm:w-auto">
                   <Search className="absolute left-2 top-3 h-4 w-4 text-muted-foreground"></Search>
                   <Input
-                    className="pl-8 font-normal w-80"
+                    className="pl-8 font-normal w-full md:w-80"
                     placeholder="Search queue by name"
                     onChange={(e) => filterData(e.target.value)}
                   ></Input>
@@ -57,7 +57,7 @@ export default function Queues() {
             </div>
           </CardTitle>
         </CardHeader>
-        <CardBody className="w-full justify-center gap-6 rounded-lg p-8 grid grid-cols-6 h-auto">
+        <CardBody className="w-full justify-center gap-6 rounded-lg p-4 md:p-8 grid grid-cols-6 h-auto">
           <div className="col-span-6 grid gap-6 md:col-span-3 lg:col-span-2 w-full h-auto">
             {filteredData
               .filter((_, i) => i % 3 == 0)

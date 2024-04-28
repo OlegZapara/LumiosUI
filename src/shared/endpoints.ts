@@ -17,4 +17,7 @@ export const GET_QUEUES = API_BASE + "/queues";
 export const GET_QUEUE = (id: string) => `${API_BASE}/queues/${id}`;
 export const UPDATE_QUEUE = API_BASE + "/queues";
 export const CREATE_QUEUE = API_BASE + "/queues";
-export const DELETE_QUEUE = (id: string) => `${API_BASE}/queues/${id}`;
+export const DELETE_SIMPLE_QUEUE = (id: string) =>
+  `${API_BASE}/queues/simple/${id}`;
+export const DELETE_MIXED_QUEUE = (id: string) =>
+  `${API_BASE}/queues/mixed/${id}`;

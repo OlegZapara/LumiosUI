@@ -34,6 +34,6 @@ export type Queue = {
   alias: string;
   id: string;
   pinned?: boolean;
-  shuffled?: boolean;
+  isMixed: boolean;
   contents: User[];
 };

@@ -28,15 +28,7 @@ const reorder = (list: User[], startIndex: number, endIndex: number) => {
   return result;
 };
 
-interface QueueProps {
-  id: string;
-  alias: string;
-  pinned?: boolean;
-  shuffled?: boolean;
-  contents: User[];
-}
-
-export default function QueueCard(props: QueueProps) {
+export default function QueueCard(props: Queue) {
   const queuesStore = useQueuesStore();
   const [users, setUsers] = useState(props.contents);
   const { toast } = useToast();
@@ -62,10 +54,11 @@ export default function QueueCard(props: QueueProps) {
     JSON.stringify(props.contents) !== JSON.stringify(users);
 
   const deleteQueue = () => {
-    queuesStore.removeQueue(props.id);
-    toast({
-      title: "Queue deleted",
-      description: `${props.alias} was successfully deleted`,
+    queuesStore.removeQueue(props.id, props.isMixed).then(() => {
+      toast({
+        title: "Queue deleted",
+        description: `${props.alias} was successfully deleted`,
+      });
     });
   };
 
@@ -73,12 +66,14 @@ export default function QueueCard(props: QueueProps) {
     const queue: Queue = {
       id: props.id,
       alias: props.alias,
+      isMixed: props.isMixed,
       contents: users,
     };
-    queuesStore.updateQueue(queue);
-    toast({
-      title: "Queue updated",
-      description: `${props.alias} was successfully updated`,
+    queuesStore.updateQueue(queue).then(() => {
+      toast({
+        title: "Queue updated",
+        description: `${props.alias} was successfully updated`,
+      });
     });
   };
 
@@ -99,13 +94,15 @@ export default function QueueCard(props: QueueProps) {
             )}
           </div>
           <div className="flex flex-row gap-1">
-            <Button
-              className="aspect-square w-10 p-0"
-              variant="ghost"
-              title="Shuffle queue"
-            >
-              <Shuffle className="stroke-blue-500" size={16}></Shuffle>
-            </Button>
+            {props.isMixed && (
+              <Button
+                className="aspect-square w-10 p-0"
+                variant="ghost"
+                title="Shuffle queue"
+              >
+                <Shuffle className="stroke-blue-500" size={16}></Shuffle>
+              </Button>
+            )}
             <Button
               className={cn(
                 "aspect-square w-10 p-0 ",
@@ -177,7 +174,9 @@ export default function QueueCard(props: QueueProps) {
                                 className="stroke-red-500"
                                 size={16}
                               ></UserRoundMinus>
-                              <span className="ml-2 text-red-500">Remove</span>
+                              <span className="ml-2 text-red-500 hidden md:flex">
+                                Remove
+                              </span>
                             </Button>
                           </div>
                         </div>
