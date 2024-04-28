@@ -3,28 +3,19 @@
 import { CardBody } from "@/components/ui/3d-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, PlusCircle, Search } from "lucide-react";
+import { Queue } from "@/shared/types";
+import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQueuesStore } from "../stores/queues";
-import { Queue } from "@/shared/types";
-import QueueCard from "./queue";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import CreateQueuePopover from "./create-popover";
+import QueueCard from "./queue";
 
 export default function Queues() {
-  const { queues, fetchQueues, createQueue } = useQueuesStore();
+  const { queues, fetchQueues } = useQueuesStore();
   const [filteredData, setFilteredData] = useState<Queue[]>([]);
 
   useEffect(() => {
     fetchQueues();
-
-    // const interval = setInterval(fetchQueues, 5000);
-    // return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

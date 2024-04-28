@@ -5,9 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Queue, User } from "@/shared/types";
 import {
-  ArrowUpToLine,
   GripVertical,
-  LogOut,
   Pin,
   PinOff,
   Shuffle,
@@ -16,11 +14,11 @@ import {
 } from "lucide-react";
 import { useQueuesStore } from "../stores/queues";
 
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const reorder = (list: User[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
@@ -160,7 +158,7 @@ export default function QueueCard(props: QueueProps) {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           className={cn(
-                            "rounded-lg px-3 py-1 select-none hover:shadow",
+                            "rounded-lg px-3 py-1 select-none hover:shadow dark:shadow-muted-foreground",
                             snapshot.isDragging ? "bg-muted shadow-lg" : ""
                           )}
                         >

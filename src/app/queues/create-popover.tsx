@@ -5,13 +5,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Toggle } from "@/components/ui/toggle";
 import { PopoverClose } from "@radix-ui/react-popover";
-import { Plus } from "lucide-react";
-import React, { useState } from "react";
+import { Plus, Shuffle } from "lucide-react";
+import { useState } from "react";
 import { useQueuesStore } from "../stores/queues";
 
 export default function CreateQueuePopover() {
   const [title, setTitle] = useState("");
+  const [isMixed, setIsMixed] = useState(false);
   const { createQueue } = useQueuesStore();
 
   return (
@@ -36,13 +38,24 @@ export default function CreateQueuePopover() {
             className="w-3/4 h-10 flex-grow"
             id="title-input"
           ></Input>
+          <Toggle
+            variant="outline"
+            className={isMixed ? "border-blue-500" : ""}
+            pressed={isMixed}
+            onPressedChange={(e) => setIsMixed(e)}
+          >
+            <Shuffle className="stroke-blue-500" size={16}></Shuffle>
+          </Toggle>
         </div>
         <div className="flex flex-row gap-2">
           <PopoverClose asChild>
             <Button
               className="flex-grow text-red-500 border-red-500 hover:text-red-600"
               variant="outline"
-              onClick={() => setTitle("")}
+              onClick={() => {
+                setTitle("");
+                setIsMixed(false);
+              }}
             >
               Cancel
             </Button>
@@ -54,7 +67,7 @@ export default function CreateQueuePopover() {
               createQueue(title);
             }}
           >
-            Create
+            {isMixed ? "Create mixed" : "Create"}
           </Button>
         </div>
       </PopoverContent>
