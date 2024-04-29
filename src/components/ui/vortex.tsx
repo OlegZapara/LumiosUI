@@ -109,9 +109,10 @@ export const Vortex = (props: VortexProps) => {
     ctx.fillStyle = backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    ctx.save();
     drawParticles(ctx);
-    renderGlow(canvas, ctx);
     renderToScreen(canvas, ctx);
+    ctx.restore();
 
     window.requestAnimationFrame(() => draw(canvas, ctx));
   };
@@ -173,7 +174,6 @@ export const Vortex = (props: VortexProps) => {
     hue: number,
     ctx: CanvasRenderingContext2D
   ) => {
-    ctx.save();
     ctx.lineCap = "round";
     ctx.lineWidth = radius;
     ctx.strokeStyle = `hsla(${hue},100%,60%,${fadeInOut(life, ttl)})`;
@@ -182,7 +182,6 @@ export const Vortex = (props: VortexProps) => {
     ctx.lineTo(x2, y2);
     ctx.stroke();
     ctx.closePath();
-    ctx.restore();
   };
 
   const checkBounds = (x: number, y: number, canvas: HTMLCanvasElement) => {
@@ -202,31 +201,14 @@ export const Vortex = (props: VortexProps) => {
     [center]
   );
 
-  const renderGlow = (
-    canvas: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D
-  ) => {
-    ctx.save();
-    ctx.filter = "blur(8px) brightness(100%)";
-    ctx.globalCompositeOperation = mode;
-    ctx.drawImage(canvas, 0, 0);
-    ctx.restore();
-
-    ctx.save();
-    ctx.filter = "blur(4px) brightness(100%)";
-    ctx.globalCompositeOperation = mode;
-    ctx.drawImage(canvas, 0, 0);
-    ctx.restore();
-  };
-
   const renderToScreen = (
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D
   ) => {
-    ctx.save();
+    // ctx.save();
     ctx.globalCompositeOperation = mode;
     ctx.drawImage(canvas, 0, 0);
-    ctx.restore();
+    // ctx.restore();
   };
 
   useEffect(() => {
