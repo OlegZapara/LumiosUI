@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useRef } from "react";
-import { createNoise3D } from "simplex-noise";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
+import { motion } from "framer-motion";
+import { useCallback, useEffect, useRef } from "react";
+import { createNoise3D } from "simplex-noise";
 
 interface VortexProps {
   children?: any;
@@ -40,7 +39,6 @@ export const Vortex = (props: VortexProps) => {
   const zOff = 0.0005;
   const backgroundColor = props.backgroundColor || "#000000";
   const mode = props.mode || "lighter";
-  const theme = useTheme();
   let tick = 0;
   const noise3D = createNoise3D();
   let particleProps = new Float32Array(particlePropsLength);
@@ -233,13 +231,17 @@ export const Vortex = (props: VortexProps) => {
 
   useEffect(() => {
     setup();
-    window.addEventListener("resize", () => {
+    const handleResize = () => {
       const canvas = canvasRef.current;
       const ctx = canvas?.getContext("2d");
       if (canvas && ctx) {
         resize(canvas, ctx);
       }
-    });
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      removeEventListener("resize", handleResize);
+    };
   }, [resize, setup]);
 
   return (
