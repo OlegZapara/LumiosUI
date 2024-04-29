@@ -131,6 +131,8 @@ function NavbarMenu() {
   return (
     <div className="md:hidden absolute left-4">
       <Button
+        title="Toggle menu"
+        aria-label="Toggle menu"
         variant="ghost"
         className="aspect-square p-0"
         onClick={() => setToggled((value) => !value)}
