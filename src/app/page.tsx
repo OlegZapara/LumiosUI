@@ -1,12 +1,16 @@
 "use client";
 
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { VortexMainLoading } from "@/components/vortex-main";
 import { BarChart3, Bell, CalendarCheck, Send, Users } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 
-const VortexPreview = dynamic(() =>
-  import("@/components/vortex-main").then((mod) => mod.VortextMain)
+const VortexPreview = dynamic(
+  () => import("@/components/vortex-main").then((mod) => mod.VortextMain),
+  {
+    loading: () => <VortexMainLoading></VortexMainLoading>,
+  }
 );
 
 const GridImage = (props: { img: string }) => (
