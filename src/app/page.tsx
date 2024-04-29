@@ -9,6 +9,7 @@ import {
   IconSignature,
   IconTableColumn,
 } from "@tabler/icons-react";
+import { BarChart3, Bell, CalendarCheck, Send, Users } from "lucide-react";
 import Image from "next/image";
 
 const GridImage = (props: { img: string }) => (
@@ -22,40 +23,40 @@ const GridImage = (props: { img: string }) => (
 const items = [
   {
     title: "Create queues",
-    description: "Explore the birth of groundbreaking ideas and inventions.",
+    description: "Queues for managing student order in various situations",
     header: <GridImage img="queues-title.svg"></GridImage>,
-    icon: <IconClipboardCopy className="h-4 w-4 text-neutral-500" />,
+    icon: <Users className="h-4 w-4 text-neutral-500" />,
   },
   {
     title: "Notify about special events",
-    description: "Dive into the transformative power of technology.",
+    description: "Automatic notifications about start of the lessons and tasks",
     header: <GridImage img="notify-title.svg"></GridImage>,
-    icon: <IconFileBroken className="h-4 w-4 text-neutral-500" />,
+    icon: <Bell className="h-4 w-4 text-neutral-500" />,
   },
   {
     title: "Plan tasks",
-    description: "Discover the beauty of thoughtful and functional design.",
+    description: "Create scheduled tasks with detailed information about event",
     header: <GridImage img="tasks-title.svg"></GridImage>,
-    icon: <IconSignature className="h-4 w-4 text-neutral-500" />,
+    icon: <CalendarCheck className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Manage group rating",
+    title: "Manage group rating and statistics",
     description:
-      "Understand the impact of effective communication in our lives.",
+      "Track each person's rating based on reactions. View advanced statistics of group activity",
     header: <GridImage img="rating-title.svg"></GridImage>,
-    icon: <IconTableColumn className="h-4 w-4 text-neutral-500" />,
+    icon: <BarChart3 className="h-4 w-4 text-neutral-500" />,
   },
   {
     title: "Write important messages",
-    description: "Join the quest for understanding and enlightenment.",
+    description: "Schedule messages for your group (coming soon)",
     header: <GridImage img="msg-title.svg"></GridImage>,
-    icon: <IconArrowWaveRightUp className="h-4 w-4 text-neutral-500" />,
+    icon: <Send className="h-4 w-4 text-neutral-500" />,
   },
 ];
 
 export default function Home() {
   return (
-    <div className="overflow-hidden bg-gradient-to-b from-white dark:from-black to-background w-full">
+    <div className="overflow-hidden bg-gradient-to-b from-white dark:from-black dark:via-black to-background w-full">
       <VortextMain></VortextMain>
       <BentoGrid className="max-w-6xl mx-auto">
         {items.map((item, i) => (

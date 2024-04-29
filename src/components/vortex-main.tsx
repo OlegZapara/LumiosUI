@@ -7,7 +7,7 @@ export function VortextMain() {
   const theme = useTheme();
 
   return (
-    <div className="w-full mx-auto rounded-md  h-[30rem] overflow-hidden">
+    <div className="w-full mx-auto rounded-md  h-[calc(100vh-3rem)] overflow-hidden">
       <Vortex
         backgroundColor={theme.resolvedTheme == "dark" ? "black" : "white"}
         mode={theme.resolvedTheme == "dark" ? "lighter" : "darken"}
