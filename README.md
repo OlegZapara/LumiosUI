@@ -74,13 +74,13 @@ Contributions to Lumios are welcome! To contribute, follow these guidelines:
 
 ## License
 
-Lumios is licensed under the [MIT License](LICENSE).
+Lumios is licensed under the [Apache License 2.0](LICENSE).
 
 ---
 
 ## Contact
 
-For questions, feedback, or inquiries about Lumios, please contact [your@email.com](mailto:ole9zp@gmail.com).
+For questions, feedback, or inquiries about Lumios, please contact [ole9zp@gmail.com](mailto:ole9zp@gmail.com).
 
 ---
 
