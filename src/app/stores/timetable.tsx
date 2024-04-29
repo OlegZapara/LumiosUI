@@ -21,8 +21,9 @@ interface TimetableState {
   updateRow: (row: TimetableEntry) => void;
   removeRow: (info: RowInfo) => void;
   fetchTimetable: () => Promise<void>;
-  updateTimetable: (newTimetable: Timetable[]) => Promise<void>;
-  createTimetable: (newTimetable: Timetable[]) => Promise<void>;
+  updateTimetable: (newTimetable: Timetable[]) => Promise<Response>;
+  createTimetable: (newTimetable: Timetable[]) => Promise<Response>;
+  deleteTimetable: () => Promise<Response>;
 }
 
 const NO_EDIT_ROW: RowInfo = { week: -1, day: -1, row: -1, index: -1 };
@@ -39,6 +40,14 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
     });
   },
   discardEdit: () => {
+    const editRowInfo = get().editRowInfo;
+    const editingEntry =
+      get().timetable![editRowInfo.week].days[editRowInfo.day].classEntries[
+        editRowInfo.row
+      ];
+    if (editingEntry.className == "") {
+      get().removeRow(editRowInfo);
+    }
     set({
       editingRow: null,
       editRowInfo: NO_EDIT_ROW,
@@ -84,7 +93,7 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
     const newTimetable = produce(get().timetable, (newTimetable) => {
       newTimetable![info.week].days[info.day].classEntries.splice(
         info.row,
-        info.row
+        info.row,
       );
     });
     get().updateTimetable(newTimetable!);
@@ -96,12 +105,16 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
     const chatId = useUsersStore.getState().chatId;
     if (chatId === null) throw new Error("Chat id must not be null");
     const result = await fetch(`/api/timetables?chatId=${chatId}`);
+    if (!result.ok) {
+      set({ timetable: [] });
+      return;
+    }
     set({ timetable: await result.json() });
   },
   updateTimetable: async (newTimetable: Timetable[]) => {
     const chatId = useUsersStore.getState().chatId;
     if (chatId === null) throw new Error("Chat id must not be null");
-    await fetch(`/api/timetables?chatId=${chatId}`, {
+    return await fetch(`/api/timetables?chatId=${chatId}`, {
       method: "PUT",
       body: JSON.stringify(newTimetable),
     });
@@ -109,9 +122,16 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
   createTimetable: async (newTimetable: Timetable[]) => {
     const chatId = useUsersStore.getState().chatId;
     if (chatId === null) throw new Error("Chat id must not be null");
-    await fetch(`/api/timetables?chatId=${chatId}`, {
+    return await fetch(`/api/timetables?chatId=${chatId}`, {
       method: "POST",
       body: JSON.stringify(newTimetable),
+    });
+  },
+  deleteTimetable: async () => {
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
+    return await fetch(`/api/timetables?chatId=${chatId}`, {
+      method: "DELETE",
     });
   },
 }));

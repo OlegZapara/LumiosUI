@@ -1,0 +1,132 @@
+[
+  {
+    "days": [
+      {
+        "dayName": "MONDAY",
+        "classEntries": [
+          {
+            "className": "",
+            "url": "",
+            "classType": "",
+            "startTime": "",
+            "endTime": ""
+          }
+        ]
+      },
+      {
+        "dayName": "TUESDAY",
+        "classEntries": [
+          {
+            "className": "",
+            "url": "",
+            "classType": "",
+            "startTime": "",
+            "endTime": ""
+          }
+        ]
+      },
+      {
+        "dayName": "WEDNESDAY",
+        "classEntries": [
+          {
+            "className": "",
+            "url": "",
+            "classType": "",
+            "startTime": "",
+            "endTime": ""
+          }
+        ]
+      },
+      {
+        "dayName": "THURSDAY",
+        "classEntries": [
+          {
+            "className": "",
+            "url": "",
+            "classType": "",
+            "startTime": "",
+            "endTime": ""
+          }
+        ]
+      },
+      {
+        "dayName": "FRIDAY",
+        "classEntries": [
+          {
+            "className": "",
+            "url": "",
+            "classType": "",
+            "startTime": "",
+            "endTime": ""
+          }
+        ]
+      }
+    ],
+    "weekType": "WEEK_A"
+  },
+  {
+    "days": [
+      {
+        "dayName": "MONDAY",
+        "classEntries": [
+          {
+            "className": "",
+            "url": "",
+            "classType": "",
+            "startTime": "",
+            "endTime": ""
+          }
+        ]
+      },
+      {
+        "dayName": "TUESDAY",
+        "classEntries": [
+          {
+            "className": "",
+            "url": "",
+            "classType": "",
+            "startTime": "",
+            "endTime": ""
+          }
+        ]
+      },
+      {
+        "dayName": "WEDNESDAY",
+        "classEntries": [
+          {
+            "className": "",
+            "url": "",
+            "classType": "",
+            "startTime": "",
+            "endTime": ""
+          }
+        ]
+      },
+      {
+        "dayName": "THURSDAY",
+        "classEntries": [
+          {
+            "className": "",
+            "url": "",
+            "classType": "",
+            "startTime": "",
+            "endTime": ""
+          }
+        ]
+      },
+      {
+        "dayName": "FRIDAY",
+        "classEntries": [
+          {
+            "className": "",
+            "url": "",
+            "classType": "",
+            "startTime": "",
+            "endTime": ""
+          }
+        ]
+      }
+    ],
+    "weekType": "WEEK_B"
+  }
+]

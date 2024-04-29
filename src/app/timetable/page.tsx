@@ -11,10 +11,10 @@ import { columns } from "./columns";
 import { words } from "./data";
 import { DataTable } from "./data-table";
 import Loading from "./loading-page";
-import NoTimetablePage from "./no-timetable-page";
-import Settings from "./settings";
 import useAuth from "@/hooks/useAuth";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import NoTimetablePageV2 from "@/app/timetable/no-timetable-page-v2";
 
 export default function TimetablePage() {
   const authenticated = useAuth();
@@ -30,7 +30,9 @@ export default function TimetablePage() {
 
   useEffect(() => {
     if (authenticated == null) return;
-    setEnableHeader(localStorage.getItem("enableTimetableHeader") != "off");
+    setEnableHeader(
+      localStorage.getItem("enableTimetableHeader") != "Disabled",
+    );
     timetableStore.fetchTimetable();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authenticated]);
@@ -41,9 +43,11 @@ export default function TimetablePage() {
   if (!timetableStore.timetable || !day || !week) {
     return <Loading />;
   }
-  if (timetableStore.timetable.length == 0) {
-    return <NoTimetablePage />;
+
+  if (timetableStore.timetable?.length == 0) {
+    return <NoTimetablePageV2></NoTimetablePageV2>;
   }
+
   return (
     <div className="w-full h-full flex items-center flex-col mt-6">
       {enableHeader && (
@@ -86,8 +90,13 @@ export default function TimetablePage() {
             </ToggleGroup>
           </div>
           <div className="gap-2 inline-flex h-12 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
-            <JsonEditor></JsonEditor>
-            <Settings></Settings>
+            {process.env.NODE_ENV !== "production" && <JsonEditor></JsonEditor>}
+            <Link
+              href="/settings?page=Timetable"
+              className="text-nowrap inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors  disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground hover:bg-background bg-transparent h-10 px-3"
+            >
+              Settings
+            </Link>
             <AboutTimetable></AboutTimetable>
           </div>
         </div>

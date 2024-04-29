@@ -14,6 +14,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { z } from "zod";
+import { withFallback } from "@/app/utils/schema-extensions";
+import TimetableSettings from "@/app/settings/timetable-settings";
 
 const pages = [
   {
@@ -24,10 +26,10 @@ const pages = [
     name: "Appearance",
     content: <Appearance />,
   },
-  // {
-  //   name: "Timetable",
-  //   content: <TimetableSettings />,
-  // },
+  {
+    name: "Timetable",
+    content: <TimetableSettings />,
+  },
   // {
   //   name: "Statistics",
   //   content: <StatisticsSettings />,
@@ -51,17 +53,6 @@ const urlSchema = withFallback(
     }),
   pages[0].name,
 );
-
-function withFallback<T>(schema: z.ZodType<T>, fallback: T) {
-  return z.preprocess(
-    (value) => {
-      const parseResult = schema.safeParse(value);
-      if (parseResult.success) return value;
-      return fallback;
-    },
-    z.custom((v) => true),
-  );
-}
 
 export default function Settings() {
   const router = useRouter();

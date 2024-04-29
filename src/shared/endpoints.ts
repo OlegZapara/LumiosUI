@@ -3,6 +3,7 @@ export const API_BASE = "https://api.uaproject-reborn.xyz";
 export const GET_TIMETABLE = API_BASE + "/timetables/retrieve";
 export const UPDATE_TIMETABLE = API_BASE + "/timetables/update";
 export const CREATE_TIMETABLE = API_BASE + "/timetables/create";
+export const DELETE_TIMETABLE = API_BASE + "/timetables/delete";
 
 export const GET_TASKS = API_BASE + "/tasks";
 export const GET_TASK = (id: string) => `${API_BASE}/tasks/${id}`;

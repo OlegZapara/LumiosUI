@@ -1,5 +1,8 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
+    <JSCodeStyleSettings version="0">
+      <option name="JSX_ATTRIBUTE_VALUE" value="Based on type" />
+    </JSCodeStyleSettings>
     <codeStyleSettings language="JSON">
       <indentOptions>
         <option name="TAB_SIZE" value="2" />
