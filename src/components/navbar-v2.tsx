@@ -42,11 +42,11 @@ export default function Navbar({ className }: { className?: string }) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm dark:shadow-muted">
-      <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
+      <div className="container flex h-14 max-w-screen-2xl items-center justify-center sm:justify-between relative">
         <div className="flex flex-row justify-center items-center gap-1 sm:gap-2 md:gap-4">
           <NavbarMenu></NavbarMenu>
-          <Link href="/">
-            <div className="transition-colors flex flex-row items-center justify-center gap-2 px-2 sm:px-4 py-2 rounded-lg title">
+          <Link title="Main page" aria-label="Main page" href="/">
+            <div className="transition-colors flex flex-row items-center justify-center gap-2 px-2 sm:px-4 py-2 rounded-lg title ml-10 md:ml-0">
               <Image
                 src="/lumios.png"
                 width="30"
@@ -67,6 +67,8 @@ export default function Navbar({ className }: { className?: string }) {
                   ? "text-foreground"
                   : "text-muted-foreground"
               )}
+              title={link.title + " page"}
+              aria-label={link.title + " page"}
               key={link.title}
               href={link.href}
             >
@@ -74,22 +76,28 @@ export default function Navbar({ className }: { className?: string }) {
             </Link>
           ))}
         </div>
-        <div className="flex flex-row items-center justify-center">
+        <div className="flex-row items-center justify-center hidden sm:flex">
           <Link
             href="/tutorial"
+            title="Turorial page"
+            aria-label="Turorial page"
             className="aspect-square rounded-md hover:bg-muted p-2"
           >
             <HelpCircle className="p-[2px]"></HelpCircle>
           </Link>
           <Link
             href="https://github.com/OlegZapara/LumiosUI"
-            className="aspect-square rounded-md hover:bg-muted p-2 hidden sm:flex"
+            title="LumiosUI Github page"
+            aria-label="LumiosUI Github page"
+            className="aspect-square rounded-md hover:bg-muted p-2"
           >
             <IconBrandGithub className="p-[2px]"></IconBrandGithub>
           </Link>
           <Button
+            aria-label="Toggle theme"
             variant="ghost"
-            className="aspect-square rounded-md hover:bg-muted p-2 hidden sm:flex"
+            title="Toggle theme"
+            className="aspect-square rounded-md hover:bg-muted p-2"
             onClick={() => {
               theme.setTheme(theme.theme == "dark" ? "white" : "dark");
             }}
@@ -98,6 +106,8 @@ export default function Navbar({ className }: { className?: string }) {
           </Button>
           <Link
             href="/settings"
+            title="Settings page"
+            aria-label="Settings page"
             className="aspect-square rounded-md hover:bg-muted p-2"
           >
             <Settings className="p-[2px]"></Settings>
@@ -119,7 +129,7 @@ function NavbarMenu() {
   }
 
   return (
-    <div className="md:hidden">
+    <div className="md:hidden absolute left-4">
       <Button
         variant="ghost"
         className="aspect-square p-0"
@@ -138,6 +148,8 @@ function NavbarMenu() {
                   : "text-muted-foreground"
               )}
               onClick={() => setToggled(false)}
+              title={link.title + " page"}
+              aria-label={link.title + " page"}
               key={link.title}
               href={link.href}
             >
@@ -146,6 +158,8 @@ function NavbarMenu() {
           ))}
           <Link
             href="/tutorial"
+            title="Turorial page"
+            aria-label="Turorial page"
             onClick={() => setToggled(false)}
             className="rounded-md hover:bg-muted p-2 px-4 flex flex-row gap-2"
           >
@@ -154,13 +168,17 @@ function NavbarMenu() {
           </Link>
           <Link
             href="https://github.com/OlegZapara/LumiosUI"
+            title="LumiosUI Github page"
+            aria-label="LumiosUI Github page"
             className="rounded-md hover:bg-muted p-2 px-4 flex flex-row gap-2"
           >
             <IconBrandGithub className="p-[2px]"></IconBrandGithub>
             <span>Project Github</span>
           </Link>
           <Button
+            aria-label="Toggle theme"
             variant="ghost"
+            title="Toggle theme"
             className="rounded-md hover:bg-muted p-2 flex justify-start px-4 font-normal gap-2 text-base"
             onClick={() => {
               theme.setTheme(theme.theme == "dark" ? "white" : "dark");
@@ -171,6 +189,8 @@ function NavbarMenu() {
           </Button>
           <Link
             href="/settings"
+            title="Settings page"
+            aria-label="Settings page"
             onClick={() => setToggled(false)}
             className="rounded-md hover:bg-muted p-2 px-4 flex flex-row gap-2"
           >
