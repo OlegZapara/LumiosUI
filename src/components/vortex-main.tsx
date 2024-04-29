@@ -12,6 +12,7 @@ export function VortextMain() {
         backgroundColor={theme.resolvedTheme == "dark" ? "black" : "white"}
         mode={theme.resolvedTheme == "dark" ? "lighter" : "darken"}
         rangeY={150}
+        particleCount={300}
         className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"
       >
         <h2 className="text-foreground text-2xl md:text-6xl font-bold text-center">
