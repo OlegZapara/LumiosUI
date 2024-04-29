@@ -55,7 +55,7 @@ const items = [
 
 export default function Home() {
   return (
-    <div className="overflow-hidden dark:bg-[#0B0B0F] bg-white w-full">
+    <div className="overflow-hidden bg-gradient-to-b from-white dark:from-black to-background w-full">
       <VortextMain></VortextMain>
       <BentoGrid className="max-w-6xl mx-auto">
         {items.map((item, i) => (

@@ -14,7 +14,7 @@ import Timetable from "./timetable";
 
 export default function Settings() {
   return (
-    <div>
+    <div className="mt-6">
       <Card className="m-8">
         <CardHeader>
           <CardTitle>Settings</CardTitle>

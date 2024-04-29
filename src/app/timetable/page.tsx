@@ -37,7 +37,7 @@ export default function TimetablePage() {
     return <NoTimetablePage />;
   }
   return (
-    <div className="w-full h-full flex items-center flex-col">
+    <div className="w-full h-full flex items-center flex-col mt-6">
       {enableHeader && (
         <TypewriterEffectSmooth words={words} className="mb-12" />
       )}

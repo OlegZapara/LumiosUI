@@ -26,7 +26,7 @@ export default function RootLayout({
           <div className="relative flex min-h-screen flex-col bg-background">
             <Navbar className="top-2" />
             <Suspense>
-              <div className="mt-6">{children}</div>
+              <div>{children}</div>
             </Suspense>
           </div>
         </ThemeProvider>

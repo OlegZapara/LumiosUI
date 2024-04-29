@@ -37,7 +37,7 @@ export default function Queues() {
   }
 
   return (
-    <div className="md:container">
+    <div className="md:container mt-6">
       <Card className="w-full shadow-md lg:shadow-lg h-auto">
         <CardHeader>
           <CardTitle>

@@ -24,7 +24,7 @@ export default function TutorialPage() {
   }
 
   return (
-    <div className="md:container">
+    <div className="md:container mt-6">
       <Card className="w-full shadow-md lg:shadow-lg h-auto">
         <CardHeader>
           <CardTitle>How to use Lumios Bot?</CardTitle>

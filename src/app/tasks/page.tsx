@@ -13,7 +13,7 @@ export default function Tasks() {
   }, [fetchTasks]);
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 mt-6">
       <DataTable columns={columns} data={tasks} />
     </div>
   );
