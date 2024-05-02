@@ -99,7 +99,7 @@ export default function Navbar({ className }: { className?: string }) {
             title="Toggle theme"
             className="aspect-square rounded-md hover:bg-muted p-2"
             onClick={() => {
-              theme.setTheme(theme.theme == "dark" ? "white" : "dark");
+              theme.setTheme(theme.theme == "dark" ? "light" : "dark");
             }}
           >
             <SunMoon className="p-[2px]"></SunMoon>
@@ -183,7 +183,7 @@ function NavbarMenu() {
             title="Toggle theme"
             className="rounded-md hover:bg-muted p-2 flex justify-start px-4 font-normal gap-2 text-base"
             onClick={() => {
-              theme.setTheme(theme.theme == "dark" ? "white" : "dark");
+              theme.setTheme(theme.theme == "dark" ? "light" : "dark");
             }}
           >
             <SunMoon className="p-[2px]"></SunMoon>

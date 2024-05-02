@@ -1,17 +1,8 @@
-"use client";
-
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
-import { VortexMainLoading } from "@/components/vortex-main";
+import { VortexMainLoading, VortextMain } from "@/components/vortex-main";
 import { BarChart3, Bell, CalendarCheck, Send, Users } from "lucide-react";
-import dynamic from "next/dynamic";
 import Image from "next/image";
-
-const VortexPreview = dynamic(
-  () => import("@/components/vortex-main").then((mod) => mod.VortextMain),
-  {
-    loading: () => <VortexMainLoading></VortexMainLoading>,
-  }
-);
+import { Suspense } from "react";
 
 const GridImage = (props: { img: string }) => (
   <div className="flex flex-1 justify-center relative w-full h-full py-2 lg:py-8 px-6 min-h-[6rem] rounded-xl bg-gradient-to-br from-blue-50 dark:from-blue-900 dark:to-blue-950 to-blue-100">
@@ -58,7 +49,9 @@ const items = [
 export default function Home() {
   return (
     <div className="overflow-hidden bg-gradient-to-b from-white dark:from-black dark:via-black to-background w-full">
-      <VortexPreview></VortexPreview>
+      <Suspense fallback={<VortexMainLoading></VortexMainLoading>}>
+        <VortextMain></VortextMain>
+      </Suspense>
       <BentoGrid className="max-w-6xl mx-auto">
         {items.map((item, i) => (
           <BentoGridItem

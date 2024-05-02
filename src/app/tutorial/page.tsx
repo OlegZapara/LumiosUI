@@ -1,28 +1,12 @@
-"use client";
-
 import { CardBody } from "@/components/ui/3d-card";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Inter } from "next/font/google";
 import Image from "next/image";
-
-const inter = Inter({ subsets: ["latin", "cyrillic"] });
+import ContentTable from "./content-table";
+import TelegramCommand from "./telegram-command";
+import TelegramCommandWithExample from "./telegram-example-command";
 
 export default function TutorialPage() {
-  function scrollIntoView(id: string) {
-    console.log("scrooll");
-    document
-      .getElementById(id)
-      ?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-
   return (
     <div className="md:container mt-6">
       <Card className="w-full shadow-md lg:shadow-lg h-auto">
@@ -31,45 +15,7 @@ export default function TutorialPage() {
         </CardHeader>
         <CardBody className="w-full flex flex-col gap-6 rounded-lg p-4 md:p-8 h-auto">
           <div className="flex flex-row justify-center gap-10 flex-wrap md:flex-nowrap">
-            <div className="flex flex-col flex-grow px-10 border border-input p-8 rounded-md">
-              <div className="text-2xl font-bold">Table of contents</div>
-              <Separator className="my-4"></Separator>
-              <Button
-                onClick={() => scrollIntoView("Queues")}
-                className="w-full justify-start"
-                variant="ghost"
-              >
-                Queues
-              </Button>
-              <Button
-                onClick={() => scrollIntoView("Rating")}
-                className="w-full justify-start"
-                variant="ghost"
-              >
-                Rating
-              </Button>
-              <Button
-                onClick={() => scrollIntoView("Timetable")}
-                className="w-full justify-start"
-                variant="ghost"
-              >
-                Timetable
-              </Button>
-              <Button
-                onClick={() => scrollIntoView("Tasks")}
-                className="w-full justify-start"
-                variant="ghost"
-              >
-                Tasks
-              </Button>
-              <Button
-                onClick={() => scrollIntoView("Arguments")}
-                className="w-full justify-start"
-                variant="ghost"
-              >
-                Arguments
-              </Button>
-            </div>
+            <ContentTable></ContentTable>
             <div className="hidden md:flex flex-col flex-grow rounded-md aspect-auto overflow-hidden min-w-60 relative">
               <div className="relavtive h-full w-full">
                 <Image
@@ -158,59 +104,5 @@ export default function TutorialPage() {
         </CardBody>
       </Card>
     </div>
-  );
-}
-
-function TelegramCommand({ command }: { command: string }) {
-  const splitString = command.split(" ");
-  const keyword = splitString[0];
-  const args = " " + splitString.slice(1).join(" ");
-  return (
-    <div className="px-4 py-2 flex flex-row bg-muted rounded-md">
-      <pre className={`text-blue-500 ${inter.className}`}>{keyword}</pre>
-      <pre className={`text-wrap ${inter.className}`}>{args}</pre>
-    </div>
-  );
-}
-
-function TelegramCommandWithExample({
-  command,
-  examples,
-}: {
-  command: string;
-  examples: string[];
-}) {
-  const splitString = command.split(" ");
-  const keyword = splitString[0];
-  const args = " " + splitString.slice(1).join(" ");
-  return (
-    <Accordion type="single" collapsible>
-      <AccordionItem value="item-1">
-        <AccordionTrigger className="flex flex-row px-4 py-2 bg-muted rounded-md">
-          <div className="flex flex-row">
-            <pre className={`text-blue-500 ${inter.className}`}>{keyword}</pre>
-            <pre className={`text-wrap ${inter.className}`}>{args}</pre>
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className="pl-4 flex flex-col mt-4 gap-4">
-          {examples.map((example) => (
-            <div
-              key={example}
-              className="px-4 py-2 flex flex-row bg-muted rounded-md text-base justify-between"
-            >
-              <div className="flex flex-row">
-                <pre className={`text-blue-500 ${inter.className}`}>
-                  {example.split(" ")[0]}
-                </pre>
-                <pre className={`text-wrap ${inter.className}`}>
-                  {" " + example.split(" ").slice(1).join(" ")}
-                </pre>
-              </div>
-              <div className="uppercase text-green-500">Example</div>
-            </div>
-          ))}
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
   );
 }
