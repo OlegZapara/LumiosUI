@@ -12,12 +12,14 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
+import SettingsField from "./settings-field";
+import { Button } from "@/components/ui/button";
 
 export default function Appearance() {
   const theme = useTheme();
 
   return (
-    <div className="w-full flex flex-col gap-2 mb-20">
+    <div className="w-full flex flex-col gap-2">
       <div className="text-xl font-semibold leading-none tracking-tight">
         Appearance
       </div>
@@ -27,63 +29,79 @@ export default function Appearance() {
       </div>
       <Separator className="w-full my-2"></Separator>
 
-      <section className="flex flex-col gap-2 my-4">
-        <div className="leading-none tracking-tight">Font</div>
-        <div className="text-sm text-muted-foreground">
-          Set the font you want to use.
-        </div>
-        <Select defaultValue="inter">
-          <SelectTrigger className="w-[180px]" disabled>
-            <SelectValue placeholder="Font" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="inter">Inter</SelectItem>
-            <SelectItem value="manrope">Manrope</SelectItem>
-            <SelectItem value="system">System</SelectItem>
-          </SelectContent>
-        </Select>
-      </section>
-
-      <section className="flex flex-col gap-2 my-4">
-        <div className="leading-none tracking-tight">Theme</div>
-        <div className="text-sm text-muted-foreground">
-          Select the theme for the website.
-        </div>
-        <RadioGroup
-          value={theme.theme}
-          onValueChange={(e) => theme.setTheme(e)}
-          className="flex flex-col md:flex-row flex-wrap gap-4"
+      <section className="flex flex-col gap-4 my-4 border border-input rounded-md p-4">
+        <div className="text-xl">Font & Theme</div>
+        <Separator></Separator>
+        <SettingsField
+          name="Font"
+          description="Preffered font that will be used accross application"
         >
-          <ThemeViewGroupItem type="light" />
-          <ThemeViewGroupItem type="dark" />
-          <ThemeViewGroupItem type="system" />
-        </RadioGroup>
+          <Select defaultValue="inter">
+            <SelectTrigger className="w-[180px]" disabled>
+              <SelectValue placeholder="Font" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="inter">Inter</SelectItem>
+              <SelectItem value="manrope">Manrope</SelectItem>
+              <SelectItem value="system">System</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingsField>
+        <div className="w-full flex flex-col gap-2 p-2 sm:p-4">
+          <div className="leading-none tracking-tight">Theme</div>
+          <div className="text-sm text-muted-foreground">
+            Select the theme for the website.
+          </div>
+          <RadioGroup
+            value={theme.theme}
+            onValueChange={(e) => theme.setTheme(e)}
+            className="flex flex-col md:flex-row flex-wrap gap-4"
+          >
+            <ThemeViewGroupItem type="light" />
+            <ThemeViewGroupItem type="dark" />
+            <ThemeViewGroupItem type="system" />
+          </RadioGroup>
+        </div>
       </section>
-      <Separator className="my-2"></Separator>
-      <section className="flex flex-col gap-4">
-        <div className="text-xl font-semibold leading-none tracking-tight">
-          Timetable
-        </div>
-        <div className="flex flex-col gap-2 my-4">
-          <div className="w-full max-w-72 leading-none tracking-tight flex flex-row  gap-4 items-center justify-between">
-            <span>Enable timetable animation</span>
-            <Switch></Switch>
-          </div>
 
-          <div className="text-sm text-muted-foreground">
-            Enable or disable timetable animation in timetable page view
-          </div>
-        </div>
-        <div className="flex flex-col gap-2 my-4">
-          <div className="w-full max-w-72 leading-none tracking-tight flex flex-row  gap-4 items-center justify-between">
-            <span>Enable devtools</span>
-            <Switch disabled></Switch>
-          </div>
-
-          <div className="text-sm text-muted-foreground">
-            Enable or disable developer tools such as JSON editor
-          </div>
-        </div>
+      <section className="flex flex-col gap-4 my-4 border border-input rounded-md p-4">
+        <div className="text-xl">Timetable</div>
+        <Separator></Separator>
+        <SettingsField
+          name="Timetable header"
+          description="Enable timetable header for timetable page"
+        >
+          <Select defaultValue="Enabled">
+            <SelectTrigger>
+              <SelectValue placeholder="Font" />
+            </SelectTrigger>
+            <Button variant="outline" className="w-full sm:w-32">
+              Save
+            </Button>
+            <SelectContent>
+              <SelectItem value="Enabled">Enabled</SelectItem>
+              <SelectItem value="Disabled">Disabled</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingsField>
+        <SettingsField
+          name="JSON editor"
+          description="Enable timetable JSON editing"
+          developer
+        >
+          <Select defaultValue="Enabled">
+            <SelectTrigger>
+              <SelectValue placeholder="Font" />
+            </SelectTrigger>
+            <Button variant="outline" className="w-full sm:w-32">
+              Save
+            </Button>
+            <SelectContent>
+              <SelectItem value="Enabled">Enabled</SelectItem>
+              <SelectItem value="Disabled">Disabled</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingsField>
       </section>
     </div>
   );
