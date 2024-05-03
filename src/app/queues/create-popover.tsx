@@ -73,13 +73,15 @@ export default function CreateQueuePopover() {
               Cancel
             </Button>
           </PopoverClose>
-          <Button
-            className="flex-grow text-green-500 border-green-500 hover:text-green-600"
-            variant="outline"
-            onClick={create}
-          >
-            {isMixed ? "Create mixed" : "Create"}
-          </Button>
+          <PopoverClose asChild>
+            <Button
+              className="flex-grow text-green-500 border-green-500 hover:text-green-600"
+              variant="outline"
+              onClick={create}
+            >
+              {isMixed ? "Create mixed" : "Create"}
+            </Button>
+          </PopoverClose>
         </div>
       </PopoverContent>
     </Popover>

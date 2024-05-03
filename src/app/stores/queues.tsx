@@ -59,7 +59,7 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
       method: "POST",
       body: JSON.stringify({
         name: name,
-        mixed: isMixed,
+        isMixed: isMixed,
       }),
     });
     await get().fetchQueues();
