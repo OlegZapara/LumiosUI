@@ -33,6 +33,7 @@ export type User = {
 export type Queue = {
   alias: string;
   id: string;
+  messageId: string;
   pinned?: boolean;
   isMixed: boolean;
   contents: User[];

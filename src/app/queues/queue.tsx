@@ -63,10 +63,9 @@ export default function QueueCard(props: Queue) {
   };
 
   const updateQueue = () => {
+    const { pinned, ...queueProps } = props;
     const queue: Queue = {
-      id: props.id,
-      alias: props.alias,
-      isMixed: props.isMixed,
+      ...queueProps,
       contents: users,
     };
     queuesStore.updateQueue(queue).then(() => {
