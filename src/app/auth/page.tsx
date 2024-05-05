@@ -6,7 +6,7 @@ import TelegramLoginButton, { TelegramUser } from "telegram-login-button";
 export default function Auth() {
   return (
     <TelegramLoginButton
-      botName="samplebot"
+      botName="lumios_bot"
       dataOnauth={(user: TelegramUser) => console.log(user)}
     />
   );
