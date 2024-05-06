@@ -1,6 +1,7 @@
 import { Queue } from "@/shared/types";
 import { produce } from "immer";
 import { create } from "zustand";
+import { useUsersStore } from "./users";
 
 interface QueuesStore {
   queues: Queue[];
@@ -41,7 +42,8 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
     }));
   },
   fetchQueues: async () => {
-    const chatId = localStorage.getItem("chatId");
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
     const pinnedQueues: string[] = JSON.parse(
       localStorage.getItem("pinnedQueues") ?? "[]"
     );
@@ -54,8 +56,9 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
     return data;
   },
   createQueue: async (name: string, isMixed: boolean) => {
-    const chatId = localStorage.getItem("chatId");
-    const res = await fetch(`/api/queues?chatId=${chatId}`, {
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
+    await fetch(`/api/queues?chatId=${chatId}`, {
       method: "POST",
       body: JSON.stringify({
         name: name,
@@ -65,7 +68,8 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
     await get().fetchQueues();
   },
   updateQueue: async (queue: Queue) => {
-    const chatId = localStorage.getItem("chatId");
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
     await fetch(`/api/queues?chatId=${chatId}`, {
       method: "PUT",
       body: JSON.stringify(queue),
@@ -73,7 +77,8 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
     await get().fetchQueues();
   },
   removeQueue: async (queueId: string, isMixed: boolean) => {
-    const chatId = localStorage.getItem("chatId");
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
     await fetch(
       `/api/queues?chatId=${chatId}&queueId=${queueId}&isMixed=${isMixed}`,
       {

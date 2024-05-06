@@ -9,37 +9,45 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import TelegramLoginButton, { TelegramUser } from "telegram-login-button";
+import { useUsersStore } from "@/app/stores/users";
 
 const links = [
   {
     href: "/",
     title: "About",
+    protected: false,
   },
   {
     href: "/authors",
     title: "Authors",
+    protected: false,
   },
   {
     href: "/timetable",
     title: "Timetable",
+    protected: true,
   },
   {
     href: "/statistics",
     title: "Statistics",
+    protected: true,
   },
   {
     href: "/tasks",
     title: "Tasks",
+    protected: true,
   },
   {
     href: "/queues",
     title: "Queues",
+    protected: true,
   },
 ];
 
 export default function Navbar({ className }: { className?: string }) {
   const pathname = usePathname();
   const theme = useTheme();
+  const usersStore = useUsersStore();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm dark:shadow-muted">
@@ -60,28 +68,31 @@ export default function Navbar({ className }: { className?: string }) {
               </p>
             </div>
           </Link>
-          {links.map((link) => (
-            <Link
-              className={cn(
-                "hover:text-foreground/80 hidden md:flex",
-                link.href == pathname
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              )}
-              title={link.title + " page"}
-              aria-label={link.title + " page"}
-              key={link.title}
-              href={link.href}
-            >
-              {link.title}
-            </Link>
-          ))}
+          {links.map(
+            (link) =>
+              !(usersStore.chatId == null && link.protected) && (
+                <Link
+                  className={cn(
+                    "hover:text-foreground/80 hidden md:flex",
+                    link.href == pathname
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                  )}
+                  title={link.title + " page"}
+                  aria-label={link.title + " page"}
+                  key={link.title}
+                  href={link.href}
+                >
+                  {link.title}
+                </Link>
+              )
+          )}
         </div>
         <div className="flex-row items-center justify-center hidden sm:flex">
           <TelegramLoginButton
             buttonSize="medium"
             botName="lumios_bot"
-            dataOnauth={(user: TelegramUser) => console.log(user)}
+            dataOnauth={(user: TelegramUser) => usersStore.setUserId(user.id)}
           />
           <Link
             href="/tutorial"
@@ -128,11 +139,7 @@ function NavbarMenu() {
   const pathname = usePathname();
   const [toggled, setToggled] = useState(false);
   const theme = useTheme();
-
-  function getTheme() {
-    if (theme.theme == "system") return theme.systemTheme;
-    return theme.theme;
-  }
+  const usersStore = useUsersStore();
 
   return (
     <div className="md:hidden absolute left-4">

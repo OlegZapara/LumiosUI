@@ -5,9 +5,14 @@ import Image from "next/image";
 import { Suspense } from "react";
 
 const GridImage = (props: { img: string }) => (
-  <div className="flex flex-1 justify-center relative w-full h-full py-2 lg:py-8 px-6 min-h-[6rem] rounded-xl bg-gradient-to-br from-blue-50 dark:from-blue-900 dark:to-blue-950 to-blue-100">
+  <div className="flex flex-1 justify-center relative w-full h-full min-h-[10rem] rounded-xl bg-gradient-to-br">
     <div className="w-full h-full relative">
-      <Image src={props.img} fill alt="Create queues"></Image>
+      <Image
+        src={props.img}
+        fill
+        objectFit="contain"
+        alt="Create queues"
+      ></Image>
     </div>
   </div>
 );
@@ -16,7 +21,7 @@ const items = [
   {
     title: "Create queues",
     description: "Queues for managing student order in various situations",
-    header: <GridImage img="queues-title.svg"></GridImage>,
+    header: <GridImage img="/Queues1.jpg"></GridImage>,
     icon: <Users className="h-4 w-4 text-neutral-500" />,
   },
   {
@@ -52,7 +57,7 @@ export default function Home() {
       <Suspense fallback={<VortexMainLoading></VortexMainLoading>}>
         <VortextMain></VortextMain>
       </Suspense>
-      <BentoGrid className="max-w-6xl mx-auto">
+      <BentoGrid className="max-w-6xl mx-auto px-2">
         {items.map((item, i) => (
           <BentoGridItem
             key={i}

@@ -1,6 +1,7 @@
 import { Timetable, TimetableEntry } from "@/shared/types";
 import { create } from "zustand";
 import { produce } from "immer";
+import { useUsersStore } from "./users";
 
 type RowInfo = {
   week: number;
@@ -92,19 +93,22 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
     });
   },
   fetchTimetable: async () => {
-    const chatId = localStorage.getItem("chatId");
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
     const result = await fetch(`/api/timetables?chatId=${chatId}`);
     set({ timetable: await result.json() });
   },
   updateTimetable: async (newTimetable: Timetable[]) => {
-    const chatId = localStorage.getItem("chatId");
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
     await fetch(`/api/timetables?chatId=${chatId}`, {
       method: "PUT",
       body: JSON.stringify(newTimetable),
     });
   },
   createTimetable: async (newTimetable: Timetable[]) => {
-    const chatId = localStorage.getItem("chatId");
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
     await fetch(`/api/timetables?chatId=${chatId}`, {
       method: "POST",
       body: JSON.stringify(newTimetable),

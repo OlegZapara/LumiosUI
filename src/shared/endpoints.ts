@@ -21,3 +21,9 @@ export const DELETE_SIMPLE_QUEUE = (id: string) =>
   `${API_BASE}/queues/simple/${id}`;
 export const DELETE_MIXED_QUEUE = (id: string) =>
   `${API_BASE}/queues/mixed/${id}`;
+
+export const GET_USER = (userId: string) => `${API_BASE}/auth/user/${userId}`;
+export const UPDATE_USER_CHAT_ID = (userId: string) =>
+  `${API_BASE}/auth/bind/${userId}`;
+export const GET_USER_CHAT_ID = (userId: string) =>
+  `${API_BASE}/auth/unbind/${userId}`;

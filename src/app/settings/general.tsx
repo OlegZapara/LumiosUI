@@ -10,41 +10,51 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
-import { Copy } from "lucide-react";
+import { Copy, ExternalLink } from "lucide-react";
 import { useEffect, useState } from "react";
 import SettingsField from "./settings-field";
-
-const availableChats = ["Chat 1", "Chat 2", "Chat 3"];
+import { useUsersStore } from "../stores/users";
+import Link from "next/link";
 
 export default function General() {
   const [chatId, setChatId] = useState<string>("");
-  const username = "@username";
-  const [chat, setChat] = useState<string>(availableChats[0]);
+  const [chat, setChat] = useState<string>("");
   const { toast } = useToast();
 
+  const usersStore = useUsersStore();
+  const [userId, setUserId] = useState<string>("");
+  const saveUserId = () => {
+    usersStore.setUserId(parseInt(userId));
+  };
+  useEffect(() => {
+    setUserId(usersStore.userId ? usersStore.userId.toString() : "");
+    setChatId(usersStore.chatId ? usersStore.chatId.toString() : "");
+    setChat(
+      usersStore.user?.chats.find((x) => x.id == usersStore.chatId)?.name ?? ""
+    );
+  }, [usersStore.user, usersStore.userId, usersStore.chatId]);
+
   const saveChatId = () => {
-    localStorage.setItem("chatId", chatId);
+    usersStore.updateChatId(parseInt(chatId));
     toast({
       title: "Chat ID was updated",
       description: "Chat ID is set to " + chatId,
     });
   };
   const saveChat = () => {
+    const chatId = usersStore.user!.chats.find((x) => x.name == chat)!.id;
+    usersStore.updateChatId(chatId);
     toast({
       title: "Chat was updated",
       description: "Chat is set to " + chat,
     });
   };
   const copyUsername = () => {
-    navigator.clipboard.writeText(username);
+    navigator.clipboard.writeText("@" + usersStore.user?.username!);
     toast({
       title: "Username is copied to clipboard",
     });
   };
-
-  useEffect(() => {
-    setChatId(localStorage.getItem("chatId") ?? "");
-  }, []);
 
   return (
     <div className="w-full flex flex-col gap-4 ml-1">
@@ -64,7 +74,7 @@ export default function General() {
             description="Telegram account that is used for this website"
           >
             <div className="flex h-10 w-full justify-center items-center rounded-md border border-input bg-background px-3 py-2">
-              <span className="flex-grow">{username}</span>
+              <span className="flex-grow">@{usersStore.user?.username}</span>
               <Button
                 className="p-0 rounded-full aspect-square h-8"
                 variant="ghost"
@@ -78,6 +88,24 @@ export default function General() {
               className="border-red-500 text-red-500 hover:text-red-600 w-full sm:w-32"
             >
               Log out
+            </Button>
+          </SettingsField>
+          <SettingsField
+            name="User Id"
+            description="Telegram user Id (used for testing)"
+            developer
+          >
+            <Input
+              value={userId}
+              type="number"
+              onChange={(e) => setUserId(e.target.value)}
+            ></Input>
+            <Button
+              variant="outline"
+              className="w-full sm:w-32"
+              onClick={saveUserId}
+            >
+              Save
             </Button>
           </SettingsField>
         </div>
@@ -104,9 +132,9 @@ export default function General() {
             </Button>
           </SettingsField>
           <SettingsField name="Switch chat" description="Select another chat">
-            <Select defaultValue={chat} onValueChange={setChat}>
+            <Select value={chat} onValueChange={setChat}>
               <SelectTrigger>
-                <SelectValue placeholder="Font" />
+                <SelectValue placeholder="User chat" />
               </SelectTrigger>
               <Button
                 variant="outline"
@@ -116,13 +144,20 @@ export default function General() {
                 Save
               </Button>
               <SelectContent>
-                {availableChats.map((x) => (
-                  <SelectItem key={x} value={x}>
-                    {x}
+                {usersStore.user?.chats.map((x) => (
+                  <SelectItem key={x.id} value={x.name}>
+                    {x.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            <Link
+              href="/choose-chat"
+              prefetch={true}
+              className="h-10 w-10 px-0 py-0 aspect-square inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+            >
+              <ExternalLink size={16}></ExternalLink>
+            </Link>
           </SettingsField>
         </div>
       </section>

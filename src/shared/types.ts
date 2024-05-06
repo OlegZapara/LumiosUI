@@ -38,3 +38,16 @@ export type Queue = {
   isMixed: boolean;
   contents: User[];
 };
+
+export type TelegramChat = {
+  id: number;
+  admin: boolean;
+  name: string;
+  description: string;
+};
+
+export type TelegramUser = {
+  username: string;
+  accountId: string;
+  chats: TelegramChat[];
+};

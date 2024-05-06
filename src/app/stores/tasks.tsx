@@ -1,5 +1,6 @@
 import { Task } from "@/shared/types";
 import { create } from "zustand";
+import { useUsersStore } from "./users";
 
 interface TasksState {
   tasks: Task[];
@@ -12,13 +13,15 @@ interface TasksState {
 export const useTasksStore = create<TasksState>((set, get) => ({
   tasks: [],
   fetchTasks: async () => {
-    const chatId = localStorage.getItem("chatId");
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
     const response = await fetch(`/api/tasks?chatId=${chatId}`);
     const data = await response.json();
     set({ tasks: data });
   },
   createTask: async (task: Task) => {
-    const chatId = localStorage.getItem("chatId");
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
     await fetch(`/api/tasks?chatId=${chatId}`, {
       method: "POST",
       body: JSON.stringify(task),
@@ -26,7 +29,8 @@ export const useTasksStore = create<TasksState>((set, get) => ({
     await get().fetchTasks();
   },
   updateTask: async (task: Task) => {
-    const chatId = localStorage.getItem("chatId");
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
     await fetch(`/api/tasks?chatId=${chatId}&taskId=${task.id}`, {
       method: "PUT",
       body: JSON.stringify(task),

@@ -8,45 +8,42 @@ import ChatCard from "./chat-card";
 import Loading from "./loading";
 import NoChat from "./no-chat";
 import { useRouter } from "next/navigation";
-
-type Chat = {
-  image: string;
-  name: string;
-  description: string;
-};
+import { useUsersStore } from "../stores/users";
+import { TelegramChat, TelegramUser } from "@/shared/types";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function ChooseChatPage() {
   const router = useRouter();
-  const [chats, setChats] = useState<Chat[]>([]);
+  const { toast } = useToast();
   const [loading, setLoading] = useState<boolean>(true);
   const [searchString, setSearchString] = useState<string>("");
-  const [filteredChats, setFilteredChats] = useState<Chat[]>([]);
+  const [filteredChats, setFilteredChats] = useState<TelegramChat[]>([]);
+  const usersStore = useUsersStore();
 
   useEffect(() => {
-    fetch("/api/chats")
-      .then((res) => res.json())
-      .then((data: Chat[]) => {
-        if (data.length === 1) {
-          console.log("you're chat is " + data[0].name);
-          router.push("/");
-        }
-        setChats(data);
-        setFilteredChats(data);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
-  }, [router]);
+    if (usersStore.user === null) return;
+    if (usersStore.user.chats.length === 1) {
+      usersStore.updateChatId(usersStore.user.chats[0].id);
+      router.push("/");
+      toast({
+        title: `Welcome to ${usersStore.user.chats[0].name}`,
+        duration: 3000,
+      });
+    }
+    setFilteredChats(usersStore.user.chats);
+    setLoading(false);
+  }, [router, toast, usersStore, usersStore.user]);
 
   const filter = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchString(e.target.value);
     setFilteredChats(
-      chats.filter((x) =>
+      usersStore.user!.chats.filter((x) =>
         x.name.toLowerCase().includes(e.target.value.toLowerCase())
       )
     );
   };
   if (loading) return <Loading />;
-  if (chats.length === 0) return <NoChat />;
+  if (usersStore.user!.chats.length === 0) return <NoChat />;
 
   return (
     <div className="md:container mt-6">
