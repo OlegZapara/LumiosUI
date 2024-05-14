@@ -21,11 +21,14 @@ import {
 } from "recharts";
 import { useUsersStore } from "../stores/users";
 import { RatingInfo } from "@/shared/types";
+import Image from "next/image";
+import { CircleUser } from "lucide-react";
 
 export default function RatingChart() {
   const MINIMAL_RATING = 150;
   const usersStore = useUsersStore();
   const [data, setData] = useState<RatingInfo[]>([]);
+  const [activeUser, setActiveUser] = useState<RatingInfo | null>();
 
   useEffect(() => {
     if (!usersStore.chatId) return;
@@ -46,10 +49,9 @@ export default function RatingChart() {
       .catch((err) => console.error(err));
   }, [usersStore.chatId]);
 
-  const [activeLabel, setActiveLabel] = useState<string>("");
-
   function handleClick(data: any, index: number) {
-    setActiveLabel(data.activeLabel);
+    console.log(data.activePayload[0].payload);
+    setActiveUser(data.activePayload[0].payload);
   }
 
   return (
@@ -78,30 +80,61 @@ export default function RatingChart() {
             </ResponsiveContainer>
           </SheetTrigger>
           <SheetContent>
-            <SheetHeader>
-              <SheetTitle>{activeLabel}</SheetTitle>
-              <SheetDescription className="w-full flex justify-center">
-                <Skeleton className="aspect-square w-4/5 rounded-full"></Skeleton>
-              </SheetDescription>
-              <SheetDescription>
-                Detailed information about {activeLabel}
-              </SheetDescription>
-              <SheetTitle className="flex flex-row items-center w-full justify-between">
-                First name: <Skeleton className="h-10 w-52"></Skeleton>
-              </SheetTitle>
-              <SheetTitle className="flex flex-row items-center w-full justify-between">
-                Last name: <Skeleton className="h-10 w-52"></Skeleton>
-              </SheetTitle>
-              <SheetTitle className="flex flex-row items-center w-full justify-between">
-                Rating: <Skeleton className="h-10 w-52"></Skeleton>
-              </SheetTitle>
-              <SheetTitle className="flex flex-row items-center w-full justify-between">
-                Description: <Skeleton className="h-10 w-52"></Skeleton>
-              </SheetTitle>
-            </SheetHeader>
+            <UserInfo user={activeUser!}></UserInfo>
           </SheetContent>
         </Sheet>
       </CardBody>
     </Card>
+  );
+}
+
+function UserInfo({ user }: { user: RatingInfo }) {
+  const [image, setImage] = useState("");
+  const [isImage, setIsImage] = useState(true);
+  const [name, setName] = useState("");
+  useEffect(() => {
+    fetch(`/api/user/photo?userId=${user.userId}`)
+      .then((image) => image.blob())
+      .then((data) => {
+        setIsImage(data.type !== "text/plain");
+        setImage(URL.createObjectURL(data));
+      });
+  }, [user.userId]);
+  useEffect(() => {
+    fetch(`/api/user?userId=${user.userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.name) setName("");
+        else setName(data.name.replace("null", ""));
+      });
+  }, [user.userId]);
+
+  return (
+    <SheetHeader>
+      <SheetDescription className="w-full flex justify-center">
+        <Image
+          src={isImage ? image : "/user.png"}
+          alt={`${user.username} profile image`}
+          className="rounded-full"
+          height={400}
+          width={400}
+        ></Image>
+      </SheetDescription>
+      <SheetDescription>Detailed information about user</SheetDescription>
+      <SheetTitle className="flex flex-row items-center w-full justify-between">
+        Username:{" "}
+        <span className="h-10 w-52 flex items-center">@{user.username}</span>
+      </SheetTitle>
+      <SheetTitle className="flex flex-row items-center w-full justify-between">
+        Name:{" "}
+        <span className="h-10 w-52 flex items-center">
+          {name ? name : <span className="text-muted-foreground">Hidden</span>}
+        </span>
+      </SheetTitle>
+      <SheetTitle className="flex flex-row items-center w-full justify-between">
+        Rating:{" "}
+        <span className="h-10 w-52 flex items-center">{user.reverence}</span>
+      </SheetTitle>
+    </SheetHeader>
   );
 }

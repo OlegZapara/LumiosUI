@@ -27,6 +27,8 @@ export const UPDATE_USER_CHAT_ID = (userId: string) =>
   `${API_BASE}/auth/bind/${userId}`;
 export const GET_USER_CHAT_ID = (userId: string) =>
   `${API_BASE}/auth/unbind/${userId}`;
+export const GET_USER_PHOTO = (userId: string) =>
+  `${API_BASE}/auth/photo/${userId}`;
 
 export const GET_RATING = (chatId: string, date: string) =>
   `${API_BASE}/records/rating?chatId=${chatId}&date=${date}`;

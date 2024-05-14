@@ -1,4 +1,4 @@
-import { GET_USER } from "@/shared/endpoints";
+import { GET_USER_PHOTO } from "@/shared/endpoints";
 import { NextRequest, NextResponse } from "next/server";
 
 function getApiKey() {
@@ -11,9 +11,8 @@ function getApiKey() {
 
 export async function GET(req: NextRequest) {
   const userId = req.nextUrl.searchParams.get("userId");
-  const apiResponse = await fetch(GET_USER(userId!), {
+  const apiResponse = await fetch(GET_USER_PHOTO(userId!), {
     headers: {
-      "content-type": "application/json",
       "X-API-KEY": getApiKey(),
     },
   });
@@ -22,6 +21,7 @@ export async function GET(req: NextRequest) {
       status: apiResponse.status,
     });
   }
-  const data = await apiResponse.json();
-  return NextResponse.json(data);
+
+  const data = await apiResponse.blob();
+  return new NextResponse(data);
 }
