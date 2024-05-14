@@ -55,6 +55,9 @@ export default function General() {
       title: "Username is copied to clipboard",
     });
   };
+  const logout = () => {
+    usersStore.logout();
+  };
 
   return (
     <div className="w-full flex flex-col gap-4 ml-1">
@@ -85,6 +88,7 @@ export default function General() {
             </div>
             <Button
               variant="outline"
+              onClick={logout}
               className="border-red-500 text-red-500 hover:text-red-600 w-full sm:w-32"
             >
               Log out
@@ -132,7 +136,7 @@ export default function General() {
             </Button>
           </SettingsField>
           <SettingsField name="Switch chat" description="Select another chat">
-            <Select value={chat} onValueChange={setChat}>
+            {/* <Select value={chat} onValueChange={setChat}>
               <SelectTrigger>
                 <SelectValue placeholder="User chat" />
               </SelectTrigger>
@@ -150,13 +154,13 @@ export default function General() {
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select>
+            </Select> */}
             <Link
               href="/choose-chat"
               prefetch={true}
-              className="h-10 w-10 px-0 py-0 aspect-square inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+              className="flex flex-row gap-2 h-10 w-full max-w-96 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground"
             >
-              <ExternalLink size={16}></ExternalLink>
+              Switch chat <ExternalLink size={16}></ExternalLink>
             </Link>
           </SettingsField>
         </div>

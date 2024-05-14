@@ -51,3 +51,18 @@ export type TelegramUser = {
   accountId: string;
   chats: TelegramChat[];
 };
+
+export type RatingInfo = {
+  id: number;
+  username: string;
+  userId: string;
+  reverence: number;
+};
+
+export type MessageInfo = {
+  username: string;
+  messages: number;
+  dayMessages: any;
+  dailyMessages: any;
+  averageDailyMessages: any;
+};

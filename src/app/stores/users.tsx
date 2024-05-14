@@ -2,21 +2,29 @@ import { TelegramUser } from "@/shared/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface UsersStore {
+type UsersState = {
   user: TelegramUser | null;
   userId: number | null;
   chatId: number | null;
+};
+
+type UsersActions = {
   fetchUser: (userId: number) => Promise<TelegramUser>;
   setUserId: (userId: number) => Promise<void>;
   updateChatId: (chatId: number) => Promise<void>;
-}
+  logout: () => void;
+};
+
+const initialState: UsersState = {
+  user: null,
+  userId: null,
+  chatId: null,
+};
 
 export const useUsersStore = create(
-  persist<UsersStore>(
+  persist<UsersState & UsersActions>(
     (set, get) => ({
-      user: null,
-      userId: null,
-      chatId: null,
+      ...initialState,
       fetchUser: async (userId: number) => {
         const response = await fetch(`api/user?userId=${userId}`);
         const data = await response.json();
@@ -39,6 +47,9 @@ export const useUsersStore = create(
           method: "POST",
         });
         set({ chatId });
+      },
+      logout: () => {
+        set({ ...initialState });
       },
     }),
     {

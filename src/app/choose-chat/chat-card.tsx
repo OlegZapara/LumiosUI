@@ -5,27 +5,43 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { TelegramChat } from "@/shared/types";
-import Image from "next/image";
-import React from "react";
-import { useUsersStore } from "../stores/users";
-import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
+import { TelegramChat } from "@/shared/types";
+import {
+  MessageCircle,
+  MessageSquare,
+  MessageSquareDashed,
+  MessageSquareMore,
+  MessageSquareText,
+  MessagesSquare,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useUsersStore } from "../stores/users";
 
 interface ChatCardProps extends TelegramChat {
   image?: string;
 }
+
+const getRandomIcon = () => {
+  const randomChoice = Math.floor(Math.random() * 6);
+  if (randomChoice == 0) return <MessageCircle></MessageCircle>;
+  if (randomChoice == 1) return <MessageSquare></MessageSquare>;
+  if (randomChoice == 2) return <MessageSquareText></MessageSquareText>;
+  if (randomChoice == 3) return <MessagesSquare></MessagesSquare>;
+  if (randomChoice == 4) return <MessageSquareMore></MessageSquareMore>;
+  return <MessageSquareDashed></MessageSquareDashed>;
+};
 
 export default function ChatCard(props: ChatCardProps) {
   const usersStore = useUsersStore();
   const router = useRouter();
   const { toast } = useToast();
   const getShortName = (name: string) => {
-    if (name.length > 20) return name.slice(0, 20) + "...";
+    if (name.length > 30) return name.slice(0, 30) + "...";
     return name;
   };
   const getShortDescription = (description: string) => {
-    if (description.length > 175) return description.slice(0, 175) + "...";
+    if (description.length > 125) return description.slice(0, 125) + "...";
     return description;
   };
   const chooseChat = () => {
@@ -44,12 +60,9 @@ export default function ChatCard(props: ChatCardProps) {
     >
       <CardHeader>
         <CardTitle className="flex flex-row items-center justify-start gap-5">
-          <Image
-            alt={props.name}
-            src={props.image ?? "/lumios.png"}
-            width={50}
-            height={50}
-          ></Image>
+          <div className="aspect-square rounded-full bg-muted flex justify-center items-center p-3">
+            {getRandomIcon()}
+          </div>
           <span>{getShortName(props.name)}</span>
         </CardTitle>
       </CardHeader>

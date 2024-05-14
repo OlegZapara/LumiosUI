@@ -1,16 +1,10 @@
+"use client";
 import { CardBody } from "@/components/ui/3d-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import React from "react";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
-
-type DataType = {
-  name: string;
-  value: number;
-};
-
-interface MessagePieChartProps {
-  data: DataType[];
-}
+import { MessageInfo } from "@/shared/types";
+import React, { useEffect, useState } from "react";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { useUsersStore } from "../stores/users";
 
 interface LabelProps {
   index: number;
@@ -47,7 +41,37 @@ const renderCustomizedLabel = ({
   );
 };
 
-export default function MessagePieChart(props: MessagePieChartProps) {
+const CustomTooltip = ({ active, payload, username }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="rounded-xl bg-white px-4 py-3 ring-2 ring-black font-semibold text-black [&_*]:text-black">
+        <p className="label">{`${payload[0].payload.username} : ${payload[0].value} messages`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+export default function MessagePieChart() {
+  const [data, setData] = useState<MessageInfo[]>([]);
+  const usersStore = useUsersStore();
+
+  useEffect(() => {
+    if (!usersStore.chatId) return;
+    const d = new Date();
+    const today = d.toISOString().split("T")[0];
+    d.setDate(d.getDate() - 7);
+    const weekAgo = d.toISOString().split("T")[0];
+    fetch(
+      `/api/statistics/messages?chatId=${usersStore.chatId}&startDate=${weekAgo}&endDate=${today}`
+    )
+      .then((res) => res.json())
+      .then((data: MessageInfo[]) =>
+        setData(data.sort((a, b) => b.messages - a.messages).slice(0, 10))
+      );
+  }, [usersStore.chatId]);
+
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -58,15 +82,15 @@ export default function MessagePieChart(props: MessagePieChartProps) {
       <CardBody className="grid grid-cols-4 gap-4 w-full">
         <div className="col-span-1 flex flex-col justify-center items-end">
           <div className="flex flex-col items-start w-auto">
-            {props.data.slice(0, 5).map((data, i) => (
+            {data.slice(0, 5).map((data, i) => (
               <div
                 className="py-2 px-4 font-semibold text-lg flex flex-row justify-between gap-6 w-full"
-                key={data.name}
+                key={data.username}
               >
                 <div>
-                  {i + 1}. {data.name}
+                  {i + 1}. {data.username}
                 </div>
-                <div className="underline">{data.value}</div>
+                <div className="underline">{data.messages}</div>
               </div>
             ))}
           </div>
@@ -75,16 +99,16 @@ export default function MessagePieChart(props: MessagePieChartProps) {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart width={500} height={500}>
               <Pie
-                data={props.data}
+                data={data}
                 cx="50%"
                 cy="50%"
                 className="focus:outline-none"
                 labelLine={false}
                 label={renderCustomizedLabel}
                 outerRadius={150}
-                dataKey="value"
+                dataKey="messages"
               >
-                {props.data.map((entry, index) => (
+                {data.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     style={
@@ -97,20 +121,21 @@ export default function MessagePieChart(props: MessagePieChartProps) {
                   />
                 ))}
               </Pie>
+              <Tooltip content={<CustomTooltip></CustomTooltip>}></Tooltip>
             </PieChart>
           </ResponsiveContainer>
         </div>
         <div className="col-span-1 flex flex-col justify-center items-start">
           <div className="flex flex-col items-start w-auto">
-            {props.data.slice(5, 10).map((data, i) => (
+            {data.slice(5, 10).map((data, i) => (
               <div
                 className="py-2 px-4 font-semibold text-lg flex flex-row justify-between gap-6 w-full"
-                key={data.name}
+                key={data.username}
               >
                 <div>
-                  {i + 6}. {data.name}
+                  {i + 6}. {data.username}
                 </div>
-                <div className="underline">{data.value}</div>
+                <div className="underline">{data.messages}</div>
               </div>
             ))}
           </div>
