@@ -89,11 +89,23 @@ export default function Navbar({ className }: { className?: string }) {
           )}
         </div>
         <div className="flex-row items-center justify-center hidden sm:flex">
-          <TelegramLoginButton
-            buttonSize="medium"
-            botName="lumios_bot"
-            dataOnauth={(user: TelegramUser) => usersStore.setUserId(user.id)}
-          />
+          {usersStore.userId == null || usersStore.user == null ? (
+            <TelegramLoginButton
+              buttonSize="medium"
+              botName="lumios_bot"
+              dataOnauth={(user: TelegramUser) => usersStore.setUserId(user.id)}
+            />
+          ) : (
+            <Link
+              href="/settings"
+              title="User settings"
+              aria-label="User settings"
+              className="flex justify-center items-center rounded-md hover:bg-muted py-2 px-4 font-semibold"
+            >
+              @{usersStore.user.username}
+            </Link>
+          )}
+
           <Link
             href="/tutorial"
             title="Turorial page"
@@ -171,6 +183,13 @@ function NavbarMenu() {
               {link.title}
             </Link>
           ))}
+          {(usersStore.userId == null || usersStore.user == null) && (
+            <TelegramLoginButton
+              buttonSize="large"
+              botName="lumios_bot"
+              dataOnauth={(user: TelegramUser) => usersStore.setUserId(user.id)}
+            />
+          )}
           <Link
             href="/tutorial"
             title="Turorial page"

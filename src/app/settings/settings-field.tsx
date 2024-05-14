@@ -1,7 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
-import { ReactNode, SetStateAction } from "react";
+import { ReactNode } from "react";
 
 interface SettingsFieldProps {
   name: string;
@@ -11,6 +8,9 @@ interface SettingsFieldProps {
 }
 
 export default function SettingsField(props: SettingsFieldProps) {
+  if (props.developer && process.env.NODE_ENV === "production") {
+    return null;
+  }
   return (
     <div
       className={`w-full flex flex-col gap-2 relative p-2 sm:p-4 ${

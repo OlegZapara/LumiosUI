@@ -136,25 +136,6 @@ export default function General() {
             </Button>
           </SettingsField>
           <SettingsField name="Switch chat" description="Select another chat">
-            {/* <Select value={chat} onValueChange={setChat}>
-              <SelectTrigger>
-                <SelectValue placeholder="User chat" />
-              </SelectTrigger>
-              <Button
-                variant="outline"
-                className="w-full sm:w-32"
-                onClick={saveChat}
-              >
-                Save
-              </Button>
-              <SelectContent>
-                {usersStore.user?.chats.map((x) => (
-                  <SelectItem key={x.id} value={x.name}>
-                    {x.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select> */}
             <Link
               href="/choose-chat"
               prefetch={true}
