@@ -3,8 +3,8 @@ import { CardBody } from "@/components/ui/3d-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { RatingInfo } from "@/shared/types";
-import { ChevronUp, ChevronsUpDown, ChevronDown } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useUsersStore } from "../stores/users";
 
 async function fetchRatingInfo(chatId: number, date: string) {
@@ -74,7 +74,7 @@ export default function RatingChangeList() {
     }
   }
   return (
-    <Card className="col-span-1 h-full">
+    <Card className="col-span-4 md:col-span-1 h-full">
       <CardHeader>
         <CardTitle>Weekly change</CardTitle>
       </CardHeader>

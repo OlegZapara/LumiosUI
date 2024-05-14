@@ -1,5 +1,6 @@
 import { CardBody } from "@/components/ui/3d-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { MessageInfo } from "@/shared/types";
 import { useEffect, useState } from "react";
 import {
   Bar,
@@ -12,7 +13,6 @@ import {
   YAxis,
 } from "recharts";
 import { useUsersStore } from "../stores/users";
-import { MessageInfo } from "@/shared/types";
 
 const getPath = (x: number, y: number, width: number, height: number) => {
   return `M${x},${y + height}C${x + width / 3},${y + height} ${x + width / 2},${
@@ -71,7 +71,7 @@ export default function MessageBarChart() {
   }, [usersStore.chatId]);
   return (
     <>
-      <Card className="col-span-2">
+      <Card className="col-span-4 md:col-span-2">
         <CardHeader>
           <CardTitle className="flex flex-col gap-2">
             Number of messages throughout the week

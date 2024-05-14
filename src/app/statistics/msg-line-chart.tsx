@@ -53,9 +53,9 @@ export default function MessageLineChart() {
   return (
     <Card className="col-span-4">
       <CardHeader>
-        <CardTitle>
-          Number of messages throughout the day (total:{" "}
-          {data.reduce((acc, { value }) => acc + value, 0)})
+        <CardTitle className="flex flex-row justify-between">
+          Number of messages throughout the day.
+          <span>Total: {data.reduce((acc, { value }) => acc + value, 0)}</span>
         </CardTitle>
       </CardHeader>
       <CardBody className="w-full">

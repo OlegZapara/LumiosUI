@@ -10,7 +10,7 @@ export default function Loading() {
         <CardHeader>
           <CardTitle>
             <div className="flex gap-6 flex-col md:flex-row w-full justify-between items-center px-4">
-              <div className="mt-3 flex flex-col gap-1">
+              <div className="mt-3 flex flex-col gap-1 animate-slowly-show">
                 <Skeleton className="h-7 w-96"></Skeleton>
                 <Skeleton className="h-5 w-72"></Skeleton>
               </div>
@@ -27,7 +27,7 @@ export default function Loading() {
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="w-full justify-center gap-6 rounded-lg p-4 md:p-8 grid grid-cols-6 h-auto">
+        <CardContent className="w-full justify-center gap-6 rounded-lg p-4 md:p-8 grid grid-cols-6 h-auto animate-slowly-show">
           <LoadingCard></LoadingCard>
           <LoadingCard></LoadingCard>
           <LoadingCard></LoadingCard>
@@ -42,7 +42,7 @@ function LoadingCard() {
     <Card className="col-span-6 sm:col-span-3 lg:col-span-2 cursor-pointer">
       <CardHeader>
         <CardTitle className="flex flex-row items-center justify-start gap-5">
-          <Skeleton className="h-[50px] w-[50px] aspect-square rounded-full"></Skeleton>
+          <Skeleton className="h-16 w-16 aspect-square rounded-full"></Skeleton>
           <Skeleton className="w-full h-8"></Skeleton>
         </CardTitle>
       </CardHeader>

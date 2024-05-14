@@ -10,6 +10,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
+import { RatingInfo } from "@/shared/types";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import {
   Bar,
@@ -20,9 +22,6 @@ import {
   YAxis,
 } from "recharts";
 import { useUsersStore } from "../stores/users";
-import { RatingInfo } from "@/shared/types";
-import Image from "next/image";
-import { CircleUser } from "lucide-react";
 
 export default function RatingChart() {
   const MINIMAL_RATING = 150;
@@ -50,12 +49,11 @@ export default function RatingChart() {
   }, [usersStore.chatId]);
 
   function handleClick(data: any, index: number) {
-    console.log(data.activePayload[0].payload);
     setActiveUser(data.activePayload[0].payload);
   }
 
   return (
-    <Card className="col-span-3 h-full">
+    <Card className="col-span-4 md:col-span-3 h-full">
       <CardHeader>
         <CardTitle>Rating overview</CardTitle>
       </CardHeader>
@@ -91,6 +89,7 @@ export default function RatingChart() {
 function UserInfo({ user }: { user: RatingInfo }) {
   const [image, setImage] = useState("");
   const [isImage, setIsImage] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [name, setName] = useState("");
   useEffect(() => {
     fetch(`/api/user/photo?userId=${user.userId}`)
@@ -106,20 +105,27 @@ function UserInfo({ user }: { user: RatingInfo }) {
       .then((data) => {
         if (!data.name) setName("");
         else setName(data.name.replace("null", ""));
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [user.userId]);
 
   return (
     <SheetHeader>
-      <SheetDescription className="w-full flex justify-center">
-        <Image
-          src={isImage ? image : "/user.png"}
-          alt={`${user.username} profile image`}
-          className="rounded-full"
-          height={400}
-          width={400}
-        ></Image>
-      </SheetDescription>
+      <div className="w-full flex justify-center">
+        {isLoading || image == "" ? (
+          <Skeleton className="w-full aspect-square rounded-full"></Skeleton>
+        ) : (
+          <Image
+            src={isImage ? image : "/user.png"}
+            alt={`${user.username} profile image`}
+            className="rounded-full"
+            height={400}
+            width={400}
+          ></Image>
+        )}
+      </div>
       <SheetDescription>Detailed information about user</SheetDescription>
       <SheetTitle className="flex flex-row items-center w-full justify-between">
         Username:{" "}

@@ -73,14 +73,14 @@ export default function MessagePieChart() {
   }, [usersStore.chatId]);
 
   return (
-    <Card className="col-span-4">
+    <Card className="col-span-4 row-span-3 md:row-span-1">
       <CardHeader>
         <CardTitle>
           Message overview (number of messages per person in last week)
         </CardTitle>
       </CardHeader>
       <CardBody className="grid grid-cols-4 gap-4 w-full">
-        <div className="col-span-1 flex flex-col justify-center items-end">
+        <div className="col-span-4 md:col-span-1 flex flex-col justify-center items-end">
           <div className="flex flex-col items-start w-auto">
             {data.slice(0, 5).map((data, i) => (
               <div
@@ -95,7 +95,7 @@ export default function MessagePieChart() {
             ))}
           </div>
         </div>
-        <div className="col-span-2">
+        <div className="col-span-4 md:col-span-2">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart width={500} height={500}>
               <Pie
@@ -125,7 +125,7 @@ export default function MessagePieChart() {
             </PieChart>
           </ResponsiveContainer>
         </div>
-        <div className="col-span-1 flex flex-col justify-center items-start">
+        <div className="col-span-4 md:col-span-1 flex flex-col justify-center items-start">
           <div className="flex flex-col items-start w-auto">
             {data.slice(5, 10).map((data, i) => (
               <div

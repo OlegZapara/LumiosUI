@@ -1,7 +1,8 @@
 "use client";
 import { CardBody } from "@/components/ui/3d-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import React, { useEffect, useState } from "react";
+import { MessageInfo } from "@/shared/types";
+import { useEffect, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -12,7 +13,6 @@ import {
   YAxis,
 } from "recharts";
 import { useUsersStore } from "../stores/users";
-import { MessageInfo } from "@/shared/types";
 
 type WeekMessageInfo = {
   day: string;
@@ -82,9 +82,14 @@ export default function AverageMessageAreaChart() {
   }, [usersStore.chatId]);
 
   return (
-    <Card className="col-span-2">
+    <Card className="col-span-4 md:col-span-2">
       <CardHeader>
-        <CardTitle>Comparison of week messages</CardTitle>
+        <CardTitle className="flex flex-col gap-2">
+          Comparison of week messages
+          <span>
+            Total average: {data.reduce((acc, { average }) => acc + average, 0)}
+          </span>
+        </CardTitle>
       </CardHeader>
       <CardBody className="w-full">
         <ResponsiveContainer width="100%" height="100%">

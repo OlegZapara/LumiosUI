@@ -12,11 +12,11 @@ import RatingChart from "./rating-chart";
 export default function Rating() {
   return (
     <div>
-      <Card className="w-[calc(100% - 3rem)] mx-6 my-2">
+      <Card className="w-[calc(100% - 3rem)] md:mx-6 md:my-2">
         <CardHeader>
           <CardTitle>Statistics for IP-32</CardTitle>
         </CardHeader>
-        <CardBody className="w-[calc(100%-2rem)] grid grid-cols-4 gap-4 mx-4 mb-4 h-full">
+        <CardBody className="w-[calc(100%-2rem)] grid grid-cols-4 grid-rows-4 gap-4 mx-4 mb-4 h-full">
           <RatingChart></RatingChart>
           <RatingChangeList></RatingChangeList>
           <MessagePieChart></MessagePieChart>

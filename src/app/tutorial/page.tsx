@@ -31,73 +31,82 @@ export default function TutorialPage() {
           <section id="Queues" className="w-full flex flex-col gap-4">
             <div className="pl-4 text-xl font-bold">Queues</div>
             <TelegramCommandWithExample
-              command="/queue <Назва> - Створити чергу із заданою назвою"
-              examples={["/queue Lab Work №1", "/queue Lab1"]}
+              command="/queue <Name> - Create new queue with given name"
+              examples={["/queue Lab Work №1", "/queue Lab1", "/queue"]}
             />
             <TelegramCommandWithExample
-              command="/mixed <Назва> - Створити мішану чергу із заданою назвою"
-              examples={["/mixed Lab Work №2", "/mixed Lab2"]}
+              command="/mixed <Name> - Created new mixed queue with given name"
+              examples={["/mixed Lab Work №2", "/mixed Lab2", "/mixed"]}
             />
             <div className="pl-4">
-              Подальша взаємодія із чергами реалізується натисканням відповідних
-              кнопок під повідомленням від боту:
+              Further interaction with the queues is implemented by pressing the
+              appropriate buttons under the message from the bot:
               <ul>
-                <li>- Join 🔰 - Доєднатися у кінець черги</li>
+                <li>- Join 🔰 - Join the end of the queue</li>
                 <li>
-                  - I&#39;m done ✅ - Вийти з черги, і сповістити наступного
+                  - I&#39;m done ✅ - Leave the queue and notify the next person
                 </li>
-                <li>- Leave 🔄 - Вийти не з голови черги, без сповіщення</li>
-                <li>- Delete ❌ - Видалити чергу, лише для адміністраторів</li>
-                <li>- Notify ⚠ - Сповістити голову черги про його позицію</li>
-                <li>- Shuffle 🔀 - Перемішати чергу у випадковому порядку</li>
+                <li>
+                  - Leave 🔄 - Leave from the middle of the queue without
+                  notification
+                </li>
+                <li>- Delete ❌ - Delete queue, for administrators only</li>
+                <li>
+                  - Notify ⚠ - Notify the head of the queue about his position
+                </li>
+                <li>
+                  - Shuffle 🔀 - Shuffle the queue in random order, for
+                  administrators only
+                </li>
               </ul>
             </div>
           </section>
           <Separator></Separator>
           <section id="Rating" className="w-full flex flex-col gap-4">
             <div className="pl-4 text-xl font-bold">Rating</div>
-            <TelegramCommand command="/stats - Переглянути загальну статистику поваги в цьому чаті" />
-            <TelegramCommand command="/me - Переглянути власну статистику поваги в цьому чаті" />
-            <TelegramCommand command="/shop - Збільшити щоденний ліміт кредитів" />
+            <TelegramCommand command="/stats - View overall chat rating statistics" />
+            <TelegramCommand command="/me - View your own rating stats in this chat" />
             <div className="pl-4">
-              Повага змінюється завдяки реакціям на повідомлення інших
-              користувачів, кожна реакція має своє додатнє або від&#39;ємне
-              значення поваги. Підтримуються майже всі звичайні реакції в
-              телеграмі.
+              Rating changes through reactions to others&apos; messages users,
+              each reaction has its positive or negative the meaning of rating.
+              Almost all common telegram reactions are supported
             </div>
           </section>
           <Separator></Separator>
           <section id="Timetable" className="w-full flex flex-col gap-4">
             <div className="pl-4 text-xl font-bold">Timetable</div>
-            <TelegramCommand command="/feed - Згенерувати посилання на веб-редактор" />
-            <TelegramCommand command="/today - Подивитися розклад на сьогодні" />
-            <TelegramCommand command="/week - Подивитися розклад на тиждень" />
+            <TelegramCommand command="/editor - Get link to Lumios Bot website" />
+            <TelegramCommand command="/today - View timetable for today" />
+            <TelegramCommand command="/tomorrow - View timetable for tomorrow" />
+            <TelegramCommand command="/week - View timetable for the week" />
+            <TelegramCommand command="/now - Get link to the current lesson" />
+            <TelegramCommand command="/next - Get link to the next lesson" />
           </section>
           <Separator></Separator>
           <section id="Tasks" className="w-full flex flex-col gap-4">
             <div className="pl-4 text-xl font-bold">Tasks</div>
             <TelegramCommandWithExample
-              command="/task [dd.mm.year] [HH:mm] [Назва] <Посилання> - Створити"
+              command="/task [dd.mm.year] [HH:mm] [Name] <Посилання> - Create task"
               examples={[
                 "/task 31.10.2024 10:00 MyTask",
                 "/task 31.10.2024 12:00 AnotherTask https://link/to/task.com",
               ]}
             />
             <TelegramCommandWithExample
-              command="/edit [ID] [dd.mm.year] [HH:mm] [Назва] <Посилання> - Редагувати"
+              command="/edit [ID] [dd.mm.year] [HH:mm] [Name] <Посилання> - Edit task"
               examples={[
                 "/edit 23 31.10.2024 11:00 MyUpdatedTask",
                 "/edit 18 31.10.2024 13:00 AnotherTask https://updatedLink/to/task.com",
               ]}
             />
-            <TelegramCommand command="/due- Список усіх завдань" />
+            <TelegramCommand command="/due - List all tasks" />
           </section>
           <Separator></Separator>
           <section id="Arguments" className="w-full flex flex-col gap-4">
             <div className="pl-4 text-xl font-bold">Arguments</div>
             <div className="pl-4">
               {
-                "<Аргумент> і [Аргумент] відрізняються. В чому різниця? [Аргумент] є обов'язковим, <Аргумент>  - ні"
+                "<Argument> and [Argument] are not the same. What is the difference? [Argument] is required, but <Argument> is not"
               }
             </div>
           </section>

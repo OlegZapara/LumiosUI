@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardContent,
@@ -17,6 +18,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUsersStore } from "../stores/users";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface ChatCardProps extends TelegramChat {
   image?: string;
@@ -24,18 +27,32 @@ interface ChatCardProps extends TelegramChat {
 
 const getRandomIcon = () => {
   const randomChoice = Math.floor(Math.random() * 6);
-  if (randomChoice == 0) return <MessageCircle></MessageCircle>;
-  if (randomChoice == 1) return <MessageSquare></MessageSquare>;
-  if (randomChoice == 2) return <MessageSquareText></MessageSquareText>;
-  if (randomChoice == 3) return <MessagesSquare></MessagesSquare>;
-  if (randomChoice == 4) return <MessageSquareMore></MessageSquareMore>;
-  return <MessageSquareDashed></MessageSquareDashed>;
+  if (randomChoice == 0) return <MessageCircle size={30}></MessageCircle>;
+  if (randomChoice == 1) return <MessageSquare size={30}></MessageSquare>;
+  if (randomChoice == 2)
+    return <MessageSquareText size={30}></MessageSquareText>;
+  if (randomChoice == 3) return <MessagesSquare size={30}></MessagesSquare>;
+  if (randomChoice == 4)
+    return <MessageSquareMore size={30}></MessageSquareMore>;
+  return <MessageSquareDashed size={30}></MessageSquareDashed>;
 };
 
 export default function ChatCard(props: ChatCardProps) {
+  const [image, setImage] = useState("");
+  const [isImage, setIsImage] = useState(false);
   const usersStore = useUsersStore();
   const router = useRouter();
   const { toast } = useToast();
+
+  useEffect(() => {
+    fetch(`/api/user/photo?userId=${props.id}`)
+      .then((image) => image.blob())
+      .then((data) => {
+        setIsImage(data.type !== "text/plain");
+        setImage(URL.createObjectURL(data));
+      });
+  }, [props.id]);
+
   const getShortName = (name: string) => {
     if (name.length > 30) return name.slice(0, 30) + "...";
     return name;
@@ -60,9 +77,19 @@ export default function ChatCard(props: ChatCardProps) {
     >
       <CardHeader>
         <CardTitle className="flex flex-row items-center justify-start gap-5">
-          <div className="aspect-square rounded-full bg-muted flex justify-center items-center p-3">
-            {getRandomIcon()}
-          </div>
+          {isImage ? (
+            <Image
+              src={image}
+              alt={props.name}
+              width={200}
+              height={200}
+              className="h-16 w-16 rounded-full"
+            ></Image>
+          ) : (
+            <div className="h-16 w-16 aspect-square rounded-full bg-muted flex justify-center items-center p-3">
+              {getRandomIcon()}
+            </div>
+          )}
           <span>{getShortName(props.name)}</span>
         </CardTitle>
       </CardHeader>
