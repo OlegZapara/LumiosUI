@@ -13,8 +13,12 @@ import { DataTable } from "./data-table";
 import Loading from "./loading-page";
 import NoTimetablePage from "./no-timetable-page";
 import Settings from "./settings";
+import useAuth from "@/hooks/useAuth";
+import { notFound } from "next/navigation";
 
 export default function TimetablePage() {
+  const authenticated = useAuth();
+
   const timetableStore = useTimetableStore();
   const settingsStore = useSettingsStore();
 
@@ -25,10 +29,14 @@ export default function TimetablePage() {
   const week = get("week");
 
   useEffect(() => {
+    if (authenticated == null) return;
     setEnableHeader(localStorage.getItem("enableTimetableHeader") != "off");
     timetableStore.fetchTimetable();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authenticated]);
+
+  if (authenticated == null) return null;
+  if (!authenticated) return notFound();
 
   if (!timetableStore.timetable || !day || !week) {
     return <Loading />;

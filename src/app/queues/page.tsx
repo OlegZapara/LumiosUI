@@ -9,15 +9,20 @@ import { useEffect, useState } from "react";
 import { useQueuesStore } from "../stores/queues";
 import CreateQueuePopover from "./create-popover";
 import QueueCard from "./queue";
+import useAuth from "@/hooks/useAuth";
+import { notFound } from "next/navigation";
 
 export default function Queues() {
+  const authenticated = useAuth();
+
   const { queues, fetchQueues } = useQueuesStore();
   const [filteredData, setFilteredData] = useState<Queue[]>([]);
 
   useEffect(() => {
+    if (authenticated == null) return;
     fetchQueues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authenticated]);
 
   useEffect(() => {
     setFilteredData([
@@ -25,6 +30,9 @@ export default function Queues() {
       ...queues.filter((x) => !x.pinned),
     ]);
   }, [queues]);
+
+  if (authenticated == null) return null;
+  if (!authenticated) return notFound();
 
   function filterData(filter: string) {
     const filteredRecords = queues.filter((x) =>

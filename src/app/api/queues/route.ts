@@ -45,7 +45,13 @@ export async function GET(req: NextRequest) {
       status: apiResponse.status,
     });
   }
-  return NextResponse.json(await apiResponse.json());
+  let data;
+  try {
+    data = await apiResponse.json();
+  } catch (error) {
+    data = [];
+  }
+  return NextResponse.json(data);
 }
 
 export async function PUT(req: NextRequest) {

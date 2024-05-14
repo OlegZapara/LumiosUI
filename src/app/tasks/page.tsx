@@ -1,5 +1,7 @@
 "use client";
 
+import useAuth from "@/hooks/useAuth";
+import { notFound } from "next/navigation";
 import { useEffect } from "react";
 import { useTasksStore } from "../stores/tasks";
 import { columns } from "./columns";
@@ -7,10 +9,15 @@ import { DataTable } from "./data-table";
 
 export default function Tasks() {
   const { tasks, fetchTasks } = useTasksStore((state) => state);
+  const authenticated = useAuth();
 
   useEffect(() => {
+    if (authenticated == null) return;
     fetchTasks();
-  }, [fetchTasks]);
+  }, [authenticated, fetchTasks]);
+
+  if (authenticated == null) return null;
+  if (!authenticated) return notFound();
 
   return (
     <div className="container mx-auto py-10 mt-6">
