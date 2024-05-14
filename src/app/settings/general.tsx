@@ -15,23 +15,27 @@ import { useEffect, useState } from "react";
 import SettingsField from "./settings-field";
 import { useUsersStore } from "../stores/users";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function General() {
   const [chatId, setChatId] = useState<string>("");
-  const [chat, setChat] = useState<string>("");
+  const router = useRouter();
   const { toast } = useToast();
 
   const usersStore = useUsersStore();
   const [userId, setUserId] = useState<string>("");
   const saveUserId = () => {
-    usersStore.setUserId(parseInt(userId));
+    toast({
+      title: "User ID was updated",
+      description: "User ID is set to " + userId,
+    });
+    usersStore.setUserId(parseInt(userId)).then((ok) => {
+      if (!ok) router.push("/choose-chat");
+    });
   };
   useEffect(() => {
     setUserId(usersStore.userId ? usersStore.userId.toString() : "");
     setChatId(usersStore.chatId ? usersStore.chatId.toString() : "");
-    setChat(
-      usersStore.user?.chats.find((x) => x.id == usersStore.chatId)?.name ?? ""
-    );
   }, [usersStore.user, usersStore.userId, usersStore.chatId]);
 
   const saveChatId = () => {
@@ -41,14 +45,7 @@ export default function General() {
       description: "Chat ID is set to " + chatId,
     });
   };
-  const saveChat = () => {
-    const chatId = usersStore.user!.chats.find((x) => x.name == chat)!.id;
-    usersStore.updateChatId(chatId);
-    toast({
-      title: "Chat was updated",
-      description: "Chat is set to " + chat,
-    });
-  };
+
   const copyUsername = () => {
     navigator.clipboard.writeText("@" + usersStore.user?.username!);
     toast({

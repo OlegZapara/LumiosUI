@@ -10,7 +10,7 @@ type UsersState = {
 
 type UsersActions = {
   fetchUser: (userId: number) => Promise<TelegramUser>;
-  setUserId: (userId: number) => Promise<void>;
+  setUserId: (userId: number) => Promise<boolean>;
   updateChatId: (chatId: number) => Promise<void>;
   logout: () => void;
 };
@@ -29,11 +29,15 @@ export const useUsersStore = create(
         const response = await fetch(`api/user?userId=${userId}`);
         const data = await response.json();
         set({ user: data });
-        console.log(data);
         return data;
       },
       setUserId: async (userId: number) => {
         const response = await fetch(`/api/chatId?userId=${userId}`);
+        if (!response.ok) {
+          set({ userId });
+          await get().fetchUser(userId);
+          return false;
+        }
         const chatId: unknown = await response.json();
         if (typeof chatId !== "number")
           throw new Error(
@@ -41,6 +45,7 @@ export const useUsersStore = create(
           );
         set({ userId, chatId });
         await get().fetchUser(userId);
+        return true;
       },
       updateChatId: async (chatId: number) => {
         await fetch(`/api/chatId?userId=${get().userId}&chatId=${chatId}`, {

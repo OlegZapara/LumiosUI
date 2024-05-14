@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     },
   });
   if (!apiResponse.ok) {
-    return new NextResponse(await apiResponse.text(), {
+    return new NextResponse("Bad request", {
       status: apiResponse.status,
     });
   }

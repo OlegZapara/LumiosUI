@@ -2,15 +2,15 @@
 import { CardBody } from "@/components/ui/3d-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, MoveRight, Search } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { TelegramChat } from "@/shared/types";
+import { MoveRight, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
+import { useUsersStore } from "../stores/users";
 import ChatCard from "./chat-card";
 import Loading from "./loading";
 import NoChat from "./no-chat";
-import { useRouter } from "next/navigation";
-import { useUsersStore } from "../stores/users";
-import { TelegramChat, TelegramUser } from "@/shared/types";
-import { useToast } from "@/components/ui/use-toast";
 
 export default function ChooseChatPage() {
   const router = useRouter();
@@ -29,6 +29,7 @@ export default function ChooseChatPage() {
         title: `Welcome to ${usersStore.user.chats[0].name}`,
         duration: 3000,
       });
+      return;
     }
     setFilteredChats(usersStore.user.chats);
     setLoading(false);

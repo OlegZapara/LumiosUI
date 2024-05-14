@@ -5,7 +5,7 @@ import { HelpCircle, Menu, Settings, SunMoon, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import TelegramLoginButton, { TelegramUser } from "telegram-login-button";
@@ -48,6 +48,13 @@ export default function Navbar({ className }: { className?: string }) {
   const pathname = usePathname();
   const theme = useTheme();
   const usersStore = useUsersStore();
+  const router = useRouter();
+
+  const updateUserId = (user: TelegramUser) => {
+    usersStore.setUserId(user.id).then((ok) => {
+      if (!ok) router.push("/choose-chat");
+    });
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm dark:shadow-muted">
@@ -93,7 +100,7 @@ export default function Navbar({ className }: { className?: string }) {
             <TelegramLoginButton
               buttonSize="medium"
               botName="lumios_bot"
-              dataOnauth={(user: TelegramUser) => usersStore.setUserId(user.id)}
+              dataOnauth={updateUserId}
             />
           ) : (
             <Link
