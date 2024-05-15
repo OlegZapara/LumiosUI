@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardContent,
@@ -13,8 +14,66 @@ import QueuesSettings from "./queues-settings";
 import StatisticsSettings from "./statistics-settings";
 import TasksSettings from "./tasks-settings";
 import TimetableSettings from "./timetable-settings";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { z } from "zod";
+
+const pages = [
+  {
+    name: "General",
+    content: <General />,
+  },
+  {
+    name: "Appearance",
+    content: <Appearance />,
+  },
+  {
+    name: "Timetable",
+    content: <TimetableSettings />,
+  },
+  {
+    name: "Statistics",
+    content: <StatisticsSettings />,
+  },
+  {
+    name: "Queues",
+    content: <QueuesSettings />,
+  },
+  {
+    name: "Tasks",
+    content: <TasksSettings />,
+  },
+];
+
+const urlSchema = withFallback(
+  z
+    .string()
+    .optional()
+    .refine((value) => {
+      return value && pages.some((x) => x.name == value);
+    }),
+  pages[0].name,
+);
+
+function withFallback<T>(schema: z.ZodType<T>, fallback: T) {
+  return z.preprocess(
+    (value) => {
+      const parseResult = schema.safeParse(value);
+      if (parseResult.success) return value;
+      return fallback;
+    },
+    z.custom((v) => true),
+  );
+}
 
 export default function Settings() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    router.push(`?page=${urlSchema.parse(searchParams.get("page"))}`);
+  }, [router, searchParams]);
+
   return (
     <div className="sm-6">
       <Card className="sm:m-8">
@@ -27,35 +86,25 @@ export default function Settings() {
         </CardHeader>
         <CardContent>
           <Tabs
-            defaultValue="general"
+            value={urlSchema.parse(searchParams.get("page")) as string}
             className="w-full flex flex-col sm:flex-row min-h-[60vh]"
           >
             <TabsList className="w-full sm:w-48 flex flex-wrap sm:flex-col h-auto justify-evenly sm:justify-start bg-background sm:mr-5 mb-4 sm:mb-0 gap-2">
-              <SettingsTab value="general">General</SettingsTab>
-              <SettingsTab value="appearance">Appearance</SettingsTab>
-              <SettingsTab value="timetable">Timetable</SettingsTab>
-              <SettingsTab value="statistics">Statistics</SettingsTab>
-              <SettingsTab value="tasks">Tasks</SettingsTab>
-              <SettingsTab value="queues">Queues</SettingsTab>
+              {pages.map((page) => (
+                <SettingsTab value={page.name} key={page.name}>
+                  {page.name}
+                </SettingsTab>
+              ))}
             </TabsList>
-            <TabsContent value="general" className="w-full">
-              <General />
-            </TabsContent>
-            <TabsContent value="appearance" className="w-full">
-              <Appearance />
-            </TabsContent>
-            <TabsContent value="timetable" className="w-full">
-              <TimetableSettings />
-            </TabsContent>
-            <TabsContent value="statistics" className="w-full">
-              <StatisticsSettings />
-            </TabsContent>
-            <TabsContent value="tasks" className="w-full">
-              <TasksSettings />
-            </TabsContent>
-            <TabsContent value="queues" className="w-full">
-              <QueuesSettings />
-            </TabsContent>
+            {pages.map((page) => (
+              <TabsContent
+                key={page.name + "-content"}
+                value={page.name}
+                className="w-full"
+              >
+                {page.content}
+              </TabsContent>
+            ))}
           </Tabs>
         </CardContent>
       </Card>
@@ -63,13 +112,15 @@ export default function Settings() {
   );
 }
 
-function SettingsTab(props: { value: string; children: React.ReactNode }) {
+function SettingsTab(props: { value: string; children: string }) {
   return (
-    <TabsTrigger
-      className="flex justify-center sm:justify-start w-24 sm:w-full h-9 hover:underline data-[state=active]:bg-muted rounded-md"
-      value={props.value}
-    >
-      {props.children}
+    <TabsTrigger asChild value={props.value}>
+      <Link
+        className="flex justify-center sm:justify-start w-24 sm:w-full h-9 hover:underline data-[state=active]:bg-muted rounded-md"
+        href={`?page=${props.value}`}
+      >
+        {props.children}
+      </Link>
     </TabsTrigger>
   );
 }

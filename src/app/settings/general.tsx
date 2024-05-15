@@ -1,13 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { Copy, ExternalLink } from "lucide-react";
@@ -18,12 +11,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function General() {
-  const [chatId, setChatId] = useState<string>("");
   const router = useRouter();
-  const { toast } = useToast();
-
   const usersStore = useUsersStore();
+  const { toast } = useToast();
+  const [chatId, setChatId] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
+
+  useEffect(() => {
+    setUserId(usersStore.userId ? usersStore.userId.toString() : "");
+    setChatId(usersStore.chatId ? usersStore.chatId.toString() : "");
+  }, [usersStore.user, usersStore.userId, usersStore.chatId]);
+
   const saveUserId = () => {
     toast({
       title: "User ID was updated",
@@ -33,10 +31,6 @@ export default function General() {
       if (!ok) router.push("/choose-chat");
     });
   };
-  useEffect(() => {
-    setUserId(usersStore.userId ? usersStore.userId.toString() : "");
-    setChatId(usersStore.chatId ? usersStore.chatId.toString() : "");
-  }, [usersStore.user, usersStore.userId, usersStore.chatId]);
 
   const saveChatId = () => {
     usersStore.updateChatId(parseInt(chatId));
@@ -47,11 +41,13 @@ export default function General() {
   };
 
   const copyUsername = () => {
-    navigator.clipboard.writeText("@" + usersStore.user?.username!);
-    toast({
-      title: "Username is copied to clipboard",
+    navigator.clipboard.writeText("@" + usersStore.user?.username!).then(() => {
+      toast({
+        title: "Username is copied to clipboard",
+      });
     });
   };
+
   const logout = () => {
     usersStore.logout();
   };
@@ -132,11 +128,14 @@ export default function General() {
               Save
             </Button>
           </SettingsField>
-          <SettingsField name="Switch chat" description="Select another chat">
+          <SettingsField
+            name="Switch chat"
+            description={`Select another chat${!usersStore.user?.chats.length || usersStore.user?.chats.length <= 1 ? " (not available)" : ""}`}
+          >
             <Link
               href="/choose-chat"
               prefetch={true}
-              className="flex flex-row gap-2 h-10 w-full max-w-96 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+              className={`${!usersStore.user?.chats.length || usersStore.user?.chats.length <= 1 ? "pointer-events-none bg-muted/20" : ""} flex flex-row gap-2 h-10 w-full max-w-96 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground`}
             >
               Switch chat <ExternalLink size={16}></ExternalLink>
             </Link>

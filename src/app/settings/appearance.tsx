@@ -10,13 +10,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
 import SettingsField from "./settings-field";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export default function Appearance() {
   const theme = useTheme();
+  const [themeLoaded, setThemeLoaded] = useState(false);
+
+  useEffect(() => {
+    if (theme.theme) setThemeLoaded(true);
+  }, [theme.theme]);
 
   return (
     <div className="w-full flex flex-col gap-2">
@@ -52,15 +57,17 @@ export default function Appearance() {
           <div className="text-sm text-muted-foreground">
             Select the theme for the website.
           </div>
-          <RadioGroup
-            value={theme.theme}
-            onValueChange={(e) => theme.setTheme(e)}
-            className="flex flex-col md:flex-row flex-wrap gap-4"
-          >
-            <ThemeViewGroupItem type="light" />
-            <ThemeViewGroupItem type="dark" />
-            <ThemeViewGroupItem type="system" />
-          </RadioGroup>
+          {themeLoaded && (
+            <RadioGroup
+              value={theme.theme || "system"}
+              onValueChange={(e) => theme.setTheme(e)}
+              className="flex flex-col md:flex-row flex-wrap gap-4"
+            >
+              <ThemeViewGroupItem type="light" />
+              <ThemeViewGroupItem type="dark" />
+              <ThemeViewGroupItem type="system" />
+            </RadioGroup>
+          )}
         </div>
       </section>
 

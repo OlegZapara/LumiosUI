@@ -1,5 +1,5 @@
 "use client";
-import { CardBody } from "@/components/ui/3d-card";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -62,8 +62,14 @@ export default function HerobrinePage() {
   }
 
   return (
-    <div>
-      <Image src="/herobrine.png" alt="Herobrine image" fill></Image>
+    <div className="flex justify-center items-center overflow-hidden h-[calc(100vh-4rem)]">
+      <Image
+        src="/herobrine.png"
+        alt="Herobrine image"
+        width={1000}
+        height={1000}
+        className="max-w-[1400px] left-0 right-0 h-full aspect-square"
+      ></Image>
     </div>
   );
 }
