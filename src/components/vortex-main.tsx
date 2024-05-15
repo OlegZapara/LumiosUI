@@ -30,6 +30,7 @@ export function VortexMainLoading() {
   return (
     <div className="w-full mx-auto rounded-md  h-[calc(100vh-3rem)] overflow-hidden">
       <div className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full">
+        <div className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"></div>
         <h2 className="text-foreground text-2xl md:text-6xl font-bold text-center">
           Lumios Bot
         </h2>
