@@ -17,8 +17,6 @@ export const StickyScroll = ({
   const [activeCard, setActiveCard] = React.useState(0);
   const ref = useRef<any>(null);
   const { scrollYProgress } = useScroll({
-    // uncomment line 22 and comment line 23 if you DONT want the overflow container and want to have it change on the entire page scroll
-    // target: ref
     container: ref,
     offset: ["start start", "end center"],
   });
@@ -45,7 +43,7 @@ export const StickyScroll = ({
       ref={ref}
     >
       <div className="div relative flex items-start px-4">
-        <div className="max-w-2xl mt-40">
+        <div className="w-full sm:max-w-2xl mt-10 sm:mt-40">
           {content.map((item, index) => (
             <div key={item.title + index} className="my-20">
               <motion.h2
@@ -72,12 +70,12 @@ export const StickyScroll = ({
               </motion.p>
             </div>
           ))}
-          <div className="h-40" />
+          <div className="h-10 sm:h-40" />
         </div>
       </div>
       <div
         className={cn(
-          "hidden lg:block rounded-md bg-white top-1 sticky",
+          "hidden lg:block rounded-md bg-background top-1 sticky",
           contentClassName,
         )}
       >

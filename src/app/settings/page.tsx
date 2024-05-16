@@ -10,10 +10,6 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Appearance from "./appearance";
 import General from "./general";
-import QueuesSettings from "./queues-settings";
-import StatisticsSettings from "./statistics-settings";
-import TasksSettings from "./tasks-settings";
-import TimetableSettings from "./timetable-settings";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -28,22 +24,22 @@ const pages = [
     name: "Appearance",
     content: <Appearance />,
   },
-  {
-    name: "Timetable",
-    content: <TimetableSettings />,
-  },
-  {
-    name: "Statistics",
-    content: <StatisticsSettings />,
-  },
-  {
-    name: "Queues",
-    content: <QueuesSettings />,
-  },
-  {
-    name: "Tasks",
-    content: <TasksSettings />,
-  },
+  // {
+  //   name: "Timetable",
+  //   content: <TimetableSettings />,
+  // },
+  // {
+  //   name: "Statistics",
+  //   content: <StatisticsSettings />,
+  // },
+  // {
+  //   name: "Queues",
+  //   content: <QueuesSettings />,
+  // },
+  // {
+  //   name: "Tasks",
+  //   content: <TasksSettings />,
+  // },
 ];
 
 const urlSchema = withFallback(
