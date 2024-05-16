@@ -35,14 +35,14 @@ export default function RatingChart() {
     date.setDate(date.getDate() - 1);
     const dateString = date.toISOString().split("T")[0];
     fetch(
-      `/api/statistics/rating?chatId=${usersStore.chatId}&date=${dateString}`
+      `/api/statistics/rating?chatId=${usersStore.chatId}&date=${dateString}`,
     )
       .then((res) => res.json())
       .then((data: RatingInfo[]) => {
         setData(
           data
             .filter((x) => x.reverence > MINIMAL_RATING)
-            .sort((a, b) => a.username.localeCompare(b.username))
+            .sort((a, b) => a.username.localeCompare(b.username)),
         );
       })
       .catch((err) => console.error(err));
@@ -86,7 +86,7 @@ export default function RatingChart() {
   );
 }
 
-function UserInfo({ user }: { user: RatingInfo }) {
+export function UserInfo({ user }: { user: RatingInfo }) {
   const [image, setImage] = useState("");
   const [isImage, setIsImage] = useState(true);
   const [isLoading, setIsLoading] = useState(true);

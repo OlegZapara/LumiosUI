@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useAuth from "@/hooks/useAuth";
 import { notFound } from "next/navigation";
 import AverageMessageAreaChart from "./avg-msg-area-chart";
-import Loading from "./loading";
 import MessageBarChart from "./msg-bar-chart";
 import MessageLineChart from "./msg-line-chart";
 import MessagePieChart from "./msg-pie-chart";
@@ -24,7 +23,7 @@ export default function Statistics() {
         <CardHeader>
           <CardTitle>Statistics for IP-32</CardTitle>
         </CardHeader>
-        <CardContent className="w-[calc(100%-2rem)] grid grid-cols-4 grid-rows-4 gap-4 mx-4 mb-4 h-full">
+        <CardContent className="md:w-[calc(100%-2rem)] grid grid-cols-4 grid-rows-4 gap-4 md:mx-4 md:mb-4 h-full p-1 md:p-6 w-full">
           <RatingChart></RatingChart>
           <RatingChangeList></RatingChangeList>
           <MessagePieChart></MessagePieChart>

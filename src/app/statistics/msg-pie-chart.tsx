@@ -64,11 +64,11 @@ export default function MessagePieChart() {
     d.setDate(d.getDate() - 7);
     const weekAgo = d.toISOString().split("T")[0];
     fetch(
-      `/api/statistics/messages?chatId=${usersStore.chatId}&startDate=${weekAgo}&endDate=${today}`
+      `/api/statistics/messages?chatId=${usersStore.chatId}&startDate=${weekAgo}&endDate=${today}`,
     )
       .then((res) => res.json())
       .then((data: MessageInfo[]) =>
-        setData(data.sort((a, b) => b.messages - a.messages).slice(0, 10))
+        setData(data.sort((a, b) => b.messages - a.messages).slice(0, 10)),
       );
   }, [usersStore.chatId]);
 
@@ -80,7 +80,7 @@ export default function MessagePieChart() {
         </CardTitle>
       </CardHeader>
       <CardBody className="grid grid-cols-4 gap-4 w-full">
-        <div className="col-span-4 md:col-span-1 flex flex-col justify-center items-end">
+        <div className="col-span-4 md:col-span-1 flex flex-col justify-center items-center md:items-end">
           <div className="flex flex-col items-start w-auto">
             {data.slice(0, 5).map((data, i) => (
               <div
@@ -125,7 +125,7 @@ export default function MessagePieChart() {
             </PieChart>
           </ResponsiveContainer>
         </div>
-        <div className="col-span-4 md:col-span-1 flex flex-col justify-center items-start">
+        <div className="col-span-4 md:col-span-1 flex flex-col justify-center items-center md:items-start">
           <div className="flex flex-col items-start w-auto">
             {data.slice(5, 10).map((data, i) => (
               <div

@@ -53,6 +53,15 @@ function getWeekMessageInfo(msgInfos: MessageInfo[]): WeekMessageInfo[] {
   return weekMessageInfo;
 }
 
+function getDayFill(currentDay: string): string {
+  const now = new Date();
+  const dayIndex = now.getDay();
+  const currentDayIndex = days.indexOf(currentDay);
+  if (dayIndex == currentDayIndex + 1) return "rgb(59, 130, 246)";
+  else if (dayIndex <= currentDayIndex) return "hsl(var(--muted-foreground))";
+  else return "hsl(var(--foreground))";
+}
+
 export default function MessageBarChart() {
   const [data, setData] = useState<WeekMessageInfo[]>([]);
   const usersStore = useUsersStore();
@@ -64,7 +73,7 @@ export default function MessageBarChart() {
     d.setDate(d.getDate() - 7);
     const weekAgo = d.toISOString().split("T")[0];
     fetch(
-      `/api/statistics/messages?chatId=${usersStore.chatId}&startDate=${weekAgo}&endDate=${today}`
+      `/api/statistics/messages?chatId=${usersStore.chatId}&startDate=${weekAgo}&endDate=${today}`,
     )
       .then((res) => res.json())
       .then((data: MessageInfo[]) => setData(getWeekMessageInfo(data)));
@@ -104,7 +113,7 @@ export default function MessageBarChart() {
                   shape={<TriangleBar />}
                 >
                   {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} />
+                    <Cell key={`cell-${index}`} fill={getDayFill(entry.day)} />
                   ))}
                 </Bar>
               </BarChart>

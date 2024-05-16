@@ -33,6 +33,12 @@ function getDayTimeInfo(msgInfos: MessageInfo[]): DayTimeInfo[] {
   return dayTimeInfo;
 }
 
+function getPreviousDay(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toDateString();
+}
+
 export default function MessageLineChart() {
   const [data, setData] = useState<DayTimeInfo[]>([]);
   const usersStore = useUsersStore();
@@ -44,7 +50,7 @@ export default function MessageLineChart() {
     d.setDate(d.getDate() - 1);
     const dayAgo = d.toISOString().split("T")[0];
     fetch(
-      `/api/statistics/messages?chatId=${usersStore.chatId}&startDate=${dayAgo}&endDate=${today}`
+      `/api/statistics/messages?chatId=${usersStore.chatId}&startDate=${dayAgo}&endDate=${today}`,
     )
       .then((res) => res.json())
       .then((data: MessageInfo[]) => setData(getDayTimeInfo(data)));
@@ -53,9 +59,16 @@ export default function MessageLineChart() {
   return (
     <Card className="col-span-4">
       <CardHeader>
-        <CardTitle className="flex flex-row justify-between">
-          Number of messages throughout the day.
-          <span>Total: {data.reduce((acc, { value }) => acc + value, 0)}</span>
+        <CardTitle className="flex flex-col md:flex-row justify-between gap-4">
+          <div className="flex flex-col md:flex-row gap-2">
+            <span>Number of messages throughout the day.</span>
+            <span className="text-base font-normal text-blue-500 text-nowrap">
+              ({getPreviousDay()})
+            </span>
+          </div>
+          <span className="text-nowrap">
+            Total: {data.reduce((acc, { value }) => acc + value, 0)}
+          </span>
         </CardTitle>
       </CardHeader>
       <CardBody className="w-full">
