@@ -31,7 +31,11 @@ export default function ChooseChatPage() {
       });
       return;
     }
-    setFilteredChats(usersStore.user.chats);
+    setFilteredChats(
+      usersStore.user.chats.filter(
+        (x) => x.name != undefined && x.description != undefined,
+      ),
+    );
     setLoading(false);
   }, [router, toast, usersStore, usersStore.user]);
 
@@ -39,8 +43,8 @@ export default function ChooseChatPage() {
     setSearchString(e.target.value);
     setFilteredChats(
       usersStore.user!.chats.filter((x) =>
-        x.name.toLowerCase().includes(e.target.value.toLowerCase())
-      )
+        x.name.toLowerCase().includes(e.target.value.toLowerCase()),
+      ),
     );
   };
   if (loading) return <Loading />;

@@ -54,10 +54,12 @@ export default function ChatCard(props: ChatCardProps) {
   }, [props.id]);
 
   const getShortName = (name: string) => {
+    if (!name) return "Unknown chat";
     if (name.length > 30) return name.slice(0, 30) + "...";
     return name;
   };
   const getShortDescription = (description: string) => {
+    if (!description) return "";
     if (description.length > 125) return description.slice(0, 125) + "...";
     return description;
   };
