@@ -4,7 +4,6 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 import useTimetableQueryParams from "@/hooks/useTimetableQueryParams";
 import { useEffect, useState } from "react";
-import { useSettingsStore } from "../stores/settings";
 import { useTimetableStore } from "../stores/timetable";
 import AboutTimetable from "./about-timetable";
 import { columns } from "./columns";
@@ -15,18 +14,21 @@ import useAuth from "@/hooks/useAuth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import NoTimetablePageV2 from "@/app/timetable/no-timetable-page-v2";
+import { useUsersStore } from "@/app/stores/users";
 
 export default function TimetablePage() {
   const authenticated = useAuth();
-
   const timetableStore = useTimetableStore();
-  const settingsStore = useSettingsStore();
+  const isAdmin = useUsersStore(
+    (state) =>
+      state.user?.chats.find((x) => x.id == state.chatId)?.admin ?? false,
+  );
 
   const [enableHeader, setEnableHeader] = useState(true);
 
-  const { get, update } = useTimetableQueryParams();
-  const day = get("day");
-  const week = get("week");
+  const { searchParams, updateSearchParams } = useTimetableQueryParams();
+  const dayParam = searchParams.get("day")!;
+  const weekParam = searchParams.get("week")!;
 
   useEffect(() => {
     if (authenticated == null) return;
@@ -40,7 +42,7 @@ export default function TimetablePage() {
   if (authenticated == null) return null;
   if (!authenticated) return notFound();
 
-  if (!timetableStore.timetable || !day || !week) {
+  if (!timetableStore.timetable || !dayParam || !weekParam) {
     return <Loading />;
   }
 
@@ -53,44 +55,48 @@ export default function TimetablePage() {
       {enableHeader && (
         <TypewriterEffectSmooth words={words} className="mb-12" />
       )}
-      <div className="w-5/6 flex justify-center items-center flex-col gap-4">
-        <div className="w-full flex justify-between">
-          <div className="w-full flex justify-start flex-row gap-4">
+      <div className="w-full px-1 md:w-5/6 flex justify-center items-center flex-col gap-4">
+        <div className="w-full flex flex-wrap md:flex-nowrap justify-between gap-4">
+          <div className="w-full flex justify-start flex-col md:flex-row gap-4">
             <ToggleGroup
               type="single"
-              defaultValue={settingsStore.weeks[0]}
-              onValueChange={(e) => update("week", e)}
+              value={dayParam}
+              onValueChange={(e) => updateSearchParams("week", e)}
             >
-              {settingsStore.weeks.map((week, i) => (
+              {timetableStore.weeks.map((week, i) => (
                 <ToggleGroupItem
                   key={week}
                   value={week}
-                  data-state={week == get("week") ? "on" : "off"}
+                  data-state={week == weekParam ? "on" : "off"}
                   aria-label="Change week"
                 >
-                  <div>{week}</div>
+                  <div className="text-nowrap">{week}</div>
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
             <ToggleGroup
               type="single"
-              defaultValue={settingsStore.days[0]}
-              onValueChange={(e) => update("day", e)}
+              value={weekParam}
+              onValueChange={(e) => updateSearchParams("day", e)}
+              className="md:flex-nowrap flex-wrap md:h-12 h-auto px-6 md:px-1"
             >
-              {settingsStore.days.map((day, i) => (
+              {timetableStore.days.map((day, i) => (
                 <ToggleGroupItem
                   key={day}
                   value={day}
-                  data-state={day == get("day") ? "on" : "off"}
+                  data-state={day == dayParam ? "on" : "off"}
                   aria-label="Change day"
+                  className="flex-grow md:flex-grow-0"
                 >
                   <div>{day}</div>
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
           </div>
-          <div className="gap-2 inline-flex h-12 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
-            {process.env.NODE_ENV !== "production" && <JsonEditor></JsonEditor>}
+          <div className="hidden lg:inline-flex gap-2 h-12 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
+            {(process.env.NODE_ENV !== "production" || isAdmin) && (
+              <JsonEditor></JsonEditor>
+            )}
             <Link
               href="/settings?page=Timetable"
               className="text-nowrap inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors  disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground hover:bg-background bg-transparent h-10 px-3"
@@ -103,14 +109,25 @@ export default function TimetablePage() {
         <div className="w-full mb-6">
           <DataTable
             columns={columns}
-            weekIndex={settingsStore.weeks.indexOf(week)}
-            dayIndex={settingsStore.days.indexOf(day)}
+            weekIndex={timetableStore.weeks.indexOf(weekParam)}
+            dayIndex={timetableStore.days.indexOf(dayParam)}
             data={
-              timetableStore.timetable[settingsStore.weeks.indexOf(week)].days[
-                settingsStore.days.indexOf(day)
-              ].classEntries
+              timetableStore.timetable[timetableStore.weeks.indexOf(weekParam)]
+                .days[timetableStore.days.indexOf(dayParam)].classEntries
             }
           />
+        </div>
+        <div className="inline-flex lg:hidden w-full gap-2 h-12 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
+          {(process.env.NODE_ENV !== "production" || isAdmin) && (
+            <JsonEditor></JsonEditor>
+          )}
+          <Link
+            href="/settings?page=Timetable"
+            className="text-nowrap inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors  disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground hover:bg-background bg-transparent h-10 px-3"
+          >
+            Settings
+          </Link>
+          <AboutTimetable></AboutTimetable>
         </div>
       </div>
     </div>

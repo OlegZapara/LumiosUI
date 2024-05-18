@@ -14,6 +14,8 @@ interface TimetableState {
   timetable: Timetable[] | null;
   editingRow: TimetableEntry | null;
   editRowInfo: RowInfo;
+  weeks: string[];
+  days: string[];
   startEdit: (info: RowInfo) => void;
   discardEdit: () => void;
   completeEdit: () => Promise<void>;
@@ -32,6 +34,8 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
   timetable: null,
   editingRow: null,
   editRowInfo: NO_EDIT_ROW,
+  weeks: ["First week", "Second week"],
+  days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
   startEdit: (info: RowInfo) => {
     set({
       editRowInfo: info,

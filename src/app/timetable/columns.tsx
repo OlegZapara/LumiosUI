@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { TimetableEntry } from "@/shared/types";
 import { useTimetableStore } from "../stores/timetable";
-import { useSettingsStore } from "../stores/settings";
 
 export enum Column {
   ClassName = "className",
@@ -63,8 +62,12 @@ export const columns: ColumnDef<TimetableEntry>[] = [
   {
     accessorKey: Column.URL,
     header: "URL",
-    maxSize: 700,
-    minSize: 400,
+    cell: ({ row }) => {
+      const url = row.getValue("url");
+      return <span>https://{extractDomain(url as string)}/...</span>;
+    },
+    maxSize: 400,
+    minSize: 200,
   },
   {
     id: "actions",
@@ -89,7 +92,7 @@ function RowAction({ row }: CellProps) {
   const searchParams = useSearchParams();
   const isEdit = timetableStore.editRowInfo.row === row.index;
 
-  const { weeks, days } = useSettingsStore();
+  const { weeks, days } = timetableStore;
 
   const entryInfo = {
     week: weeks.indexOf(searchParams.get("week")!),
@@ -104,12 +107,12 @@ function RowAction({ row }: CellProps) {
         <Button
           variant="ghost"
           onClick={() => {
-            timetableStore.completeEdit();
-            toast({
-              title: "Timetable updated",
-              description: `${row
-                .getAllCells()[0]
-                .getValue<string>()} was updated`,
+            timetableStore.completeEdit().then(() => {
+              const name = row.getAllCells()[0].getValue<string>();
+              toast({
+                title: "Timetable updated",
+                description: name ? `${name} was updated` : "New row was added",
+              });
             });
           }}
         >
@@ -183,3 +186,8 @@ function RowAction({ row }: CellProps) {
     </DropdownMenu>
   );
 }
+
+const extractDomain = (url: string): string => {
+  const match = url.match(/^(?:https?:\/\/)?(?:www\.)?([^\/]+)/);
+  return match ? match[1] : url;
+};
