@@ -4,6 +4,7 @@ interface SettingsFieldProps {
   name: string;
   description: string;
   developer?: boolean;
+  admin?: boolean;
   children: ReactNode;
 }
 
@@ -15,11 +16,16 @@ export default function SettingsField(props: SettingsFieldProps) {
     <div
       className={`w-full flex flex-col gap-2 relative p-2 sm:p-4 ${
         props.developer && "border border-orange-400 rounded-md"
-      }`}
+      } ${props.admin && "border border-red-500 rounded-md"}`}
     >
       {props.developer && (
         <div className="absolute text-orange-400 right-5 font-bold top-1">
           DEVELOPER MODE
+        </div>
+      )}
+      {props.admin && (
+        <div className="absolute text-red-500 right-5 font-bold top-1">
+          ADMIN MODE
         </div>
       )}
       <div className="leading-none tracking-tight">{props.name}</div>

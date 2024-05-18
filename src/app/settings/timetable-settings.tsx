@@ -11,11 +11,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useTimetableStore } from "@/app/stores/timetable";
+import { useUsersStore } from "@/app/stores/users";
 
 export default function TimetableSettings() {
   const { deleteTimetable } = useTimetableStore((state) => state);
   const [timetableHeader, setTimetableHeader] = useState<string>("Enabled");
   const { toast } = useToast();
+  const usersStore = useUsersStore();
+  const currentChat = usersStore.user?.chats.find(
+    (x) => x.id == usersStore.chatId,
+  );
 
   useEffect(() => {
     setTimetableHeader(
@@ -88,12 +93,16 @@ export default function TimetableSettings() {
         <SettingsField
           name="Delete timetable"
           description="Remove timetable for this group (This action cannot be undone)"
-          developer
+          admin
         >
           <Button
             onClick={removeTimetable}
             variant="destructive"
             className="w-full"
+            disabled={
+              (!currentChat?.admin ?? true) &&
+              process.env.NODE_ENV === "production"
+            }
           >
             Delete timetable
           </Button>
