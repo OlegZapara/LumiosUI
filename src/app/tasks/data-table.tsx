@@ -3,14 +3,14 @@
 import {
   ColumnDef,
   ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   useReactTable,
+  VisibilityState,
 } from "@tanstack/react-table";
 
 import {
@@ -48,11 +48,12 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({ id: false });
   const [rowSelection, setRowSelection] = React.useState({});
+  const [taskDialogOpen, setTaskDialogOpen] = React.useState(false);
 
   const table = useReactTable({
     data,
@@ -71,6 +72,11 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
     },
+    initialState: {
+      pagination: {
+        pageSize: 8,
+      },
+    },
   });
 
   function getSelectedTask(): Task {
@@ -82,11 +88,10 @@ export function DataTable<TData, TValue>({
       dueDate: string;
       url: string;
     };
-    const task: Task = {
+    return {
       ...selectedTaskValues,
       dueDate: new Date(selectedTaskValues.dueDate),
     } as Task;
-    return task;
   }
 
   return (
@@ -116,14 +121,23 @@ export function DataTable<TData, TValue>({
           </>
         )}
         {table.getFilteredSelectedRowModel().rows.length == 1 && (
-          <TaskDialog type="edit" task={getSelectedTask()}>
+          <TaskDialog
+            type="edit"
+            task={getSelectedTask()}
+            open={taskDialogOpen}
+            setOpen={setTaskDialogOpen}
+          >
             <div className="border-blue-500 cursor-pointer ml-auto h-10 px-4 py-2 relative mr-4 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:bg-accent hover:text-accent-foreground">
               <SquarePen className="absolute h-5 w-5 left-3 stroke-blue-500"></SquarePen>
               <div className="pl-6 text-blue-500">Edit</div>
             </div>
           </TaskDialog>
         )}
-        <TaskDialog type="create">
+        <TaskDialog
+          type="create"
+          open={taskDialogOpen}
+          setOpen={setTaskDialogOpen}
+        >
           <div className="border-green-500 cursor-pointer ml-auto h-10 px-4 py-2 relative mr-4 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:bg-accent hover:text-accent-foreground">
             <PlusCircle className="absolute h-5 w-5 left-3 stroke-green-500"></PlusCircle>
             <div className="pl-6 text-green-500">Create</div>
@@ -169,7 +183,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -188,7 +202,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

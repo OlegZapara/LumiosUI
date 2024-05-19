@@ -20,7 +20,7 @@ export default function Tasks() {
   if (!authenticated) return notFound();
 
   return (
-    <div className="px-1 sm:container mx-auto py-10 mt-6">
+    <div className="px-1 sm:container mx-auto py-10">
       <DataTable columns={columns} data={tasks} />
     </div>
   );

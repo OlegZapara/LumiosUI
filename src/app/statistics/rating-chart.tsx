@@ -24,7 +24,6 @@ import {
 import { useUsersStore } from "../stores/users";
 
 export default function RatingChart() {
-  const MINIMAL_RATING = 150;
   const usersStore = useUsersStore();
   const [data, setData] = useState<RatingInfo[]>([]);
   const [activeUser, setActiveUser] = useState<RatingInfo | null>();
@@ -39,9 +38,10 @@ export default function RatingChart() {
     )
       .then((res) => res.json())
       .then((data: RatingInfo[]) => {
+        const minRating = Math.max(...data.map((x) => x.reverence)) / 100;
         setData(
           data
-            .filter((x) => x.reverence > MINIMAL_RATING)
+            .filter((x) => x.reverence > minRating)
             .sort((a, b) => a.username.localeCompare(b.username)),
         );
       })

@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { ReactNode, useEffect, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -50,7 +50,7 @@ const formSchema = z.object({
       },
       {
         message: "Invalid time format. Use HH:MM (24-hour) format.",
-      }
+      },
     ),
   url: z
     .union([
@@ -63,30 +63,41 @@ const formSchema = z.object({
 });
 
 interface TaskDialogProps {
-  open?: boolean;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
   children?: ReactNode;
   className?: string;
   type: "edit" | "create";
   task?: Task;
 }
 
+function getDate(date: Date | string | undefined): Date {
+  if (typeof date == "string") {
+    const parts = date.split("-").map((x) => parseInt(x));
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  }
+  if (typeof date == "undefined") return new Date();
+  return date;
+}
+
 export default function TaskDialog(props: TaskDialogProps) {
   const { updateTask, createTask } = useTasksStore();
 
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...props.task,
+      dueDate: getDate(props.task?.dueDate),
       dueTime: props.task?.dueTime.substring(0, 5),
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    setOpen(false);
+    props.setOpen(false);
     const task: Task = { ...values, id: props.task?.id! };
     task.dueDate.setMinutes(
-      task.dueDate.getMinutes() - task.dueDate.getTimezoneOffset()
+      task.dueDate.getMinutes() - task.dueDate.getTimezoneOffset(),
     );
     if (props.type == "create") {
       createTask(task);
@@ -96,15 +107,15 @@ export default function TaskDialog(props: TaskDialogProps) {
   }
 
   useEffect(() => {
-    setOpen(props.open ?? false);
-  }, [props.open]);
+    props.setOpen(props.open ?? false);
+  }, [props, props.open]);
 
   useEffect(() => {
     form.reset();
-  }, [form, open]);
+  }, [form]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={props.open} onOpenChange={props.setOpen}>
       <DialogTrigger asChild>{props.children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>

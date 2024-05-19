@@ -38,7 +38,7 @@ export const useTasksStore = create<TasksState>((set, get) => ({
     await get().fetchTasks();
   },
   removeTask: async (taskId: string) => {
-    const chatId = localStorage.getItem("chatId");
+    const chatId = useUsersStore.getState().chatId;
     await fetch(`/api/tasks?chatId=${chatId}&taskId=${taskId}`, {
       method: "DELETE",
     });

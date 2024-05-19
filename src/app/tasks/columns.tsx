@@ -10,11 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Task } from "@/shared/types";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useTasksStore } from "../stores/tasks";
 import TaskDialog from "./task-dialog";
+import { useToast } from "@/components/ui/use-toast";
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -61,6 +62,7 @@ export const columns: ColumnDef<Task>[] = [
         </Button>
       );
     },
+    sortingFn: "datetime",
   },
   {
     accessorKey: "dueTime",
@@ -73,27 +75,37 @@ export const columns: ColumnDef<Task>[] = [
   {
     accessorKey: "url",
     header: "Url",
+    cell: ({ row }) => {
+      const url = row.getValue("url");
+      const domain = extractDomain(url as string);
+      return (
+        <span>
+          {domain ? "https://" + extractDomain(url as string) + "/..." : ""}
+        </span>
+      );
+    },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const task = row.original;
-      return <TasksDropdown task={task} />;
+      return <TasksDropdown row={row} />;
     },
     enableSorting: false,
     enableHiding: false,
   },
 ];
 
-function TasksDropdown(props: { task: Task }) {
+function TasksDropdown(props: { row: Row<Task> }) {
   const { removeTask } = useTasksStore();
   const [editWindowOpen, setEditWindowOpen] = useState<boolean>(false);
+  const { toast } = useToast();
 
   return (
     <>
       <TaskDialog
+        setOpen={setEditWindowOpen}
         type="edit"
-        task={props.task}
+        task={props.row.original}
         open={editWindowOpen}
       ></TaskDialog>
       <DropdownMenu>
@@ -106,7 +118,15 @@ function TasksDropdown(props: { task: Task }) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() => navigator.clipboard.writeText(props.task.url)}
+            onClick={() => {
+              navigator.clipboard.writeText(props.row.original.url).then(() => {
+                toast({
+                  title: "Link copied to clipboard",
+                  description: props.row.original.url,
+                  duration: 3000,
+                });
+              });
+            }}
           >
             Copy task URL
           </DropdownMenuItem>
@@ -114,7 +134,7 @@ function TasksDropdown(props: { task: Task }) {
           <DropdownMenuItem onClick={() => setEditWindowOpen(true)}>
             Edit task
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => removeTask(props.task.id)}>
+          <DropdownMenuItem onClick={() => removeTask(props.row.original.id)}>
             Delete task
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -122,3 +142,8 @@ function TasksDropdown(props: { task: Task }) {
     </>
   );
 }
+
+const extractDomain = (url: string): string => {
+  const match = url.match(/^(?:https?:\/\/)?(?:www\.)?([^\/]+)/);
+  return match ? match[1] : url;
+};
