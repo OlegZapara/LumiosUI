@@ -14,14 +14,16 @@ interface TimetableState {
   timetable: Timetable[] | null;
   editingRow: TimetableEntry | null;
   editRowInfo: RowInfo;
+  validEdit: any;
   weeks: string[];
   days: string[];
   startEdit: (info: RowInfo) => void;
   discardEdit: () => void;
-  completeEdit: () => Promise<void>;
+  completeEdit: () => Promise<boolean>;
   addRow: ({ week, day }: { week: number; day: number }) => void;
   updateRow: (row: TimetableEntry) => void;
   removeRow: (info: RowInfo) => void;
+  setValid: (column: string, isValid: boolean) => void;
   fetchTimetable: () => Promise<void>;
   updateTimetable: (newTimetable: Timetable[]) => Promise<Response>;
   createTimetable: (newTimetable: Timetable[]) => Promise<Response>;
@@ -29,11 +31,19 @@ interface TimetableState {
 }
 
 const NO_EDIT_ROW: RowInfo = { week: -1, day: -1, row: -1, index: -1 };
+const ALL_FIELDS_VALID = {
+  className: true,
+  startTime: true,
+  endTime: true,
+  classType: true,
+  url: true,
+};
 
 export const useTimetableStore = create<TimetableState>((set, get) => ({
   timetable: null,
   editingRow: null,
   editRowInfo: NO_EDIT_ROW,
+  validEdit: ALL_FIELDS_VALID,
   weeks: ["First week", "Second week"],
   days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
   startEdit: (info: RowInfo) => {
@@ -41,6 +51,7 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
       editRowInfo: info,
       editingRow:
         get().timetable![info.week].days[info.day].classEntries[info.row],
+      validEdit: { ...ALL_FIELDS_VALID },
     });
   },
   discardEdit: () => {
@@ -55,9 +66,21 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
     set({
       editingRow: null,
       editRowInfo: NO_EDIT_ROW,
+      validEdit: { ...ALL_FIELDS_VALID },
     });
   },
   completeEdit: async () => {
+    let ok = true;
+    for (const [key, value] of Object.entries(get().validEdit)) {
+      if (value == false) ok = false;
+      if ((get().editingRow as any)[key] == "" && key != "url") {
+        ok = false;
+        const validInfo = get().validEdit;
+        validInfo[key] = false;
+        set({ validEdit: validInfo });
+      }
+    }
+    if (!ok) return false;
     const { week, day, row } = get().editRowInfo;
     const newTimetable = produce(get().timetable, (timetable: Timetable[]) => {
       timetable![week].days[day].classEntries[row] = get().editingRow!;
@@ -67,7 +90,9 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
       timetable: newTimetable,
       editingRow: null,
       editRowInfo: NO_EDIT_ROW,
+      validEdit: { ...ALL_FIELDS_VALID },
     });
+    return true;
   },
   addRow: ({ week, day }: { week: number; day: number }) => {
     const timetable = produce(get().timetable, (newTimetable) => {
@@ -88,6 +113,7 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
         index: 0,
       },
       editingRow: timetable[week].days[day].classEntries.at(-1),
+      validEdit: { ...ALL_FIELDS_VALID },
     });
   },
   updateRow: (row: TimetableEntry) => {
@@ -95,14 +121,19 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
   },
   removeRow: (info: RowInfo) => {
     const newTimetable = produce(get().timetable, (newTimetable) => {
-      newTimetable![info.week].days[info.day].classEntries.splice(
-        info.row,
-        info.row,
-      );
+      newTimetable![info.week].days[info.day].classEntries.splice(info.row, 1);
     });
     get().updateTimetable(newTimetable!);
     set({
       timetable: newTimetable,
+    });
+  },
+  setValid: (column: string, isValid: boolean) => {
+    set((state) => {
+      const validInfo = state.validEdit;
+      validInfo[column] = isValid;
+      console.log(validInfo);
+      return { validEdit: validInfo };
     });
   },
   fetchTimetable: async () => {

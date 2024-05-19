@@ -2,7 +2,7 @@ import TextInput from "@/components/timetable/text-input";
 import TimeInput from "@/components/timetable/time-input";
 import TypeInput from "@/components/timetable/type-input";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Cell, Row, flexRender } from "@tanstack/react-table";
+import { Cell, flexRender, Row } from "@tanstack/react-table";
 import { useTimetableStore } from "../stores/timetable";
 import { Column } from "./columns";
 
@@ -29,8 +29,9 @@ export default function EntryForm<TData>(props: EntryFormProps<TData>) {
     };
     switch (cell.column.id) {
       case Column.ClassName:
-      case Column.URL:
         return <TextInput {...inputProps} />;
+      case Column.URL:
+        return <TextInput {...inputProps} canBeEmpty />;
       case Column.StartTime:
       case Column.EndTime:
         return <TimeInput {...inputProps} />;

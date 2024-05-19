@@ -38,7 +38,9 @@ export default function RatingChart() {
     )
       .then((res) => res.json())
       .then((data: RatingInfo[]) => {
-        const minRating = Math.max(...data.map((x) => x.reverence)) / 100;
+        const minRating = Math.floor(
+          Math.max(...data.map((x) => x.reverence)) / 100,
+        );
         setData(
           data
             .filter((x) => x.reverence > minRating)

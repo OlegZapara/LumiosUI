@@ -76,13 +76,9 @@ export const columns: ColumnDef<Task>[] = [
     accessorKey: "url",
     header: "Url",
     cell: ({ row }) => {
-      const url = row.getValue("url");
-      const domain = extractDomain(url as string);
-      return (
-        <span>
-          {domain ? "https://" + extractDomain(url as string) + "/..." : ""}
-        </span>
-      );
+      const url = row.getValue("url") as string;
+      const content = url.slice(0, 30) + (url.length > 30 ? "..." : "");
+      return <span>{content}</span>;
     },
   },
   {
@@ -116,21 +112,27 @@ function TasksDropdown(props: { row: Row<Task> }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() => {
-              navigator.clipboard.writeText(props.row.original.url).then(() => {
-                toast({
-                  title: "Link copied to clipboard",
-                  description: props.row.original.url,
-                  duration: 3000,
-                });
-              });
-            }}
-          >
-            Copy task URL
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
+          {props.row.original.url && (
+            <>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigator.clipboard
+                    .writeText(props.row.original.url)
+                    .then(() => {
+                      toast({
+                        title: "Link copied to clipboard",
+                        description: props.row.original.url,
+                        duration: 3000,
+                      });
+                    });
+                }}
+              >
+                Copy task URL
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </>
+          )}
           <DropdownMenuItem onClick={() => setEditWindowOpen(true)}>
             Edit task
           </DropdownMenuItem>

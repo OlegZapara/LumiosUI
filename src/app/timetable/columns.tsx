@@ -63,8 +63,9 @@ export const columns: ColumnDef<TimetableEntry>[] = [
     accessorKey: Column.URL,
     header: "URL",
     cell: ({ row }) => {
-      const url = row.getValue("url");
-      return <span>https://{extractDomain(url as string)}/...</span>;
+      const url = row.getValue("url") as string;
+      const content = url.slice(0, 30) + (url.length > 30 ? "..." : "");
+      return <span>{content}</span>;
     },
     maxSize: 400,
     minSize: 200,
@@ -107,12 +108,22 @@ function RowAction({ row }: CellProps) {
         <Button
           variant="ghost"
           onClick={() => {
-            timetableStore.completeEdit().then(() => {
-              const name = row.getAllCells()[0].getValue<string>();
-              toast({
-                title: "Timetable updated",
-                description: name ? `${name} was updated` : "New row was added",
-              });
+            timetableStore.completeEdit().then((ok) => {
+              if (ok) {
+                const name = row.getAllCells()[0].getValue<string>();
+                toast({
+                  title: "Timetable updated",
+                  description: name
+                    ? `${name} was updated`
+                    : "New row was added",
+                });
+              } else {
+                toast({
+                  title: "Timetable was not updated",
+                  description: "Make sure that all values are filled properly",
+                  variant: "destructive",
+                });
+              }
             });
           }}
         >

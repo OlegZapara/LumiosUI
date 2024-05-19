@@ -69,6 +69,7 @@ export default function MessageBarChart() {
   useEffect(() => {
     if (!usersStore.chatId) return;
     const d = new Date();
+    d.setDate(d.getDate() - 1);
     const today = d.toISOString().split("T")[0];
     d.setDate(d.getDate() - 7);
     const weekAgo = d.toISOString().split("T")[0];

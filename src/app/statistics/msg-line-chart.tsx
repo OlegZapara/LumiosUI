@@ -46,6 +46,7 @@ export default function MessageLineChart() {
   useEffect(() => {
     if (!usersStore.chatId) return;
     const d = new Date();
+    d.setDate(d.getDate() - 1);
     const today = d.toISOString().split("T")[0];
     d.setDate(d.getDate() - 1);
     const dayAgo = d.toISOString().split("T")[0];

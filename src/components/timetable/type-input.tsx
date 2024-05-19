@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TimetableEntry } from "@/shared/types";
+import { cn } from "@/lib/utils";
 
 interface TypeInputProps {
   isFocused: boolean;
@@ -20,15 +21,32 @@ export default function TypeInput({
   columnId,
 }: TypeInputProps) {
   const timetableStore = useTimetableStore();
+  const notValid =
+    "border-red-500 focus:ring-red-500 focus-visible:ring-red-500";
+
+  const validateBlur = () => {
+    timetableStore.setValid(columnId, editingRow[columnId] != "");
+  };
+  const validateValue = (value: string | undefined) => {
+    timetableStore.setValid(columnId, value != "");
+  };
 
   return (
     <Select
       onValueChange={(e) => {
+        validateValue(e);
         const updatedEntry = { ...editingRow, [columnId]: e };
         timetableStore.updateRow(updatedEntry as TimetableEntry);
       }}
     >
-      <SelectTrigger autoFocus={isFocused} className="px-2 w-full">
+      <SelectTrigger
+        onBlur={validateBlur}
+        autoFocus={isFocused}
+        className={cn(
+          "px-2 w-full",
+          timetableStore.validEdit[columnId] ? "" : notValid,
+        )}
+      >
         <SelectValue placeholder={editingRow[columnId]} />
       </SelectTrigger>
       <SelectContent>
