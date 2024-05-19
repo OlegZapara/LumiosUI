@@ -73,7 +73,26 @@ export const useTimetableStore = create<TimetableState>((set, get) => ({
     let ok = true;
     for (const [key, value] of Object.entries(get().validEdit)) {
       if (value == false) ok = false;
-      if ((get().editingRow as any)[key] == "" && key != "url") {
+      let valid = true;
+      switch (key) {
+        case "className":
+        case "classType":
+          if ((get().editingRow as any)[key] == "") {
+            valid = false;
+          }
+          break;
+        case "startTime":
+        case "endTime":
+          const timeRegex = /^([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
+          const isValidTime = timeRegex.test((get().editingRow as any)[key]);
+          if (!isValidTime) {
+            valid = false;
+          }
+          break;
+        default:
+          break;
+      }
+      if (!valid) {
         ok = false;
         const validInfo = get().validEdit;
         validInfo[key] = false;

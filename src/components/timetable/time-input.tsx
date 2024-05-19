@@ -25,14 +25,22 @@ export default function TimeInput({
 
   const notValid = "border-red-500 focus-visible:ring-red-500";
   const validateBlur = () => {
+    const timeRegex = /^([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
+    const isValidTime = timeRegex.test(editingRow[columnId]);
+    const lastChar = editingRow[columnId][editingRow[columnId].length - 1];
     timetableStore.setValid(
       columnId,
-      editingRow[columnId] != "" &&
-        editingRow[columnId][editingRow[columnId].length - 1] != "_",
+      editingRow[columnId] != "" && (lastChar == "_" || isValidTime),
     );
   };
   const validateValue = (value: string | undefined) => {
-    timetableStore.setValid(columnId, value != "");
+    const timeRegex = /^([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
+    const isValidTime = timeRegex.test(value!);
+    const lastChar = value![value!.length - 1];
+    timetableStore.setValid(
+      columnId,
+      value != "" && (lastChar == "_" || isValidTime),
+    );
   };
 
   return (
