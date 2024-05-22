@@ -8,10 +8,12 @@ import { useTimetableStore } from "@/app/stores/timetable";
 import { useToast } from "@/components/ui/use-toast";
 import { emptyTimetable } from "@/app/timetable/data";
 import { timetableScheme } from "@/app/timetable/timetable-scheme";
+import { useTheme } from "next-themes";
 
 export default function NoTimetablePageV2() {
   const timetableStore = useTimetableStore();
   const { toast } = useToast();
+  const theme = useTheme();
 
   function createEmptyTimetable() {
     timetableStore.createTimetable(emptyTimetable).then((res) => {
@@ -43,14 +45,14 @@ export default function NoTimetablePageV2() {
       <div className="flex flex-row flex-wrap justify-center gap-6 my-6">
         <TimetableOptionCard
           title="Create empty timetable"
-          image="/data-filling.png"
+          image={`/data-filling-${theme.resolvedTheme ?? "light"}.png`}
           onClick={createEmptyTimetable}
         ></TimetableOptionCard>
         <Dialog>
           <DialogTrigger asChild>
             <TimetableOptionCard
               title="Import JSON timetable"
-              image="/JSON.jpeg"
+              image={`/JSON-${theme.resolvedTheme ?? "light"}.png`}
             ></TimetableOptionCard>
           </DialogTrigger>
           <DialogContent>

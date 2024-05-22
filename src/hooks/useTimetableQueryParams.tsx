@@ -16,6 +16,10 @@ const getWeek = function (weeks: string[]) {
   ];
 };
 
+function clamp(num: number, min: number, max: number) {
+  return num <= min ? min : num >= max ? max : num;
+}
+
 export default function useTimetableSearchParams() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,7 +33,7 @@ export default function useTimetableSearchParams() {
       .refine((value) => {
         return value && days.some((x) => x == value);
       }),
-    days[Math.min(new Date().getDay(), days.length - 1)],
+    days[clamp(new Date().getDay() - 1, 0, days.length - 1)],
   );
 
   const urlWeekSchema = withFallback(

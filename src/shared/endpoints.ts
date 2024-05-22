@@ -11,13 +11,11 @@ export const UPDATE_TASK = API_BASE + "/tasks";
 export const CREATE_TASK = API_BASE + "/tasks";
 export const DELETE_TASK = (id: string) => `${API_BASE}/tasks/${id}`;
 
-export const GET_SHOTS = API_BASE + "/statistics/shots";
-// export const GET_MESSAGES = API_BASE + "/statistics/messages";
-
 export const GET_QUEUES = API_BASE + "/queues";
 export const GET_QUEUE = (id: string) => `${API_BASE}/queues/${id}`;
 export const UPDATE_QUEUE = API_BASE + "/queues";
 export const CREATE_QUEUE = API_BASE + "/queues";
+export const SHUFFLE_QUEUE = (id: string) => `${API_BASE}/queues/shuffle/${id}`;
 export const DELETE_SIMPLE_QUEUE = (id: string) =>
   `${API_BASE}/queues/simple/${id}`;
 export const DELETE_MIXED_QUEUE = (id: string) =>

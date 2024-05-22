@@ -19,6 +19,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import { useUsersStore } from "@/app/stores/users";
 
 const reorder = (list: User[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
@@ -30,6 +31,9 @@ const reorder = (list: User[], startIndex: number, endIndex: number) => {
 
 export default function QueueCard(props: Queue) {
   const queuesStore = useQueuesStore();
+  const isAdmin = useUsersStore(
+    (state) => state.user!.chats.find((x) => x.id == state.chatId)!.admin,
+  );
   const [users, setUsers] = useState(props.contents);
   const { toast } = useToast();
 
@@ -45,7 +49,7 @@ export default function QueueCard(props: Queue) {
     const reorderedUsers = reorder(
       users,
       result.source.index,
-      result.destination.index
+      result.destination.index,
     );
     setUsers(reorderedUsers);
   }
@@ -80,6 +84,25 @@ export default function QueueCard(props: Queue) {
     setUsers((users) => users.filter((_, i) => i !== index));
   };
 
+  const shuffleQueue = () => {
+    if (process.env.NODE_ENV === "production" && !isAdmin) {
+      toast({ title: "Only admin can shuffle the queue" });
+      return;
+    }
+    queuesStore
+      .shuffleQueue(props.id)
+      .then(() => {
+        toast({ title: "Queue was successfully shuffled" });
+      })
+      .catch((err) => {
+        toast({
+          title: "Error occurred during queue shuffle",
+          variant: "destructive",
+        });
+        console.error(err);
+      });
+  };
+
   return (
     <Card className="flex justify-start [&>div]:w-full flex-col">
       <CardHeader>
@@ -98,6 +121,7 @@ export default function QueueCard(props: Queue) {
                 className="aspect-square w-10 p-0"
                 variant="ghost"
                 title="Shuffle queue"
+                onClick={shuffleQueue}
               >
                 <Shuffle className="stroke-blue-500" size={16}></Shuffle>
               </Button>
@@ -105,7 +129,7 @@ export default function QueueCard(props: Queue) {
             <Button
               className={cn(
                 "aspect-square w-10 p-0 ",
-                props.pinned ? "border-[1px] border-orange-300" : ""
+                props.pinned ? "border-[1px] border-orange-300" : "",
               )}
               variant="ghost"
               title={props.pinned ? "Unpin queue" : "Pin queue"}
@@ -155,7 +179,7 @@ export default function QueueCard(props: Queue) {
                           {...provided.dragHandleProps}
                           className={cn(
                             "rounded-lg px-3 py-1 select-none hover:shadow dark:shadow-muted-foreground",
-                            snapshot.isDragging ? "bg-muted shadow-lg" : ""
+                            snapshot.isDragging ? "bg-muted shadow-lg" : "",
                           )}
                         >
                           <div className="group flex flex-row gap-2 items-center h-8 justify-between">

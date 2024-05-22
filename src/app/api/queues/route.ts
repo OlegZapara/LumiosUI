@@ -15,6 +15,14 @@ function getChatId(req: NextRequest): string {
   return chatId;
 }
 
+function getUserId(req: NextRequest): string {
+  const userId = req.nextUrl.searchParams.get("userId");
+  if (userId == null) {
+    throw new Error("Request should contain userId");
+  }
+  return userId;
+}
+
 function getQueueId(req: NextRequest): string {
   const taskId = req.nextUrl.searchParams.get("queueId");
   if (taskId == null) {
@@ -60,6 +68,7 @@ export async function PUT(req: NextRequest) {
     headers: {
       "content-type": "application/json",
       chatId: getChatId(req),
+      userId: getUserId(req),
       "X-API-KEY": getApiKey(),
     },
     body: JSON.stringify(await req.json()),
@@ -87,14 +96,14 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   const queueId = getQueueId(req);
   const isMixed = req.nextUrl.searchParams.get("isMixed") == "true";
-  const fethcUrl = isMixed
+  const fetchUrl = isMixed
     ? DELETE_MIXED_QUEUE(queueId)
     : DELETE_SIMPLE_QUEUE(queueId);
-  console.log(fethcUrl);
-  const apiResponse = await fetch(fethcUrl, {
+  const apiResponse = await fetch(fetchUrl, {
     method: "DELETE",
     headers: {
       "content-type": "application/json",
+      userId: getUserId(req),
       chatId: getChatId(req),
       "X-API-KEY": getApiKey(),
     },

@@ -8,6 +8,7 @@ interface QueuesStore {
   pinQueue: (id: string) => void;
   unpinQueue: (id: string) => void;
   fetchQueues: () => Promise<Queue[]>;
+  shuffleQueue: (id: string) => Promise<void>;
   createQueue: (title: string, isMixed: boolean) => Promise<void>;
   updateQueue: (queue: Queue) => Promise<void>;
   removeQueue: (queueId: string, isMixed: boolean) => Promise<void>;
@@ -17,7 +18,7 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
   queues: [],
   pinQueue: (id: string) => {
     const pinnedQueues: string[] = JSON.parse(
-      localStorage.getItem("pinnedQueues") ?? "[]"
+      localStorage.getItem("pinnedQueues") ?? "[]",
     );
     pinnedQueues.push(id);
     localStorage.setItem("pinnedQueues", JSON.stringify(pinnedQueues));
@@ -30,7 +31,7 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
   },
   unpinQueue: (id: string) => {
     let pinnedQueues: string[] = JSON.parse(
-      localStorage.getItem("pinnedQueues") ?? "[]"
+      localStorage.getItem("pinnedQueues") ?? "[]",
     );
     pinnedQueues = pinnedQueues.filter((x) => x != id);
     localStorage.setItem("pinnedQueues", JSON.stringify(pinnedQueues));
@@ -45,7 +46,7 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
     const chatId = useUsersStore.getState().chatId;
     if (chatId === null) throw new Error("Chat id must not be null");
     const pinnedQueues: string[] = JSON.parse(
-      localStorage.getItem("pinnedQueues") ?? "[]"
+      localStorage.getItem("pinnedQueues") ?? "[]",
     );
     const response = await fetch(`/api/queues?chatId=${chatId}`);
     const data: Queue[] = await response.json();
@@ -62,15 +63,25 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
       method: "POST",
       body: JSON.stringify({
         name: name,
-        isMixed: isMixed,
+        mixed: isMixed,
       }),
+    });
+    await get().fetchQueues();
+  },
+  shuffleQueue: async (id: string) => {
+    const chatId = useUsersStore.getState().chatId;
+    if (chatId === null) throw new Error("Chat id must not be null");
+    await fetch(`/api/queues/shuffle?chatId=${chatId}&queueId=${id}`, {
+      method: "POST",
     });
     await get().fetchQueues();
   },
   updateQueue: async (queue: Queue) => {
     const chatId = useUsersStore.getState().chatId;
+    const userId = useUsersStore.getState().userId;
     if (chatId === null) throw new Error("Chat id must not be null");
-    await fetch(`/api/queues?chatId=${chatId}`, {
+    if (userId === null) throw new Error("User id must not be null");
+    await fetch(`/api/queues?chatId=${chatId}&userId=${userId}`, {
       method: "PUT",
       body: JSON.stringify(queue),
     });
@@ -78,12 +89,14 @@ export const useQueuesStore = create<QueuesStore>((set, get) => ({
   },
   removeQueue: async (queueId: string, isMixed: boolean) => {
     const chatId = useUsersStore.getState().chatId;
+    const userId = useUsersStore.getState().userId;
     if (chatId === null) throw new Error("Chat id must not be null");
+    if (userId === null) throw new Error("User id must not be null");
     await fetch(
-      `/api/queues?chatId=${chatId}&queueId=${queueId}&isMixed=${isMixed}`,
+      `/api/queues?chatId=${chatId}&userId=${userId}&queueId=${queueId}&isMixed=${isMixed}`,
       {
         method: "DELETE",
-      }
+      },
     );
     await get().fetchQueues();
   },
