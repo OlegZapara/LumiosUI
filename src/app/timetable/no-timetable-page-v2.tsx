@@ -63,7 +63,7 @@ export default function NoTimetablePageV2() {
               To fill required values refer to this example{" "}
               <a
                 href="/example-timetable.json"
-                download="example.json"
+                download="example-timetable.json"
                 className="p-0 aspect-square h-8 w-8 cursor-pointer border border-input rounded-lg flex justify-center items-center hover:bg-muted"
               >
                 <Download size={16}></Download>

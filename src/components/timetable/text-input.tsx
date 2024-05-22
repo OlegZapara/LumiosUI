@@ -1,46 +1,25 @@
-import { useTimetableStore } from "@/app/stores/timetable";
-import { TimetableEntry } from "@/shared/types";
 import { Input } from "../ui/input";
-import { cn } from "@/lib/utils";
+import * as React from "react";
+import { forwardRef } from "react";
 
-interface TextInputProps {
+interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isFocused: boolean;
-  editingRow: any;
-  columnId: string;
-  canBeEmpty?: boolean;
+  errors: boolean;
 }
 
-export default function TextInput({
-  isFocused,
-  editingRow,
-  columnId,
-  canBeEmpty,
-}: TextInputProps) {
-  const timetableStore = useTimetableStore();
-  const notValid = "border-red-500 focus-visible:ring-red-500";
-  const validateBlur = () => {
-    const valid = !(!canBeEmpty && !editingRow[columnId]);
-    timetableStore.setValid(columnId, valid);
-  };
-  const validateValue = (value: string | undefined) => {
-    timetableStore.setValid(columnId, !(!canBeEmpty && !value));
-  };
+export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
+  function TextInput(props: TextInputProps, ref) {
+    const { isFocused, errors, ...otherProps } = props;
+    const invalidClassName = "border-red-500 focus-visible:ring-red-500";
 
-  return (
-    <Input
-      autoFocus={isFocused}
-      onBlur={validateBlur}
-      className={cn(
-        "px-2 w-full",
-        timetableStore.validEdit[columnId] ? "" : notValid,
-      )}
-      value={editingRow[columnId]}
-      size={1}
-      onChange={(e) => {
-        validateValue(e.target.value);
-        const updatedEntry = { ...editingRow, [columnId]: e.target.value };
-        timetableStore.updateRow(updatedEntry as TimetableEntry);
-      }}
-    />
-  );
-}
+    return (
+      <Input
+        {...otherProps}
+        ref={ref}
+        autoFocus={isFocused}
+        className={`px-2 w-full ${errors && invalidClassName}`}
+        size={1}
+      />
+    );
+  },
+);

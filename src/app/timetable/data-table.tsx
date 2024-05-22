@@ -6,7 +6,6 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  Row,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -20,8 +19,13 @@ import {
 } from "@/components/ui/table";
 
 import { useEffect } from "react";
-import { useTimetableStore } from "../stores/timetable";
-import EntryForm from "./entry-form";
+import { EMPTY_ENTRY, useTimetableStore } from "../stores/timetable";
+import { DataTableRow } from "@/app/timetable/data-table-row";
+import { FormProvider, useForm } from "react-hook-form";
+import { timetableEntryScheme } from "@/app/timetable/timetable-scheme";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/components/ui/use-toast";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -29,6 +33,8 @@ interface DataTableProps<TData, TValue> {
   weekIndex: number;
   dayIndex: number;
 }
+
+export type FormType = z.infer<typeof timetableEntryScheme>;
 
 export function DataTable<TData, TValue>({
   columns,
@@ -43,14 +49,23 @@ export function DataTable<TData, TValue>({
   });
   const timetableStore = useTimetableStore();
   const editingRow = timetableStore.editingRow;
+  const formMethods = useForm<FormType>({
+    resolver: zodResolver(timetableEntryScheme),
+  });
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (editingRow == null) return;
-      if (event.shiftKey && event.key === "Enter") {
-        timetableStore.completeEdit();
+      if (
+        event.shiftKey &&
+        event.key === "Enter" &&
+        formMethods.formState.isValid
+      ) {
+        onSubmit(formMethods.getValues());
       }
       if (event.key == "Escape") {
+        formMethods.reset({ ...EMPTY_ENTRY });
         timetableStore.discardEdit();
       }
     };
@@ -59,106 +74,97 @@ export function DataTable<TData, TValue>({
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingRow, timetableStore]);
 
-  return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table
-              .getRowModel()
-              .rows.map((row) => (
-                <DataTableRow
-                  key={row.id}
-                  row={row}
-                  week={weekIndex}
-                  day={dayIndex}
-                ></DataTableRow>
-              ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-          <TableRow>
-            <TableCell
-              onClick={() =>
-                timetableStore.addRow({ week: weekIndex, day: dayIndex })
-              }
-              className="cursor-pointer"
-              colSpan={columns.length}
-            >
-              <div className="flex flex-row items-center justify-center w-full h-full">
-                Add new row <Plus></Plus>
-              </div>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
+  function addRow() {
+    formMethods.reset({ ...EMPTY_ENTRY });
+    timetableStore.addRow({ week: weekIndex, day: dayIndex });
+  }
 
-interface DataTableRowProps<TData> {
-  week: number;
-  day: number;
-  row: Row<TData>;
-}
+  const timeToSeconds = (time: string): number => {
+    const [hours, minutes, seconds] = time.split(":").map(Number);
+    return hours * 3600 + minutes * 60 + seconds;
+  };
 
-function DataTableRow<TData>(props: DataTableRowProps<TData>) {
-  const timetableStore = useTimetableStore();
-
-  const isEdit = timetableStore.editRowInfo.row === props.row.index;
-
-  if (isEdit) {
-    return <EntryForm {...props}></EntryForm>;
+  async function onSubmit(data: FormType) {
+    if (timeToSeconds(data.startTime) >= timeToSeconds(data.endTime)) {
+      formMethods.setError("endTime", {});
+      formMethods.setError("startTime", {});
+      toast({
+        title: "Start time must be before end time",
+        variant: "destructive",
+      });
+      return;
+    }
+    const ok = await timetableStore.completeEdit(data);
+    if (!ok) {
+      toast({
+        title: "Timetable was not updated",
+        description: "Make sure that all values are filled properly",
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({
+      title: "Timetable updated",
+      description: data.className
+        ? `${data.className} was updated`
+        : "New row was added",
+    });
   }
 
   return (
-    <TableRow
-      key={props.row.id}
-      data-state={props.row.getIsSelected() && "selected"}
-      tabIndex={props.row.index + 1}
-    >
-      {props.row.getVisibleCells().map((cell, i) => (
-        <TableCell
-          key={cell.id}
-          style={{ width: cell.column.getSize() }}
-          className="cursor-default"
-          onDoubleClick={() =>
-            timetableStore.startEdit({
-              ...props,
-              row: props.row.index,
-              index: i,
-            })
-          }
-        >
-          <div className="px-2">
-            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-          </div>
-        </TableCell>
-      ))}
-    </TableRow>
+    <FormProvider {...formMethods}>
+      <form onSubmit={formMethods.handleSubmit(onSubmit)}>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table
+                  .getRowModel()
+                  .rows.map((row) => <DataTableRow row={row} key={row.id} />)
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+              <TableRow>
+                <TableCell
+                  onClick={addRow}
+                  className="cursor-pointer"
+                  colSpan={columns.length}
+                >
+                  <div className="flex flex-row items-center justify-center w-full h-full">
+                    Add new row <Plus></Plus>
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+      </form>
+    </FormProvider>
   );
 }

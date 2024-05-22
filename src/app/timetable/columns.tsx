@@ -1,198 +1,71 @@
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useToast } from "@/components/ui/use-toast";
-import { ColumnDef, Row } from "@tanstack/react-table";
-import { Check, MoreHorizontal, X } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { TimetableEntry } from "@/shared/types";
 import { useTimetableStore } from "../stores/timetable";
+import { EditRowAction } from "@/components/timetable/edit-row-action";
+import { BasicRowAction } from "@/components/timetable/basic-row-action";
+import { TextField } from "@/components/timetable/text-field";
+import { TypeField } from "@/components/timetable/type-field";
 
-export enum Column {
-  ClassName = "className",
-  StartTime = "startTime",
-  EndTime = "endTime",
-  ClassType = "classType",
-  URL = "url",
-}
+export type ColumnType =
+  | "className"
+  | "startTime"
+  | "endTime"
+  | "classType"
+  | "url";
 
 export const columns: ColumnDef<TimetableEntry>[] = [
   {
-    accessorKey: Column.ClassName,
+    accessorKey: "className",
     header: "Class Name",
+    cell: (props) => <TextField {...props} type="className" />,
     maxSize: 200,
     minSize: 100,
   },
   {
-    accessorKey: Column.StartTime,
+    accessorKey: "startTime",
     header: "Start time",
+    cell: (props) => <TextField {...props} type="startTime" />,
+
     maxSize: 200,
     minSize: 100,
   },
   {
-    accessorKey: Column.EndTime,
+    accessorKey: "endTime",
     header: "End time",
+    cell: (props) => <TextField {...props} type="endTime" />,
+
     maxSize: 200,
     minSize: 100,
   },
   {
-    accessorKey: Column.ClassType,
+    accessorKey: "classType",
     header: "Class type",
+    cell: (props) => <TypeField {...props} type="classType" />,
+
     maxSize: 200,
     minSize: 100,
   },
   {
-    accessorKey: Column.URL,
+    accessorKey: "url",
     header: "URL",
-    cell: ({ row }) => {
-      const url = row.getValue("url") as string;
-      const content = url.slice(0, 30) + (url.length > 30 ? "..." : "");
-      return <span>{content}</span>;
-    },
+    cell: (props) => <TextField {...props} type="url" />,
     maxSize: 400,
     minSize: 200,
   },
   {
     id: "actions",
-    cell: ({ row }) => (
-      <AlertDialog>
-        <div className="flex justify-end">
-          <RowAction row={row}></RowAction>
-        </div>
-      </AlertDialog>
-    ),
+    cell: (props) => <RowAction {...props}></RowAction>,
     size: 150,
   },
 ];
 
-interface CellProps {
-  row: Row<TimetableEntry>;
-}
-
-function RowAction({ row }: CellProps) {
-  const timetableStore = useTimetableStore();
-  const { toast } = useToast();
-  const searchParams = useSearchParams();
-  const isEdit = timetableStore.editRowInfo.row === row.index;
-
-  const { weeks, days } = timetableStore;
-
-  const entryInfo = {
-    week: weeks.indexOf(searchParams.get("week")!),
-    day: days.indexOf(searchParams.get("day")!),
-    row: row.index,
-    index: 0,
-  };
-
-  if (isEdit) {
-    return (
-      <div className="flex flex-row">
-        <Button
-          variant="ghost"
-          onClick={() => {
-            timetableStore.completeEdit().then((ok) => {
-              if (ok) {
-                const name = row.getAllCells()[0].getValue<string>();
-                toast({
-                  title: "Timetable updated",
-                  description: name
-                    ? `${name} was updated`
-                    : "New row was added",
-                });
-              } else {
-                toast({
-                  title: "Timetable was not updated",
-                  description: "Make sure that all values are filled properly",
-                  variant: "destructive",
-                });
-              }
-            });
-          }}
-        >
-          <Check className="stroke-green-500"></Check>
-        </Button>
-        <Button variant="ghost" onClick={() => timetableStore.discardEdit()}>
-          <X className="stroke-red-500"></X>
-        </Button>
-      </div>
-    );
-  }
+function RowAction(props: CellContext<TimetableEntry, unknown>) {
+  const isEdit = useTimetableStore(
+    (state) => state.editRowInfo.row === props.row.index,
+  );
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem
-          onClick={() => {
-            toast({
-              title: "Link copied to clipboard",
-              description: row.original.url,
-              duration: 3000,
-            });
-            navigator.clipboard.writeText(row.original.url);
-          }}
-        >
-          Copy URL
-        </DropdownMenuItem>
-        <DropdownMenuSeparator></DropdownMenuSeparator>
-        <DropdownMenuItem onClick={() => timetableStore.startEdit(entryInfo)}>
-          Edit row
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <AlertDialogTrigger>Delete row</AlertDialogTrigger>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            Are you sure you want to delete{" "}
-            {row.getAllCells()[0].getValue<string>()}?
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently remove timetable
-            entry from database
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => {
-              timetableStore.removeRow(entryInfo);
-              const rowName = row.getAllCells()[0].getValue<string>();
-              toast({
-                title: "Row deleted",
-                description: `${
-                  rowName ? rowName : "Row"
-                } was removed from timetable`,
-              });
-            }}
-          >
-            Delete
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </DropdownMenu>
+    <div className="flex justify-end">
+      {isEdit ? <EditRowAction /> : <BasicRowAction row={props.row} />}
+    </div>
   );
 }

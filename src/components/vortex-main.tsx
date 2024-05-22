@@ -3,7 +3,7 @@
 import { Vortex } from "@/components/ui/vortex";
 import { useTheme } from "next-themes";
 
-export function VortextMain() {
+export function VortexMain() {
   const theme = useTheme();
 
   return (
