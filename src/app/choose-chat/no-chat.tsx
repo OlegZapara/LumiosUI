@@ -1,6 +1,5 @@
 import React from "react";
 import { data } from "./instruction";
-import { Separator } from "@/components/ui/separator";
 
 export default function NoChat() {
   return (

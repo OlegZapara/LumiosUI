@@ -44,7 +44,7 @@ const links = [
   },
 ];
 
-export default function Navbar({ className }: { className?: string }) {
+export default function Navbar() {
   const pathname = usePathname();
   const theme = useTheme();
   const usersStore = useUsersStore();
@@ -83,7 +83,7 @@ export default function Navbar({ className }: { className?: string }) {
                     "hover:text-foreground/80 hidden md:flex",
                     link.href == pathname
                       ? "text-foreground"
-                      : "text-muted-foreground"
+                      : "text-muted-foreground",
                   )}
                   title={link.title + " page"}
                   aria-label={link.title + " page"}
@@ -92,7 +92,7 @@ export default function Navbar({ className }: { className?: string }) {
                 >
                   {link.title}
                 </Link>
-              )
+              ),
           )}
         </div>
         <div className="flex-row items-center justify-center hidden sm:flex">
@@ -179,7 +179,7 @@ function NavbarMenu() {
                 "h-12 w-full hover:text-foreground/80 text-lg px-4 hover:bg-muted flex items-center",
                 link.href == pathname
                   ? "text-foreground"
-                  : "text-muted-foreground"
+                  : "text-muted-foreground",
               )}
               onClick={() => setToggled(false)}
               title={link.title + " page"}

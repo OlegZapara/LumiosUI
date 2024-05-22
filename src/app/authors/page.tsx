@@ -35,6 +35,7 @@ function OlehCard() {
     />
   );
 }
+
 function BohdanCard() {
   return (
     <PersonInfo3dCard

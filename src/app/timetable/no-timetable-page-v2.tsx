@@ -107,6 +107,7 @@ function TimetableOptionCard(props: TimetableOptionCardProps) {
 function DragNDropField() {
   const timetableStore = useTimetableStore();
   const { toast } = useToast();
+
   function processFile(files: File[]) {
     const jsonFile = files[0];
     readJSONFile(jsonFile)
@@ -138,6 +139,7 @@ function DragNDropField() {
       })
       .catch((err) => console.log(err));
   }
+
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: processFile,
     multiple: false,

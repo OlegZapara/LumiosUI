@@ -36,7 +36,7 @@ export default function Queues() {
 
   function filterData(filter: string) {
     const filteredRecords = queues.filter((x) =>
-      x.alias.toUpperCase().includes(filter.toUpperCase())
+      x.alias.toUpperCase().includes(filter.toUpperCase()),
     );
     setFilteredData([
       ...filteredRecords.filter((x) => x.pinned),

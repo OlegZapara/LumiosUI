@@ -41,7 +41,7 @@ export const useUsersStore = create(
         const chatId: unknown = await response.json();
         if (typeof chatId !== "number")
           throw new Error(
-            `ChatId is of type ${typeof chatId} (expected number)`
+            `ChatId is of type ${typeof chatId} (expected number)`,
           );
         set({ userId, chatId });
         await get().fetchUser(userId);
@@ -59,6 +59,6 @@ export const useUsersStore = create(
     }),
     {
       name: "users",
-    }
-  )
+    },
+  ),
 );

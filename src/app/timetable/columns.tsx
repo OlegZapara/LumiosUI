@@ -11,7 +11,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Check, MoreHorizontal, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-// import { days, weeks } from "./data";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -197,8 +196,3 @@ function RowAction({ row }: CellProps) {
     </DropdownMenu>
   );
 }
-
-const extractDomain = (url: string): string => {
-  const match = url.match(/^(?:https?:\/\/)?(?:www\.)?([^\/]+)/);
-  return match ? match[1] : url;
-};

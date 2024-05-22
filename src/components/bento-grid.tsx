@@ -1,5 +1,5 @@
 "use client";
-import { Users, Bell, CalendarCheck, BarChart3, Send } from "lucide-react";
+import { BarChart3, Bell, CalendarCheck, Send, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { BentoGrid, BentoGridItem } from "./ui/bento-grid";

@@ -45,9 +45,7 @@ export const Vortex = (props: VortexProps) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   let center: [number, number] = [0, 0];
 
-  const HALF_PI: number = 0.5 * Math.PI;
   const TAU: number = 2 * Math.PI;
-  const TO_RAD: number = Math.PI / 180;
   const rand = (n: number): number => n * Math.random();
   const randRange = (n: number): number => n - rand(2 * n);
   const fadeInOut = (t: number, m: number): number => {
@@ -172,7 +170,7 @@ export const Vortex = (props: VortexProps) => {
     ttl: number,
     radius: number,
     hue: number,
-    ctx: CanvasRenderingContext2D
+    ctx: CanvasRenderingContext2D,
   ) => {
     ctx.lineCap = "round";
     ctx.lineWidth = radius;
@@ -198,12 +196,12 @@ export const Vortex = (props: VortexProps) => {
       center[0] = 0.5 * canvas.width;
       center[1] = 0.5 * canvas.height;
     },
-    [center]
+    [center],
   );
 
   const renderToScreen = (
     canvas: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D
+    ctx: CanvasRenderingContext2D,
   ) => {
     // ctx.save();
     ctx.globalCompositeOperation = mode;

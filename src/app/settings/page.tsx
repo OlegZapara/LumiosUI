@@ -30,18 +30,6 @@ const pages = [
     name: "Timetable",
     content: <TimetableSettings />,
   },
-  // {
-  //   name: "Statistics",
-  //   content: <StatisticsSettings />,
-  // },
-  // {
-  //   name: "Queues",
-  //   content: <QueuesSettings />,
-  // },
-  // {
-  //   name: "Tasks",
-  //   content: <TasksSettings />,
-  // },
 ];
 
 const urlSchema = withFallback(
