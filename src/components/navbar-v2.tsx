@@ -44,7 +44,7 @@ const links = [
   },
 ];
 
-export default function Navbar() {
+export default function Navbar({ className }: { className?: string }) {
   const pathname = usePathname();
   const theme = useTheme();
   const usersStore = useUsersStore();
