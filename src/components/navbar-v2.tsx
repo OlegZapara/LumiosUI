@@ -50,8 +50,6 @@ export default function Navbar({ className }: { className?: string }) {
   const usersStore = useUsersStore();
   const router = useRouter();
 
-  if (typeof window === "undefined") return null;
-
   const updateUserId = (user: TelegramUser) => {
     usersStore.setUserId(user.id).then((ok) => {
       if (!ok) router.push("/choose-chat");
@@ -101,7 +99,7 @@ export default function Navbar({ className }: { className?: string }) {
         <div className="flex-row items-center justify-center flex">
           {usersStore.userId == null || usersStore.user == null ? (
             <TelegramLoginButton
-              buttonSize={window.innerWidth < 800 ? "small" : "medium"}
+              buttonSize="medium"
               botName="lumios_bot"
               dataOnauth={updateUserId}
             />
@@ -176,30 +174,26 @@ function NavbarMenu() {
       </Button>
       {toggled && (
         <div className="fixed h-screen w-full max-w-96 left-0 top-14 shadow-lg flex flex-col bg-background">
-          {links.map((link) => (
-            <Link
-              className={cn(
-                "h-12 w-full hover:text-foreground/80 text-lg px-4 hover:bg-muted flex items-center",
-                link.href == pathname
-                  ? "text-foreground"
-                  : "text-muted-foreground",
-              )}
-              onClick={() => setToggled(false)}
-              title={link.title + " page"}
-              aria-label={link.title + " page"}
-              key={link.title}
-              href={link.href}
-            >
-              {link.title}
-            </Link>
-          ))}
-          {/*{(usersStore.userId == null || usersStore.user == null) && (*/}
-          <TelegramLoginButton
-            buttonSize="large"
-            botName="lumios_bot"
-            dataOnauth={(user: TelegramUser) => usersStore.setUserId(user.id)}
-          />
-          {/*)}*/}
+          {links.map(
+            (link) =>
+              !(usersStore.chatId == null && link.protected) && (
+                <Link
+                  className={cn(
+                    "h-12 w-full hover:text-foreground/80 text-lg px-4 hover:bg-muted flex items-center",
+                    link.href == pathname
+                      ? "text-foreground"
+                      : "text-muted-foreground",
+                  )}
+                  onClick={() => setToggled(false)}
+                  title={link.title + " page"}
+                  aria-label={link.title + " page"}
+                  key={link.title}
+                  href={link.href}
+                >
+                  {link.title}
+                </Link>
+              ),
+          )}
           <Link
             href="/tutorial"
             title="Turorial page"
