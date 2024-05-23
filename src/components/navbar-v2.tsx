@@ -50,6 +50,8 @@ export default function Navbar({ className }: { className?: string }) {
   const usersStore = useUsersStore();
   const router = useRouter();
 
+  if (typeof window === "undefined") return null;
+
   const updateUserId = (user: TelegramUser) => {
     usersStore.setUserId(user.id).then((ok) => {
       if (!ok) router.push("/choose-chat");
