@@ -58,18 +58,19 @@ export default function Navbar({ className }: { className?: string }) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm dark:shadow-muted">
-      <div className="container flex h-14 max-w-screen-2xl items-center justify-center sm:justify-between relative">
+      <div className="container flex h-14 max-w-screen-2xl items-center justify-between relative">
         <div className="flex flex-row justify-center items-center gap-1 sm:gap-2 md:gap-4">
           <NavbarMenu></NavbarMenu>
           <Link title="Main page" aria-label="Main page" href="/">
-            <div className="transition-colors flex flex-row items-center justify-center gap-2 px-2 sm:px-4 py-2 rounded-lg title ml-10 md:ml-0">
+            <div className="transition-colors flex flex-row items-center justify-center gap-2 px-2 sm:px-4 py-2 rounded-lg title ml-5 md:ml-0">
               <Image
                 src="/lumios.png"
                 width="30"
                 height="30"
                 alt="Lumios logo"
+                className="min-w-6"
               ></Image>
-              <p className="font-bold text-xl sm:text-2xl relative w-max">
+              <p className="font-bold text-sm sm:text-2xl relative w-max">
                 <span>Lumios Bot</span>
                 <span className="absolute -bottom-1 left-0 w-0 transition-all h-1 bg-blue-500"></span>
               </p>
@@ -95,10 +96,10 @@ export default function Navbar({ className }: { className?: string }) {
               ),
           )}
         </div>
-        <div className="flex-row items-center justify-center hidden sm:flex">
+        <div className="flex-row items-center justify-center flex">
           {usersStore.userId == null || usersStore.user == null ? (
             <TelegramLoginButton
-              buttonSize="medium"
+              buttonSize={window.innerWidth < 800 ? "small" : "medium"}
               botName="lumios_bot"
               dataOnauth={updateUserId}
             />
@@ -107,7 +108,7 @@ export default function Navbar({ className }: { className?: string }) {
               href="/settings"
               title="User settings"
               aria-label="User settings"
-              className="flex justify-center items-center rounded-md hover:bg-muted py-2 px-4 font-semibold"
+              className="justify-center items-center rounded-md hover:bg-muted py-2 px-4 font-semibold"
             >
               @{usersStore.user.username}
             </Link>
@@ -117,7 +118,7 @@ export default function Navbar({ className }: { className?: string }) {
             href="/tutorial"
             title="Turorial page"
             aria-label="Turorial page"
-            className="aspect-square rounded-md hover:bg-muted p-2"
+            className="hidden sm:flex aspect-square rounded-md hover:bg-muted p-2"
           >
             <HelpCircle className="p-[2px]"></HelpCircle>
           </Link>
@@ -125,7 +126,7 @@ export default function Navbar({ className }: { className?: string }) {
             href="https://github.com/OlegZapara/LumiosUI"
             title="LumiosUI Github page"
             aria-label="LumiosUI Github page"
-            className="aspect-square rounded-md hover:bg-muted p-2"
+            className="hidden sm:flex aspect-square rounded-md hover:bg-muted p-2"
           >
             <IconBrandGithub className="p-[2px]"></IconBrandGithub>
           </Link>
@@ -133,7 +134,7 @@ export default function Navbar({ className }: { className?: string }) {
             aria-label="Toggle theme"
             variant="ghost"
             title="Toggle theme"
-            className="aspect-square rounded-md hover:bg-muted p-2"
+            className="hidden sm:flex aspect-square rounded-md hover:bg-muted p-2"
             onClick={() => {
               theme.setTheme(theme.theme == "dark" ? "light" : "dark");
             }}
@@ -144,7 +145,7 @@ export default function Navbar({ className }: { className?: string }) {
             href="/settings"
             title="Settings page"
             aria-label="Settings page"
-            className="aspect-square rounded-md hover:bg-muted p-2"
+            className="hidden sm:flex aspect-square rounded-md hover:bg-muted p-2"
           >
             <Settings className="p-[2px]"></Settings>
           </Link>
@@ -190,13 +191,13 @@ function NavbarMenu() {
               {link.title}
             </Link>
           ))}
-          {(usersStore.userId == null || usersStore.user == null) && (
-            <TelegramLoginButton
-              buttonSize="large"
-              botName="lumios_bot"
-              dataOnauth={(user: TelegramUser) => usersStore.setUserId(user.id)}
-            />
-          )}
+          {/*{(usersStore.userId == null || usersStore.user == null) && (*/}
+          <TelegramLoginButton
+            buttonSize="large"
+            botName="lumios_bot"
+            dataOnauth={(user: TelegramUser) => usersStore.setUserId(user.id)}
+          />
+          {/*)}*/}
           <Link
             href="/tutorial"
             title="Turorial page"
