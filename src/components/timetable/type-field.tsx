@@ -47,7 +47,6 @@ export function TypeField(props: TypeFieldProps) {
               <SelectItem value="LAB">LAB</SelectItem>
               <SelectItem value="PRACTICE">PRACTICE</SelectItem>
               <SelectItem value="LECTURE">LECTURE</SelectItem>
-              <SelectItem value="OTHER">OTHER</SelectItem>
             </SelectContent>
           </Select>
         );

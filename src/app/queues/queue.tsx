@@ -81,6 +81,10 @@ export default function QueueCard(props: Queue) {
   };
 
   const removeUser = (index: number) => {
+    if (!isAdmin && process.env.NODE_ENV === "production") {
+      toast({ title: "Only admin can remove users" });
+      return;
+    }
     setUsers((users) => users.filter((_, i) => i !== index));
   };
 
@@ -154,7 +158,10 @@ export default function QueueCard(props: Queue) {
       </CardHeader>
       <CardBody className="h-auto p-6 flex flex-col gap-1 relative">
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="droppable">
+          <Droppable
+            droppableId="droppable"
+            isDropDisabled={!(isAdmin || process.env.NODE_ENV !== "production")}
+          >
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {users.map((user, index) => (

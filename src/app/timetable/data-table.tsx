@@ -78,6 +78,14 @@ export function DataTable<TData, TValue>({
   }, [editingRow, timetableStore]);
 
   function addRow() {
+    if (timetableStore.editingRow != null) {
+      toast({
+        title: "You cannot add a new row",
+        description: "You need to finish editing before adding a new row",
+        variant: "destructive",
+      });
+      return;
+    }
     formMethods.reset({ ...EMPTY_ENTRY });
     timetableStore.addRow({ week: weekIndex, day: dayIndex });
   }
