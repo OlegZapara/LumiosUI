@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { z } from "zod";
 import { withFallback } from "@/app/utils/schema-extensions";
 import TimetableSettings from "@/app/settings/timetable-settings";
+import { useUsersStore } from "@/app/stores/users";
 
 const pages = [
   {
@@ -45,9 +46,17 @@ const urlSchema = withFallback(
 export default function Settings() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const usersStore = useUsersStore();
   useEffect(() => {
     router.push(`?page=${urlSchema.parse(searchParams.get("page"))}`);
   }, [router, searchParams]);
+
+  useEffect(() => {
+    if (usersStore.userId) {
+      usersStore.setUserId(usersStore.userId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="sm-6">

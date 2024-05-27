@@ -37,7 +37,7 @@ export default function ChooseChatPage() {
       ),
     );
     setLoading(false);
-  }, [router, toast, usersStore, usersStore.user]);
+  }, [router, toast, usersStore, usersStore.user, usersStore.user?.chats]);
 
   const filter = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchString(e.target.value);
