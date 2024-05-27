@@ -16,6 +16,9 @@ export async function GET(req: NextRequest) {
       "content-type": "application/json",
       "X-API-KEY": getApiKey(),
     },
+    next: {
+      revalidate: 0,
+    },
   });
   if (!apiResponse.ok) {
     return new NextResponse(await apiResponse.text(), {

@@ -28,6 +28,7 @@ export const useUsersStore = create(
       fetchUser: async (userId: number) => {
         const response = await fetch(`api/user?userId=${userId}`);
         const data = await response.json();
+        console.log(data);
         set({ user: data });
         return data;
       },

@@ -58,6 +58,10 @@ export default function QueueCard(props: Queue) {
     JSON.stringify(props.contents) !== JSON.stringify(users);
 
   const deleteQueue = () => {
+    if (!isAdmin && process.env.NODE_ENV === "production") {
+      toast({ title: "Only admin can delete queue" });
+      return;
+    }
     queuesStore.removeQueue(props.id, props.isMixed).then(() => {
       toast({
         title: "Queue deleted",
@@ -67,6 +71,10 @@ export default function QueueCard(props: Queue) {
   };
 
   const updateQueue = () => {
+    if (!isAdmin && process.env.NODE_ENV === "production") {
+      toast({ title: "Only admin can update queue" });
+      return;
+    }
     const { pinned, ...queueProps } = props;
     const queue: Queue = {
       ...queueProps,
