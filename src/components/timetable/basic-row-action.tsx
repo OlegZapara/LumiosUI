@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Row } from "@tanstack/react-table";
 import { TimetableEntry } from "@/shared/types";
+import { useFormContext } from "react-hook-form";
+import { FormType } from "@/app/timetable/data-table";
 
 type BasicRowActionProps = {
   row: Row<TimetableEntry>;
@@ -34,12 +36,15 @@ export function BasicRowAction({ row }: BasicRowActionProps) {
   const timetableStore = useTimetableStore();
   const { toast } = useToast();
   const searchParams = useSearchParams();
+  const formContext = useFormContext<FormType>();
 
   const { weeks, days } = timetableStore;
+  const weekIndex = weeks.indexOf(searchParams.get("week")!);
+  const dayIndex = days.indexOf(searchParams.get("day")!);
 
   const entryInfo = {
-    week: weeks.indexOf(searchParams.get("week")!),
-    day: days.indexOf(searchParams.get("day")!),
+    week: weekIndex,
+    day: dayIndex,
     row: row.index,
     index: 0,
   };
@@ -56,6 +61,11 @@ export function BasicRowAction({ row }: BasicRowActionProps) {
 
   function startEdit() {
     timetableStore.startEdit(entryInfo);
+    formContext.reset(
+      timetableStore.timetable![weekIndex].days[dayIndex].classEntries[
+        row.index
+      ],
+    );
   }
 
   function deleteRow() {

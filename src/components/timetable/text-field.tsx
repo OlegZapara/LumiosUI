@@ -5,6 +5,7 @@ import { TextInput } from "@/components/timetable/text-input";
 import { useFormContext } from "react-hook-form";
 import { FormType } from "@/app/timetable/data-table";
 import { ColumnType } from "@/app/timetable/columns";
+import Link from "next/link";
 
 const MAX_LENGTH = 30;
 
@@ -26,6 +27,18 @@ export function TextField(props: TextFieldProps) {
     fieldValue.slice(0, MAX_LENGTH) +
     (fieldValue.length > MAX_LENGTH ? "..." : "");
 
+  if (!isEditing && props.type == "url") {
+    return (
+      <Link
+        aria-label={`Link to ${fieldValue}`}
+        className="px-2 underline text-blue-500"
+        target="_blank"
+        href={fieldValue}
+      >
+        {content}
+      </Link>
+    );
+  }
   if (!isEditing) {
     return <div className="px-2">{content}</div>;
   }
