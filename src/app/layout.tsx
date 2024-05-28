@@ -5,7 +5,8 @@ import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import Navbar from "@/components/navbar-v2";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
+import GoogleAnalytics from "@/components/google-analytics";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,8 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className}`}>
+      <Head>
         <GoogleAnalytics />
+      </Head>
+      <body className={`${inter.className}`}>
         <ThemeProvider attribute="class" defaultTheme={"system"}>
           <Toaster />
           <div className="relative flex min-h-screen flex-col bg-background">
