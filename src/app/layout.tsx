@@ -6,7 +6,6 @@ import { Suspense } from "react";
 import "./globals.css";
 import Navbar from "@/components/navbar-v2";
 import GoogleAnalytics from "@/components/google-analytics";
-import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,9 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <Head>
-        <GoogleAnalytics />
-      </Head>
+      <GoogleAnalytics />
       <body className={`${inter.className}`}>
         <ThemeProvider attribute="class" defaultTheme={"system"}>
           <Toaster />
