@@ -47,12 +47,8 @@ export const TypewriterEffectSmooth = ({
     <div className={cn("flex space-x-1 my-6", className)}>
       <motion.div
         className="overflow-hidden "
-        initial={{
-          width: "0%",
-        }}
-        whileInView={{
-          width: "fit-content",
-        }}
+        initial={{ width: 0 }}
+        animate={{ width: "fit-content" }}
         transition={{
           duration: 2,
           ease: "linear",
@@ -60,7 +56,7 @@ export const TypewriterEffectSmooth = ({
         }}
       >
         <div
-          className="text-xs sm:text-base md:text-xl lg:text:3xl xl:text-5xl font-bold"
+          className="text-xs sm:text-base md:text-xl lg:text-3xl xl:text-5xl font-bold"
           style={{
             whiteSpace: "nowrap",
           }}
@@ -69,15 +65,10 @@ export const TypewriterEffectSmooth = ({
         </div>{" "}
       </motion.div>
       <motion.span
-        initial={{
-          opacity: 0,
-        }}
-        animate={{
-          opacity: 1,
-        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{
           duration: 0.8,
-
           repeat: Infinity,
           repeatType: "reverse",
         }}
