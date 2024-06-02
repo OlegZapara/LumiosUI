@@ -174,8 +174,8 @@ export default function QueueCard(props: Queue) {
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {users.map((user, index) => (
                   <Draggable
-                    key={user.username}
-                    draggableId={user.username}
+                    key={user.username ? user.username : user.name}
+                    draggableId={user.username ? user.username : user.name}
                     index={index}
                   >
                     {(provided, snapshot) => {
@@ -199,8 +199,8 @@ export default function QueueCard(props: Queue) {
                         >
                           <div className="group flex flex-row gap-2 items-center h-8 justify-between">
                             <div className="flex flex-row gap-2 items-center">
-                              <GripVertical size={16}></GripVertical>@
-                              {user.username}
+                              <GripVertical size={16}></GripVertical>
+                              {user.username ? `@${user.username}` : user.name}
                             </div>
                             <Button
                               variant="ghost"

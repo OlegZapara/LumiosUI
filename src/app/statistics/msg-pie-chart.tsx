@@ -86,10 +86,10 @@ export default function MessagePieChart() {
             {data.slice(0, 5).map((data, i) => (
               <div
                 className="py-2 px-4 font-semibold text-lg flex flex-row justify-between gap-6 w-full"
-                key={data.username}
+                key={data.username ? data.username : "null"}
               >
                 <div>
-                  {i + 1}. {data.username}
+                  {i + 1}. {data.username ? data.username : "null"}
                 </div>
                 <div className="underline">{data.messages}</div>
               </div>
@@ -131,10 +131,10 @@ export default function MessagePieChart() {
             {data.slice(5, 10).map((data, i) => (
               <div
                 className="py-2 px-4 font-semibold text-lg flex flex-row justify-between gap-6 w-full"
-                key={data.username}
+                key={data.username ? data.username : "null"}
               >
                 <div>
-                  {i + 6}. {data.username}
+                  {i + 6}. {data.username ? data.username : "null"}
                 </div>
                 <div className="underline">{data.messages}</div>
               </div>

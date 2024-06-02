@@ -32,6 +32,7 @@ import { Task } from "@/shared/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTasksStore } from "../stores/tasks";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   taskName: z.string().trim().min(2, {
@@ -82,6 +83,7 @@ function getDate(date: Date | string | undefined): Date {
 
 export default function TaskDialog(props: TaskDialogProps) {
   const { updateTask, createTask } = useTasksStore();
+  const { toast } = useToast();
 
   // const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -100,9 +102,21 @@ export default function TaskDialog(props: TaskDialogProps) {
       task.dueDate.getMinutes() - task.dueDate.getTimezoneOffset(),
     );
     if (props.type == "create") {
-      createTask(task);
+      createTask(task).then(() => {
+        form.reset();
+        toast({
+          title: "Task created",
+          description: `Task ${task.taskName} was created successfully`,
+        });
+      });
     } else {
-      updateTask(task);
+      updateTask(task).then(() => {
+        form.reset();
+        toast({
+          title: "Task updated",
+          description: `Task ${task.taskName} was updated successfully`,
+        });
+      });
     }
   }
 
