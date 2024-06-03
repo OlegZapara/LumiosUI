@@ -2,17 +2,8 @@
 
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useTheme } from "next-themes";
-import SettingsField from "./settings-field";
-import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 
 export default function Appearance() {
@@ -35,23 +26,6 @@ export default function Appearance() {
       <Separator className="w-full my-2"></Separator>
 
       <section className="flex flex-col gap-4 my-4 border border-input rounded-md p-4">
-        <div className="text-xl">Font & Theme</div>
-        <Separator></Separator>
-        <SettingsField
-          name="Font"
-          description="Preffered font that will be used accross application"
-        >
-          <Select defaultValue="inter">
-            <SelectTrigger className="w-[180px]" disabled>
-              <SelectValue placeholder="Font" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="inter">Inter</SelectItem>
-              <SelectItem value="manrope">Manrope</SelectItem>
-              <SelectItem value="system">System</SelectItem>
-            </SelectContent>
-          </Select>
-        </SettingsField>
         <div className="w-full flex flex-col gap-2 p-2 sm:p-4">
           <div className="leading-none tracking-tight">Theme</div>
           <div className="text-sm text-muted-foreground">
@@ -69,46 +43,6 @@ export default function Appearance() {
             </RadioGroup>
           )}
         </div>
-      </section>
-
-      <section className="flex flex-col gap-4 my-4 border border-input rounded-md p-4">
-        <div className="text-xl">Timetable</div>
-        <Separator></Separator>
-        <SettingsField
-          name="Timetable header"
-          description="Enable timetable header for timetable page"
-        >
-          <Select defaultValue="Enabled">
-            <SelectTrigger>
-              <SelectValue placeholder="Font" />
-            </SelectTrigger>
-            <Button variant="outline" className="w-full sm:w-32">
-              Save
-            </Button>
-            <SelectContent>
-              <SelectItem value="Enabled">Enabled</SelectItem>
-              <SelectItem value="Disabled">Disabled</SelectItem>
-            </SelectContent>
-          </Select>
-        </SettingsField>
-        <SettingsField
-          name="JSON editor"
-          description="Enable timetable JSON editing"
-          developer
-        >
-          <Select defaultValue="Enabled">
-            <SelectTrigger>
-              <SelectValue placeholder="Font" />
-            </SelectTrigger>
-            <Button variant="outline" className="w-full sm:w-32">
-              Save
-            </Button>
-            <SelectContent>
-              <SelectItem value="Enabled">Enabled</SelectItem>
-              <SelectItem value="Disabled">Disabled</SelectItem>
-            </SelectContent>
-          </Select>
-        </SettingsField>
       </section>
     </div>
   );

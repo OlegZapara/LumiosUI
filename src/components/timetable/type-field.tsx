@@ -41,7 +41,7 @@ export function TypeField(props: TypeFieldProps) {
               autoFocus={isFocused}
               className={`px-2 w-full ${errors && invalidClassName}`}
             >
-              <SelectValue placeholder={field.value} />
+              <SelectValue placeholder={field.value ? field.value : "Type"} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="LAB">LAB</SelectItem>

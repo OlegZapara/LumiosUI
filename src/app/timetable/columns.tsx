@@ -17,14 +17,18 @@ export const columns: ColumnDef<TimetableEntry>[] = [
   {
     accessorKey: "className",
     header: "Class Name",
-    cell: (props) => <TextField {...props} type="className" />,
+    cell: (props) => (
+      <TextField {...props} type="className" placeholder="Class Name" />
+    ),
     maxSize: 200,
     minSize: 100,
   },
   {
     accessorKey: "startTime",
     header: "Start time",
-    cell: (props) => <TextField {...props} type="startTime" />,
+    cell: (props) => (
+      <TextField {...props} type="startTime" placeholder="HH:MM:SS" />
+    ),
 
     maxSize: 200,
     minSize: 100,
@@ -32,7 +36,9 @@ export const columns: ColumnDef<TimetableEntry>[] = [
   {
     accessorKey: "endTime",
     header: "End time",
-    cell: (props) => <TextField {...props} type="endTime" />,
+    cell: (props) => (
+      <TextField {...props} type="endTime" placeholder="HH:MM:SS" />
+    ),
 
     maxSize: 200,
     minSize: 100,
@@ -48,7 +54,7 @@ export const columns: ColumnDef<TimetableEntry>[] = [
   {
     accessorKey: "url",
     header: "URL",
-    cell: (props) => <TextField {...props} type="url" />,
+    cell: (props) => <TextField {...props} type="url" placeholder="URL" />,
     maxSize: 400,
     minSize: 200,
   },

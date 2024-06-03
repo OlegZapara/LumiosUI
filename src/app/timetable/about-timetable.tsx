@@ -28,16 +28,10 @@ export default function AboutTimetable() {
                 Save row: <Badge>Shift-Enter</Badge>
               </Label>
               <Label className="flex justify-between">
-                Move to next row: <Badge>Tab</Badge>
+                Move to next cell: <Badge>Tab</Badge>
               </Label>
               <Label className="flex justify-between">
-                Move to previous row: <Badge>Shift-Tab</Badge>
-              </Label>
-              <Label className="flex justify-between">
-                Move to left cell: <Badge>Left arrow</Badge>
-              </Label>
-              <Label className="flex justify-between">
-                Move to right cell: <Badge>Right arrow</Badge>
+                Discard edit: <Badge>Esc</Badge>
               </Label>
             </div>
           </SheetDescription>

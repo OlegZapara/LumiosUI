@@ -11,6 +11,7 @@ const MAX_LENGTH = 30;
 
 interface TextFieldProps extends CellContext<TimetableEntry, unknown> {
   type: ColumnType;
+  placeholder: string;
 }
 
 export function TextField(props: TextFieldProps) {
@@ -48,6 +49,7 @@ export function TextField(props: TextFieldProps) {
       {...formContext.register(props.type)}
       isFocused={isFocused}
       errors={errors}
+      placeholder={props.placeholder}
     />
   );
 }

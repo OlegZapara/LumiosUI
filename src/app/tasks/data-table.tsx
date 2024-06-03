@@ -54,6 +54,7 @@ export function DataTable<TData, TValue>({
     React.useState<VisibilityState>({ id: false });
   const [rowSelection, setRowSelection] = React.useState({});
   const [taskDialogOpen, setTaskDialogOpen] = React.useState(false);
+  const [editTaskDialogOpen, setEditTaskDialogOpen] = React.useState(false);
 
   const table = useReactTable({
     data,
@@ -124,8 +125,8 @@ export function DataTable<TData, TValue>({
           <TaskDialog
             type="edit"
             task={getSelectedTask()}
-            open={taskDialogOpen}
-            setOpen={setTaskDialogOpen}
+            open={editTaskDialogOpen}
+            setOpen={setEditTaskDialogOpen}
           >
             <div className="border-blue-500 cursor-pointer ml-auto h-10 px-4 py-2 relative mr-4 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:bg-accent hover:text-accent-foreground">
               <SquarePen className="absolute h-5 w-5 left-3 stroke-blue-500"></SquarePen>
@@ -160,9 +161,7 @@ export function DataTable<TData, TValue>({
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
+                    onCheckedChange={(value) => column.toggleVisibility(value)}
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
