@@ -15,6 +15,9 @@ export async function GET(req: NextRequest) {
     headers: {
       "X-API-KEY": getApiKey(),
     },
+    next: {
+      revalidate: 0,
+    },
   });
   if (!apiResponse.ok) {
     return new NextResponse("Bad request", {
