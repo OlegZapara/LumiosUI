@@ -1,15 +1,15 @@
 import { z } from "zod";
 
-const QueueUserSchema = z.object({
+export const QueueUserSchema = z.object({
   username: z.string().min(1, { message: "username must not be empty" }),
   name: z.string().min(1, { message: "name must not be empty" }),
   accountId: z.number(),
 });
 
-const QueueSchema = z.object({
+export const QueueSchema = z.object({
   alias: z.string().min(1, { message: "alias must not be empty" }),
   id: z.string(),
-  messageId: z.string(),
+  messageId: z.number(),
   pinned: z.boolean().optional(),
   isMixed: z.boolean(),
   contents: z.array(QueueUserSchema),

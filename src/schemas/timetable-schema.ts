@@ -2,6 +2,16 @@ import { z } from "zod";
 
 const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
 
+export const weeks = ["First week", "Second week"];
+export const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+export const EMPTY_ENTRY: TimetableEntry = {
+  className: "",
+  url: "",
+  classType: "",
+  startTime: "00:00:00",
+  endTime: "00:00:00",
+};
+
 export const TimetableEntrySchema = z.object({
   className: z.string().min(1, { message: "className must not be empty" }),
   url: z.string(),

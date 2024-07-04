@@ -1,11 +1,9 @@
 import { CellContext } from "@tanstack/react-table";
-import { TimetableEntry } from "@/shared/types";
-import { useTimetableStore } from "@/app/stores/timetable";
 import { TextInput } from "@/components/timetable/text-input";
 import { useFormContext } from "react-hook-form";
-import { FormType } from "@/app/timetable/data-table";
-import { ColumnType } from "@/app/timetable/columns";
+import { ColumnType } from "@/components/timetable/columns";
 import Link from "next/link";
+import { TimetableEntry } from "@/schemas/timetable-schema";
 
 const MAX_LENGTH = 30;
 
@@ -15,11 +13,13 @@ interface TextFieldProps extends CellContext<TimetableEntry, unknown> {
 }
 
 export function TextField(props: TextFieldProps) {
-  const timetableStore = useTimetableStore();
-  const formContext = useFormContext<FormType>();
-  const isEditing = timetableStore.editRowInfo.row === props.row.index;
-  const isFocused =
-    props.cell.column.getIndex() === timetableStore.editRowInfo.index;
+  const formContext = useFormContext<TimetableEntry>();
+  // const isEditing = timetableStore.editRowInfo.row === props.row.index;
+  // const isFocused =
+  //   props.cell.column.getIndex() === timetableStore.editRowInfo.index;
+  // TODO: Fix this
+  const isEditing = false;
+  const isFocused = false;
   const errors =
     formContext.formState.errors[props.column.id as ColumnType] != undefined;
 
@@ -32,7 +32,7 @@ export function TextField(props: TextFieldProps) {
     return (
       <Link
         aria-label={`Link to ${fieldValue}`}
-        className="px-2 underline text-blue-500"
+        className="px-2 text-blue-500 underline"
         target="_blank"
         href={fieldValue}
       >

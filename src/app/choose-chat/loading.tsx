@@ -1,33 +1,27 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search } from "lucide-react";
+import { MoveRight } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import Filter from "@/components/general/filter";
 
 export default function Loading() {
   return (
-    <div className="md:container mt-6">
-      <Card className="w-full shadow-md lg:shadow-lg h-auto">
+    <div className="mt-6 md:container">
+      <Card className="h-auto w-full shadow-md lg:shadow-lg">
         <CardHeader>
           <CardTitle>
-            <div className="flex gap-6 flex-col md:flex-row w-full justify-between items-center px-4">
-              <div className="mt-3 flex flex-col gap-1 animate-slowly-show">
-                <Skeleton className="h-7 w-96"></Skeleton>
-                <Skeleton className="h-5 w-72"></Skeleton>
-              </div>
-              <div className="w-full md:w-72 flex relative">
-                <Input
-                  placeholder="Search for chat"
-                  className="w-full max-w-96 font-normal pl-9"
-                  disabled
-                ></Input>
-                <div className="absolute left-3 top-3">
-                  <Search size={16}></Search>
-                </div>
-              </div>
+            <div className="flex w-full flex-col items-center justify-between gap-6 px-4 md:flex-row">
+              <span className="mt-3 flex flex-col gap-1">
+                Lumios Bot is available in multiple chats.
+                <span className="flex flex-row items-center gap-2 text-base font-normal">
+                  <MoveRight></MoveRight>Select chat that you want to use
+                </span>
+              </span>
+              <Filter placeholder="Search for chats" disabled />
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="w-full justify-center gap-6 rounded-lg p-4 md:p-8 grid grid-cols-6 h-auto animate-slowly-show">
+        <CardContent className="grid h-auto w-full grid-cols-6 justify-center gap-6 rounded-lg p-4 md:p-8">
           <LoadingCard></LoadingCard>
           <LoadingCard></LoadingCard>
           <LoadingCard></LoadingCard>
@@ -39,17 +33,18 @@ export default function Loading() {
 
 function LoadingCard() {
   return (
-    <Card className="col-span-6 sm:col-span-3 lg:col-span-2 cursor-pointer">
+    <Card className="col-span-6 animate-slowly-show sm:col-span-3 lg:col-span-2">
       <CardHeader>
         <CardTitle className="flex flex-row items-center justify-start gap-5">
-          <Skeleton className="h-16 w-16 aspect-square rounded-full"></Skeleton>
-          <Skeleton className="w-full h-8"></Skeleton>
+          <Skeleton className="aspect-square h-14 rounded-full"></Skeleton>
+          <Skeleton className="h-8 w-full"></Skeleton>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
-        <Skeleton className="w-full h-4"></Skeleton>
-        <Skeleton className="w-full h-4"></Skeleton>
-        <Skeleton className="w-full h-4"></Skeleton>
+        <Separator className="mb-4" />
+        <Skeleton className="h-4 w-full"></Skeleton>
+        <Skeleton className="h-4 w-full"></Skeleton>
+        <Skeleton className="h-4 w-full"></Skeleton>
       </CardContent>
     </Card>
   );

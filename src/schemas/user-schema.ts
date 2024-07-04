@@ -1,15 +1,22 @@
 import { z } from "zod";
 
-const TelegramChatSchema = z.object({
+export const TelegramChatSchema = z.object({
   id: z.number(),
   admin: z.boolean(),
   name: z.string(),
   description: z.string(),
 });
 
-const TelegramUserSchema = z.object({
+export const TelegramUserSchema = z.object({
   username: z.string(),
-  accountId: z.string(),
+  accountId: z.number(),
+  chatId: z.number(),
+  isAdmin: z.boolean(),
+});
+
+export const LoginResponseSchema = z.object({
+  username: z.string(),
+  accountId: z.number(),
   chats: z.array(TelegramChatSchema),
 });
 

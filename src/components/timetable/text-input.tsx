@@ -17,7 +17,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         {...otherProps}
         ref={ref}
         autoFocus={isFocused}
-        className={`px-2 w-full ${errors && invalidClassName}`}
+        className={`w-full px-2 ${errors && invalidClassName}`}
         size={1}
       />
     );

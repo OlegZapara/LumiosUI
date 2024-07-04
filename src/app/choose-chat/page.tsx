@@ -1,87 +1,40 @@
-"use client";
 import { CardBody } from "@/components/ui/3d-card";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
-import { TelegramChat } from "@/shared/types";
-import { MoveRight, Search } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useUsersStore } from "../stores/users";
-import ChatCard from "./chat-card";
-import Loading from "./loading";
-import NoChat from "./no-chat";
+import { MoveRight } from "lucide-react";
+import { getChats, updateChatId } from "@/actions/auth-actions";
+import { redirect } from "next/navigation";
+import Filter from "@/components/general/filter";
+import ChatList from "@/components/choose-chat/chat-list";
 
-export default function ChooseChatPage() {
-  const router = useRouter();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [searchString, setSearchString] = useState<string>("");
-  const [filteredChats, setFilteredChats] = useState<TelegramChat[]>([]);
-  const usersStore = useUsersStore();
+export default async function ChooseChatPage() {
+  const chats = await getChats();
 
-  useEffect(() => {
-    if (usersStore.user === null) return;
-    if (usersStore.user.chats.length === 1) {
-      usersStore.updateChatId(usersStore.user.chats[0].id);
-      router.push("/");
-      toast({
-        title: `Welcome to ${usersStore.user.chats[0].name}`,
-        duration: 3000,
-      });
-      return;
-    }
-    setFilteredChats(
-      usersStore.user.chats.filter(
-        (x) => x.name != undefined && x.description != undefined,
-      ),
-    );
-    setLoading(false);
-  }, [router, toast, usersStore, usersStore.user, usersStore.user?.chats]);
-
-  const filter = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchString(e.target.value);
-    setFilteredChats(
-      usersStore.user!.chats.filter((x) =>
-        x.name.toLowerCase().includes(e.target.value.toLowerCase()),
-      ),
-    );
-  };
-  if (loading) return <Loading />;
-  if (usersStore.user!.chats.length === 0) return <NoChat />;
+  if (chats.length == 0) {
+    redirect("/");
+  }
+  if (chats.length == 1) {
+    await updateChatId(chats[0].id);
+    redirect("/");
+  }
 
   return (
-    <div className="md:container mt-6">
-      <Card className="w-full shadow-md lg:shadow-lg h-auto">
+    <div className="mt-6 md:container">
+      <Card className="h-auto w-full shadow-md lg:shadow-lg">
         <CardHeader>
           <CardTitle>
-            <div className="flex gap-6 flex-col md:flex-row w-full justify-between items-center px-4">
+            <div className="flex w-full flex-col items-center justify-between gap-6 px-4 md:flex-row">
               <span className="mt-3 flex flex-col gap-1">
                 Lumios Bot is available in multiple chats.
-                <span className="text-base font-normal flex flex-row gap-2 items-center">
+                <span className="flex flex-row items-center gap-2 text-base font-normal">
                   <MoveRight></MoveRight>Select chat that you want to use
                 </span>
               </span>
-              <div className="w-full md:w-72 flex relative">
-                <Input
-                  placeholder="Search for chat"
-                  className="w-full max-w-96 font-normal pl-9"
-                  value={searchString}
-                  onChange={filter}
-                ></Input>
-                <div className="absolute left-3 top-3">
-                  <Search size={16}></Search>
-                </div>
-              </div>
+              <Filter placeholder="Search for chats" />
             </div>
           </CardTitle>
         </CardHeader>
-        <CardBody className="w-full justify-center gap-6 rounded-lg p-4 md:p-8 grid grid-cols-6 h-auto">
-          {filteredChats.length !== 0 ? (
-            filteredChats.map((chat) => <ChatCard key={chat.name} {...chat} />)
-          ) : (
-            <div className="col-span-6 pl-2">No results found</div>
-          )}
+        <CardBody className="grid h-auto w-full grid-cols-6 justify-center gap-6 rounded-lg p-4 md:p-8">
+          <ChatList chats={chats} />
         </CardBody>
       </Card>
     </div>

@@ -2,19 +2,35 @@
 
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
-export const TypewriterEffectSmooth = ({
-  words,
-  className,
-  cursorClassName,
-}: {
-  words: {
-    text: string;
-    className?: string;
-  }[];
-  className?: string;
-  cursorClassName?: string;
-}) => {
+export const words = [
+  {
+    text: "Plan",
+  },
+  {
+    text: "schedule",
+  },
+  {
+    text: "with",
+  },
+  {
+    text: "Lumios Bot.",
+    className: "text-blue-500 dark:text-blue-500",
+  },
+];
+
+export const TimetableHeaderAnimation = () => {
+  const [headerEnabled, setHeaderEnabled] = useState(true);
+
+  useEffect(() => {
+    setHeaderEnabled(
+      localStorage.getItem("enableTimetableHeader") !== "disabled",
+    );
+  }, []);
+
+  if (!headerEnabled) return null;
+
   const wordsArray = words.map((word) => {
     return {
       ...word,
@@ -30,7 +46,7 @@ export const TypewriterEffectSmooth = ({
               {word.text.map((char, index) => (
                 <span
                   key={`char-${index}`}
-                  className={cn(`dark:text-white text-black `, word.className)}
+                  className={cn(`text-black dark:text-white`, word.className)}
                 >
                   {char}
                 </span>
@@ -44,9 +60,9 @@ export const TypewriterEffectSmooth = ({
   };
 
   return (
-    <div className={cn("flex space-x-1 my-6", className)}>
+    <div className="my-6 mb-12 flex space-x-1">
       <motion.div
-        className="overflow-hidden "
+        className="overflow-hidden"
         initial={{ width: 0 }}
         animate={{ width: "fit-content" }}
         transition={{
@@ -56,7 +72,7 @@ export const TypewriterEffectSmooth = ({
         }}
       >
         <div
-          className="text-xs sm:text-base md:text-xl lg:text-3xl xl:text-5xl font-bold"
+          className="text-xs font-bold sm:text-base md:text-xl lg:text-3xl xl:text-5xl"
           style={{
             whiteSpace: "nowrap",
           }}
@@ -72,10 +88,7 @@ export const TypewriterEffectSmooth = ({
           repeat: Infinity,
           repeatType: "reverse",
         }}
-        className={cn(
-          "block rounded-sm w-[4px]  h-4 sm:h-6 xl:h-12 bg-blue-500",
-          cursorClassName,
-        )}
+        className="block h-4 w-[4px] rounded-sm bg-blue-500 sm:h-6 xl:h-12"
       ></motion.span>
     </div>
   );

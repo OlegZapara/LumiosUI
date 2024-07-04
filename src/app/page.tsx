@@ -1,10 +1,13 @@
-import MainBentoGrid from "@/components/bento-grid";
-import { VortexMain, VortexMainLoading } from "@/components/vortex-main";
+import MainBentoGrid from "@/components/general/bento-grid";
+import {
+  VortexMain,
+  VortexMainLoading,
+} from "@/components/general/vortex-main";
 import { Suspense } from "react";
 
 export default function Home() {
   return (
-    <div className="overflow-hidden bg-gradient-to-b from-white dark:from-black dark:via-black to-background w-full">
+    <div className="w-full overflow-hidden bg-gradient-to-b from-white to-background dark:from-black dark:via-black">
       <Suspense fallback={<VortexMainLoading></VortexMainLoading>}>
         <VortexMain></VortexMain>
       </Suspense>

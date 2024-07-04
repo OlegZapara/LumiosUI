@@ -1,8 +1,5 @@
 import { CellContext } from "@tanstack/react-table";
-import { TimetableEntry } from "@/shared/types";
-import { useTimetableStore } from "@/app/stores/timetable";
 import { Controller, useFormContext } from "react-hook-form";
-import { FormType } from "@/app/timetable/data-table";
 import {
   Select,
   SelectContent,
@@ -10,18 +7,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ColumnType } from "@/app/timetable/columns";
+import { ColumnType } from "@/components/timetable/columns";
+import { TimetableEntry } from "@/schemas/timetable-schema";
 
 interface TypeFieldProps extends CellContext<TimetableEntry, unknown> {
   type: ColumnType;
 }
 
 export function TypeField(props: TypeFieldProps) {
-  const timetableStore = useTimetableStore();
-  const formContext = useFormContext<FormType>();
-  const isEditing = timetableStore.editRowInfo.row === props.row.index;
-  const isFocused =
-    props.cell.column.getIndex() === timetableStore.editRowInfo.index;
+  const formContext = useFormContext<TimetableEntry>();
+  // TODO: Fix this
+  const isEditing = false;
+  const isFocused = false;
+  // const isEditing = timetableStore.editRowInfo.row === props.row.index;
+  // const isFocused =
+  //   props.cell.column.getIndex() === timetableStore.editRowInfo.index;
 
   if (!isEditing) {
     return <div className="px-2">{props.cell.getValue<string>()}</div>;
@@ -39,7 +39,7 @@ export function TypeField(props: TypeFieldProps) {
           <Select onValueChange={field.onChange}>
             <SelectTrigger
               autoFocus={isFocused}
-              className={`px-2 w-full ${errors && invalidClassName}`}
+              className={`w-full px-2 ${errors && invalidClassName}`}
             >
               <SelectValue placeholder={field.value ? field.value : "Type"} />
             </SelectTrigger>

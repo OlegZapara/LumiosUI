@@ -3,6 +3,8 @@
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![Radix UI](https://img.shields.io/badge/radix%20ui-161618.svg?style=for-the-badge&logo=radix-ui&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+[![CodeFactor](https://www.codefactor.io/repository/github/olegzapara/lumiosui/badge)](https://www.codefactor.io/repository/github/olegzapara/lumiosui)
+
 # Lumios
 
 Lumios is a website UI for a Telegram bot designed to streamline study management. It offers features such as queue management, ratings, statistics, tasks, timetable, and notifications. Lumios is built with Shadcn UI and Next.js.
@@ -11,13 +13,15 @@ Lumios is a website UI for a Telegram bot designed to streamline study managemen
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+- [Lumios](#lumios)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Features](#features)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Contact](#contact)
 
 ---
 
