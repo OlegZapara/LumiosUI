@@ -6,7 +6,9 @@ import { getSession } from "@/actions/auth-actions";
 import { revalidatePath } from "next/cache";
 
 export async function getTimetable() {
-  const chatId = (await getSession())?.user.chatId?.toString();
+  const session = await getSession();
+  if (!session) return [];
+  const chatId = session.user.chatId?.toString();
   const res = await apiClient.get("/timetables/retrieve", {
     headers: { chatId },
   });
@@ -14,21 +16,34 @@ export async function getTimetable() {
 }
 
 export async function updateTimetable(timetable: Timetable) {
-  const chatId = (await getSession())?.user.chatId?.toString();
-  await apiClient.put("/timetables/update", timetable, { headers: { chatId } });
+  const session = await getSession();
+  if (!session) return;
+  const chatId = session.user.chatId;
+  if (!chatId) return;
+  await apiClient.put("/timetables/update", timetable, {
+    headers: { chatId: chatId.toString() },
+  });
   revalidatePath("/timetable");
 }
 
 export async function createTimetable(timetable: Timetable) {
-  const chatId = (await getSession())?.user.chatId?.toString();
+  const session = await getSession();
+  if (!session) return;
+  const chatId = session.user.chatId?.toString();
+  if (!chatId) return;
   await apiClient.post("/timetables/create", timetable, {
-    headers: { chatId },
+    headers: { chatId: chatId.toString() },
   });
   revalidatePath("/timetable");
 }
 
 export async function deleteTimetable() {
-  const chatId = (await getSession())?.user.chatId?.toString();
-  await apiClient.delete("/timetables/delete", { headers: { chatId } });
+  const session = await getSession();
+  if (!session) return;
+  const chatId = session.user.chatId;
+  if (!chatId) return;
+  await apiClient.delete("/timetables/delete", {
+    headers: { chatId: chatId.toString() },
+  });
   revalidatePath("/timetable");
 }

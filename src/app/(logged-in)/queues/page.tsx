@@ -8,6 +8,9 @@ import QueuesList from "@/components/queues/queues-list";
 
 export default async function Queues() {
   const session = await getSession();
+
+  if (!session) return;
+
   const queues = await getQueues();
 
   return (
@@ -25,7 +28,7 @@ export default async function Queues() {
           </CardTitle>
         </CardHeader>
         <CardBody className="grid h-auto w-full grid-cols-6 justify-center gap-6 rounded-lg p-4 md:p-8">
-          <QueuesList queues={queues} isAdmin={session!.user.isAdmin} />
+          <QueuesList queues={queues} isAdmin={session.user.isAdmin} />
         </CardBody>
       </Card>
     </div>

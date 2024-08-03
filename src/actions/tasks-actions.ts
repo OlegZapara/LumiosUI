@@ -5,7 +5,11 @@ import apiClient from "@/lib/axios-client";
 import { getSession } from "@/actions/auth-actions";
 import { revalidatePath } from "next/cache";
 
-export async function getTasks(chatId: number) {
+export async function getTasks(): Promise<Task[]> {
+  const session = await getSession();
+  if (!session) return [];
+  const chatId = session.user.chatId;
+  if (!chatId) return [];
   const response = await apiClient.get("/tasks", {
     headers: { chatId: chatId.toString() },
   });
@@ -14,7 +18,10 @@ export async function getTasks(chatId: number) {
 }
 
 export async function updateTask(task: Task) {
-  const chatId = (await getSession())?.user.chatId!;
+  const session = await getSession();
+  if (!session) return;
+  const chatId = session.user.chatId;
+  if (!chatId) return;
   await apiClient.put("/tasks", task, {
     headers: { chatId: chatId.toString(), taskId: task.id.toString() },
   });
@@ -22,7 +29,10 @@ export async function updateTask(task: Task) {
 }
 
 export async function createTask(task: Omit<Task, "id">) {
-  const chatId = (await getSession())?.user.chatId!;
+  const session = await getSession();
+  if (!session) return;
+  const chatId = session.user.chatId;
+  if (!chatId) return;
   await apiClient.post("/tasks", task, {
     headers: { chatId: chatId.toString() },
   });
@@ -30,7 +40,10 @@ export async function createTask(task: Omit<Task, "id">) {
 }
 
 export async function deleteTask(taskId: number) {
-  const chatId = (await getSession())?.user.chatId!;
+  const session = await getSession();
+  if (!session) return;
+  const chatId = session.user.chatId;
+  if (!chatId) return;
   await apiClient.delete(`/tasks/${taskId}`, {
     headers: { chatId: chatId.toString() },
   });

@@ -15,7 +15,9 @@ function nDaysBefore(n: number) {
 }
 
 async function ratingStatistics(date: string) {
-  const chatId = (await getSession())?.user.chatId;
+  const session = await getSession();
+  if (!session) return [];
+  const chatId = session.user.chatId;
   const res = await apiClient.get(
     `/records/rating?chatId=${chatId}&date=${date}`,
   );
@@ -23,7 +25,9 @@ async function ratingStatistics(date: string) {
 }
 
 async function getMessagesStatistics(start: string, end: string) {
-  const chatId = (await getSession())?.user.chatId;
+  const session = await getSession();
+  if (!session) return [];
+  const chatId = session.user.chatId;
   const res = await apiClient.get(
     `/records/messages?chatId=${chatId}&startDate=${start}&endDate=${end}`,
   );

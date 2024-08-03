@@ -7,7 +7,7 @@ import { Suspense } from "react";
 
 export default function Home() {
   return (
-    <div className="w-full overflow-hidden bg-gradient-to-b from-white to-background dark:from-black dark:via-black">
+    <div className="w-full overflow-hidden bg-gradient-to-b from-white to-background dark:from-black dark:via-black mb-20">
       <Suspense fallback={<VortexMainLoading></VortexMainLoading>}>
         <VortexMain></VortexMain>
       </Suspense>

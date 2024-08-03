@@ -54,7 +54,8 @@ export async function login(accountId: number): Promise<string> {
 }
 
 export async function updateChatId(chatId: number) {
-  const accountId = (await getSession())?.user.accountId!;
+  const accountId = (await getSession())?.user.accountId;
+  if (!accountId) return;
   await apiClient.post(
     `/auth/bind/${accountId}`,
     {},
@@ -97,7 +98,8 @@ export async function updateSession(request: NextRequest) {
 }
 
 export async function getChats() {
-  const accountId = (await getSession())?.user.accountId!;
+  const accountId = (await getSession())?.user.accountId;
+  if (!accountId) return [];
   const response = await apiClient.get(`/auth/user/${accountId}`);
   const parsedResponse = LoginResponseSchema.parse(response.data);
   return parsedResponse.chats;
