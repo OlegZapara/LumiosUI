@@ -31,7 +31,7 @@ function TelegramLogin(props: TelegramLoginProps) {
 
   return (
     <TelegramLoginButton
-      botName="lumios"
+      botName="lumios_bot"
       buttonSize={props.size}
       dataOnauth={(user) => {
         login(user.id).then(() => {
