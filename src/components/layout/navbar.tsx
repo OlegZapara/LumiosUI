@@ -86,7 +86,7 @@ function LinkList({ session }: { session: SessionType | null | undefined }) {
   return (
     <div className="flex flex-row items-center justify-center">
       {!session?.user ? (
-        <TelegramLogin size="large" />
+        <TelegramLogin size="medium" />
       ) : (
         <Link
           href="/settings"
