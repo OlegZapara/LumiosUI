@@ -6,7 +6,15 @@ import ContentTable from "../../components/tutorial/content-table";
 import TelegramCommand from "../../components/tutorial/telegram-command";
 import TelegramCommandWithExample from "../../components/tutorial/telegram-example-command";
 
-const content = ["Queues", "Rating", "Timetable", "Tasks", "Arguments"];
+const content = [
+  "Queues",
+  "Rating",
+  "Timetable",
+  "Tasks",
+  "Gambling",
+  "Arguments",
+  "Inline mode",
+];
 
 export default function TutorialPage() {
   return (
@@ -71,7 +79,16 @@ export default function TutorialPage() {
             <div className="pl-4">
               Rating changes through reactions to others&apos; messages users,
               each reaction has its positive or negative the meaning of rating.
-              Almost all common telegram reactions are supported
+              Almost all common telegram reactions are supported. You can find
+              more about each reaction in the{" "}
+              <a
+                target="_blank"
+                href="https://github.com/ikeepcalm/lumios/blob/1decd8e2f0523c5b474120b1c9bdbe285449142c/src/main/java/dev/ua/ikeepcalm/lumios/database/entities/reverence/source/ReverenceReaction.java"
+                className="text-blue-500 underline"
+              >
+                source code (Java)
+              </a>{" "}
+              of the Lumios Bot.
             </div>
           </section>
           <Separator></Separator>
@@ -104,12 +121,73 @@ export default function TutorialPage() {
             <TelegramCommand command="/due - List all tasks" />
           </section>
           <Separator></Separator>
+          <section id="Gambling" className="flex w-full flex-col gap-4">
+            <div className="pl-4 text-xl font-bold">Gambling</div>
+            <TelegramCommand command="/gamble_all - shortcut to gamble all your rating" />
+            <TelegramCommandWithExample
+              command="/gamble [amount] - Gamble specified amount of rating"
+              examples={["/gamble 100", "/gamble all"]}
+            />
+            <ul className="pl-4">
+              <li>
+                Gamble command sets the amount of rating you want to bet. You
+                can set either a specific amount (not more than 40% of total) or{" "}
+                <b>all</b> your rating.
+              </li>
+              <li>
+                Win - get <b>50%</b> of your bet
+              </li>
+              <li>
+                Lose - lose <b>50%</b> of your bet
+              </li>
+            </ul>
+            <TelegramCommand command="🎲" />
+            <ul className="pl-4">
+              <li>Throw a dice (with Telegram emoji).</li>
+              <li>
+                👾 Win (5, 6) - get <b>40%</b> of your bet
+              </li>
+              <li>🐳 Draw (4) - your rating doesn&apos;t change</li>
+              <li>
+                🤮 Lose (1, 2, 3) - lose <b>50%</b> of your bet
+              </li>
+            </ul>
+            <TelegramCommand command="🎰" />
+            <ul className="pl-4">
+              <li>Spin casino (with Telegram emoji).</li>
+              <li>
+                👾 Win - get <b>40%</b> of your bet
+              </li>
+              <li>🐳 Draw - your rating doesn&apos;t change</li>
+              <li>
+                🤮 Lose - lose <b>50%</b> of your bet
+              </li>
+              <a
+                className="text-blue-500 underline"
+                target="_blank"
+                href="https://core.telegram.org/api/dice#slot-machine"
+              >
+                How win is calculated?
+              </a>
+            </ul>
+            <TelegramCommand command="⚽️ 🎯 🏀 🎳 - are not yet supported" />
+          </section>
+          <Separator></Separator>
           <section id="Arguments" className="flex w-full flex-col gap-4">
             <div className="pl-4 text-xl font-bold">Arguments</div>
             <div className="pl-4">
               {
                 "<Argument> and [Argument] are not the same. What is the difference? [Argument] is required, but <Argument> is not"
               }
+            </div>
+          </section>
+          <Separator></Separator>
+          <section id="Inline mode" className="flex w-full flex-col gap-4">
+            <div className="pl-4 text-xl font-bold">Inline mode</div>
+            <div className="pl-4">
+              Lumios Bot supports inline mode. You can use Lumios Bot in any
+              chat by typing <b>@lumios_bot</b> in the message input field and
+              then the command.
             </div>
           </section>
         </CardBody>

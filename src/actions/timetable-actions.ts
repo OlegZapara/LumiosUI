@@ -9,6 +9,7 @@ export async function getTimetable() {
   const session = await getSession();
   if (!session) return [];
   const chatId = session.user.chatId?.toString();
+  if (!chatId) return [];
   const res = await apiClient.get("/timetables/retrieve", {
     headers: { chatId },
   });
