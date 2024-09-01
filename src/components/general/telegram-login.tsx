@@ -16,15 +16,21 @@ function TelegramLogin(props: TelegramLoginProps) {
     return (
       <Button
         variant="ghost"
-        className="font-semibold text-orange-500 hover:text-orange-700"
+        className="gap-1 font-semibold"
         onClick={() => {
           const id = parseInt(process.env.NEXT_PUBLIC_DEV_USER_ID!);
-          login(id).then((username) => {
-            toast({ title: `Logged in as ${username}` });
-          });
+          toast({ title: `Requesting user information...` });
+          setTimeout(() => {
+            login(id).then((username) => {
+              toast({ title: `Logged in as ${username}` });
+            });
+          }, 2000); // Simulate request delay
         }}
       >
-        Log in (dev)
+        Log in{" "}
+        <span className="inline-block bg-gradient-to-tr from-fuchsia-500 via-violet-600 to-blue-500 bg-clip-text text-transparent">
+          (dev)
+        </span>
       </Button>
     );
   }
@@ -34,6 +40,7 @@ function TelegramLogin(props: TelegramLoginProps) {
       botName="lumios_bot"
       buttonSize={props.size}
       dataOnauth={(user) => {
+        toast({ title: `Requesting user information...` });
         login(user.id).then(() => {
           toast({ title: `Logged in as ${user.username}` });
         });

@@ -9,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
+import { NavbarMobile } from "./navbar-mobile";
 
 export const navLinks = [
   { href: "/", title: "About", protected: false },
@@ -29,6 +30,9 @@ export default function Navbar({ className, session }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-muted">
       <div className="container relative flex h-14 max-w-screen-2xl items-center justify-between">
+        <div className="flex h-full items-center justify-center sm:hidden">
+          <NavbarMobile session={session} links={navLinks} />
+        </div>
         <div className="flex flex-row items-center justify-center gap-1 sm:gap-2 md:gap-4">
           <LumiosLogo />
           <NavList links={links} />
@@ -84,7 +88,7 @@ function NavList({ links }: { links: { title: string; href: string }[] }) {
 function LinkList({ session }: { session: SessionType | null | undefined }) {
   const theme = useTheme();
   return (
-    <div className="flex flex-row items-center justify-center">
+    <div className="hidden flex-row items-center justify-center sm:flex">
       {!session?.user ? (
         <TelegramLogin size="medium" />
       ) : (

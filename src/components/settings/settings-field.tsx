@@ -15,11 +15,11 @@ export default function SettingsField(props: SettingsFieldProps) {
   return (
     <div
       className={`relative flex w-full flex-col gap-2 p-2 sm:p-4 ${
-        props.developer && "rounded-md border border-orange-400"
+        props.developer && "rounded-md border border-violet-600"
       } ${props.admin && "rounded-md border border-red-500"}`}
     >
       {props.developer && (
-        <div className="absolute right-5 top-1 font-bold text-orange-400">
+        <div className="absolute right-5 top-1 font-bold text-violet-500">
           DEVELOPER MODE
         </div>
       )}
