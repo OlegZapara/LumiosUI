@@ -1,6 +1,6 @@
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { HelpCircle, Menu, Settings, SunMoon, User, X } from "lucide-react";
 import { cn } from "@/lib/utils";

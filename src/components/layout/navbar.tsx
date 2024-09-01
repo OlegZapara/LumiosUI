@@ -10,6 +10,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
 import { NavbarMobile } from "./navbar-mobile";
+import { useEffect, useState } from "react";
 
 export const navLinks = [
   { href: "/", title: "About", protected: false },
@@ -87,10 +88,21 @@ function NavList({ links }: { links: { title: string; href: string }[] }) {
 
 function LinkList({ session }: { session: SessionType | null | undefined }) {
   const theme = useTheme();
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    setWidth(window.innerWidth);
+    window.addEventListener("resize", () => setWidth(window.innerWidth));
+    return () =>
+      window.removeEventListener("resize", () => setWidth(window.innerWidth));
+  }, []);
+  // 640px = tailwind sm breakpoint
+  if (width < 640) {
+    return null;
+  }
   return (
     <div className="hidden flex-row items-center justify-center sm:flex">
       {!session?.user ? (
-        <TelegramLogin size="medium" />
+        <TelegramLogin key="TelegramLogin" size="medium" />
       ) : (
         <Link
           href="/settings"
