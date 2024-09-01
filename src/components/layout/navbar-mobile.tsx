@@ -33,7 +33,7 @@ export const NavbarMobile = ({ session, links }: NavbarMobileProps) => {
       {toggled && (
         <div className="fixed left-0 top-14 flex h-screen w-full max-w-96 flex-col bg-background shadow-lg">
           {!session?.user ? (
-            <TelegramLogin size="large" />
+            <TelegramLogin size="medium" />
           ) : (
             <Link
               href="/settings"

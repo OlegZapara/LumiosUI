@@ -36,16 +36,18 @@ function TelegramLogin(props: TelegramLoginProps) {
   }
 
   return (
-    <TelegramLoginButton
-      botName="lumios_bot"
-      buttonSize={props.size}
-      dataOnauth={(user) => {
-        toast({ title: `Requesting user information...` });
-        login(user.id).then(() => {
-          toast({ title: `Logged in as ${user.username}` });
-        });
-      }}
-    />
+    <div className="flex items-center justify-center">
+      <TelegramLoginButton
+        botName="lumios_bot"
+        buttonSize={props.size}
+        dataOnauth={(user) => {
+          toast({ title: `Requesting user information...` });
+          login(user.id).then(() => {
+            toast({ title: `Logged in as ${user.username}` });
+          });
+        }}
+      />
+    </div>
   );
 }
 
