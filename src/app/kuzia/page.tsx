@@ -14,7 +14,7 @@ export default function KuziaPage() {
       <Image
         height={1000}
         width={800}
-        src="/kuzia.jpg"
+        src="/kitty.jpg"
         alt="Kuzia"
         className="h-full w-auto"
       ></Image>
