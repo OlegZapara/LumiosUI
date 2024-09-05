@@ -3,7 +3,7 @@ import { z } from "zod";
 const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
 
 export const weeks = ["First week", "Second week"];
-export const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+export const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]; // "Saturday" and "Sunday" are not included
 export const EMPTY_ENTRY: TimetableEntry = {
   className: "",
   url: "",
@@ -14,7 +14,7 @@ export const EMPTY_ENTRY: TimetableEntry = {
 
 export const TimetableEntrySchema = z.object({
   className: z.string().min(1, { message: "className must not be empty" }),
-  url: z.string(),
+  url: z.string().default(""),
   classType: z.string().min(1, { message: "classType must not be empty" }),
   startTime: z.string().refine((value) => timeRegex.test(value), {
     message: "Invalid time format. Expected hh:mm:ss",
@@ -25,7 +25,15 @@ export const TimetableEntrySchema = z.object({
 });
 
 export const TimetableDaySchema = z.object({
-  dayName: z.enum(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]),
+  dayName: z.enum([
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY",
+    "SUNDAY",
+  ]),
   classEntries: z.array(TimetableEntrySchema),
 });
 

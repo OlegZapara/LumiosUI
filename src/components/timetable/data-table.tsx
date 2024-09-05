@@ -11,6 +11,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { useTimetableSearchParams } from "@/hooks/timetable/useTimetableSearchParams";
 import {
+  EMPTY_ENTRY,
   Timetable,
   TimetableEntry,
   TimetableEntrySchema,
@@ -23,6 +24,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Plus } from "lucide-react";
+import { createContext, useState } from "react";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 
 type DataTableProps = {
@@ -30,7 +32,21 @@ type DataTableProps = {
   data: Timetable;
 };
 
+type ActiveRow = {
+  index: number;
+  entry: TimetableEntry;
+};
+
+type TimetableContextType = {
+  activeRow: ActiveRow;
+  resetActiveRow: () => void;
+  setActiveRow: (row: ActiveRow) => void;
+} | null;
+
+export const TimetableContext = createContext<TimetableContextType>(null);
+
 export function DataTable({ columns, data }: DataTableProps) {
+  const [activeRow, setActiveRow] = useState({ index: -1, entry: EMPTY_ENTRY });
   const { dayIndex, weekIndex } = useTimetableSearchParams();
   const table = useReactTable({
     data: data[weekIndex].days[dayIndex].classEntries,
@@ -74,6 +90,7 @@ export function DataTable({ columns, data }: DataTableProps) {
       });
       return;
     }
+    resetActiveRow();
     // const ok = await timetableStore.completeEdit(data);
     // if (!ok) {
     //   toast({
@@ -91,41 +108,50 @@ export function DataTable({ columns, data }: DataTableProps) {
     // });
   }
 
+  function resetActiveRow() {
+    setActiveRow({ index: -1, entry: EMPTY_ENTRY });
+    form.reset({ ...EMPTY_ENTRY });
+  }
+
   return (
-    <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mb-6 w-full">
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table
-                  .getRowModel()
-                  .rows.map((row) => <DataTableRow key={row.id} row={row} />)
-              ) : (
-                <EmptyTimetableRow colSpan={columns.length} />
-              )}
-              <AddRowButton colSpan={columns.length} />
-            </TableBody>
-          </Table>
-        </div>
-      </form>
-    </FormProvider>
+    <TimetableContext.Provider
+      value={{ activeRow, setActiveRow, resetActiveRow }}
+    >
+      <FormProvider {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mb-6 w-full">
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table
+                    .getRowModel()
+                    .rows.map((row) => <DataTableRow key={row.id} row={row} />)
+                ) : (
+                  <EmptyTimetableRow colSpan={columns.length} />
+                )}
+                <AddRowButton colSpan={columns.length} />
+              </TableBody>
+            </Table>
+          </div>
+        </form>
+      </FormProvider>
+    </TimetableContext.Provider>
   );
 }
 

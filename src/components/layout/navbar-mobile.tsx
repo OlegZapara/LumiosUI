@@ -1,13 +1,13 @@
-import { useTheme } from "next-themes";
-import { usePathname } from "next/navigation";
-import { useRef, useState } from "react";
-import { Button } from "../ui/button";
-import { HelpCircle, Menu, Settings, SunMoon, User, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { IconBrandGithub } from "@tabler/icons-react";
 import { SessionType } from "@/actions/auth-actions";
+import { cn } from "@/lib/utils";
+import { IconBrandGithub } from "@tabler/icons-react";
+import { HelpCircle, Menu, Settings, SunMoon, X } from "lucide-react";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 import TelegramLogin from "../general/telegram-login";
+import { Button } from "../ui/button";
 
 type NavbarMobileProps = {
   session: SessionType | null | undefined;
