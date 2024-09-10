@@ -19,6 +19,7 @@ export const navLinks = [
   { href: "/statistics", title: "Statistics", protected: true },
   { href: "/tasks", title: "Tasks", protected: true },
   { href: "/queues", title: "Queues", protected: true },
+  { href: "/tree", title: "Tree", protected: true },
 ];
 
 type NavbarProps = {
