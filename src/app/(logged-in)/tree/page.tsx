@@ -1,16 +1,9 @@
 "use client";
 import Tree from "@/components/tree/tree";
+import { TreeContext } from "@/components/tree/tree-context";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { BarChart2, Crown, Info } from "lucide-react";
-import { createContext, useState } from "react";
-
-export type TreeContextType = {
-  active: string | null;
-  setActive: (active: string | null) => void;
-};
-
-export const TreeContext = createContext<TreeContextType | null>(null);
+import { useState } from "react";
 
 export default function TreePage() {
   const [active, setActive] = useState<string | null>(null);

@@ -1,11 +1,11 @@
 "use client";
-import { TreeContext } from "@/app/(logged-in)/tree/page";
 import cytoscape from "cytoscape";
 import dagre from "cytoscape-dagre";
 import gridGuide from "cytoscape-grid-guide";
 import { useTheme } from "next-themes";
 import { useContext, useEffect, useRef } from "react";
 import { InterFont } from "@/lib/fonts";
+import { TreeContext } from "./tree-context";
 
 cytoscape.use(dagre);
 gridGuide(cytoscape);
@@ -37,10 +37,6 @@ export default function Tree() {
 
       layout: {
         name: "dagre",
-        nodeSep: 50, // Space between nodes
-        edgeSep: 10, // Space between edges
-        rankSep: 30, // Space between ranks
-        rankDir: "TB", // Direction of layout: 'TB' for top-to-bottom
       },
 
       style: [
