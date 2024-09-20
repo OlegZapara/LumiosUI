@@ -16,6 +16,7 @@ import {
   TimetableEntry,
   TimetableEntrySchema,
 } from "@/schemas/timetable-schema";
+import { useTimetableStore } from "@/state/timetable-state";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ColumnDef,
@@ -24,7 +25,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Plus } from "lucide-react";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 
 type DataTableProps = {
@@ -32,22 +33,9 @@ type DataTableProps = {
   data: Timetable;
 };
 
-type ActiveRow = {
-  index: number;
-  entry: TimetableEntry;
-};
-
-type TimetableContextType = {
-  activeRow: ActiveRow;
-  resetActiveRow: () => void;
-  setActiveRow: (row: ActiveRow) => void;
-} | null;
-
-export const TimetableContext = createContext<TimetableContextType>(null);
-
 export function DataTable({ columns, data }: DataTableProps) {
-  const [activeRow, setActiveRow] = useState({ index: -1, entry: EMPTY_ENTRY });
   const { dayIndex, weekIndex } = useTimetableSearchParams();
+  const timetableStore = useTimetableStore();
   const table = useReactTable({
     data: data[weekIndex].days[dayIndex].classEntries,
     columns,
@@ -58,22 +46,29 @@ export function DataTable({ columns, data }: DataTableProps) {
   });
   const { toast } = useToast();
 
-  // useEffect(() => {
-  //   const handleHotkey = (event: KeyboardEvent) => {
-  //     if (form.getValues() == null) return;
-  //     if (event.shiftKey && event.key === "Enter" && form.formState.isValid) {
-  //       onSubmit(form.getValues());
-  //     }
-  //     if (event.key == "Escape") {
-  //       form.reset({ ...EMPTY_ENTRY });
-  //     }
-  //   };
-  //
-  //   document.addEventListener("keydown", handleHotkey);
-  //   return () => {
-  //     document.removeEventListener("keydown", handleHotkey);
-  //   };
-  // }, [form, onSubmit]);
+  useEffect(() => {
+    timetableStore.setTimetable(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  useEffect(() => {
+    const handleHotkey = (event: KeyboardEvent) => {
+      if (form.getValues() == null) return;
+      if (event.shiftKey && event.key === "Enter" && form.formState.isValid) {
+        onSubmit(form.getValues());
+      }
+      if (event.key == "Escape") {
+        timetableStore.discardEdit();
+        form.reset({ ...EMPTY_ENTRY });
+      }
+    };
+
+    document.addEventListener("keydown", handleHotkey);
+    return () => {
+      document.removeEventListener("keydown", handleHotkey);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const timeToSeconds = (time: string): number => {
     const [hours, minutes, seconds] = time.split(":").map(Number);
@@ -90,68 +85,58 @@ export function DataTable({ columns, data }: DataTableProps) {
       });
       return;
     }
-    resetActiveRow();
-    // const ok = await timetableStore.completeEdit(data);
-    // if (!ok) {
-    //   toast({
-    //     title: "Timetable was not updated",
-    //     description: "Make sure that all values are filled properly",
-    //     variant: "destructive",
-    //   });
-    //   return;
-    // }
-    // toast({
-    //   title: "Timetable updated",
-    //   description: data.className
-    //     ? `${data.className} was updated`
-    //     : "New row was added",
-    // });
-  }
-
-  function resetActiveRow() {
-    setActiveRow({ index: -1, entry: EMPTY_ENTRY });
-    form.reset({ ...EMPTY_ENTRY });
+    const ok = await timetableStore.completeEdit(data);
+    if (!ok) {
+      toast({
+        title: "Timetable was not updated",
+        description: "Make sure that all values are filled properly",
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({
+      title: "Timetable updated",
+      description: data.className
+        ? `${data.className} was updated`
+        : "New row was added",
+    });
   }
 
   return (
-    <TimetableContext.Provider
-      value={{ activeRow, setActiveRow, resetActiveRow }}
-    >
-      <FormProvider {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mb-6 w-full">
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table
-                    .getRowModel()
-                    .rows.map((row) => <DataTableRow key={row.id} row={row} />)
-                ) : (
-                  <EmptyTimetableRow colSpan={columns.length} />
-                )}
-                <AddRowButton colSpan={columns.length} />
-              </TableBody>
-            </Table>
-          </div>
-        </form>
-      </FormProvider>
-    </TimetableContext.Provider>
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mb-6 w-full">
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table
+                  .getRowModel()
+                  .rows.map((row) => <DataTableRow key={row.id} row={row} />)
+              ) : (
+                <EmptyTimetableRow colSpan={columns.length} />
+              )}
+              {/* TODO: adding row to timetable should work <AddRowButton colSpan={columns.length} /> */}
+            </TableBody>
+          </Table>
+        </div>
+      </form>
+    </FormProvider>
   );
 }
 
@@ -167,10 +152,13 @@ function EmptyTimetableRow(props: { colSpan: number }) {
 
 function AddRowButton(props: { colSpan: number }) {
   const form = useFormContext<TimetableEntry>();
+  const timetableStore = useTimetableStore();
+  const { dayIndex, weekIndex } = useTimetableSearchParams();
   const { toast } = useToast();
 
   function addRow() {
-    if (form.getValues() != null) {
+    form.reset({ ...EMPTY_ENTRY });
+    if (timetableStore.editRowInfo.row !== -1) {
       toast({
         title: "You cannot add a new row",
         description: "You need to finish editing before adding a new row",
@@ -178,7 +166,7 @@ function AddRowButton(props: { colSpan: number }) {
       });
       return;
     }
-    // form.reset({ ...EMPTY_ENTRY });
+    timetableStore.addRow({ week: weekIndex, day: dayIndex });
   }
 
   return (

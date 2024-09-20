@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { ColumnType } from "@/components/timetable/columns";
 import { TimetableEntry } from "@/schemas/timetable-schema";
+import { useTimetableStore } from "@/state/timetable-state";
 
 interface TypeFieldProps extends CellContext<TimetableEntry, unknown> {
   type: ColumnType;
@@ -16,12 +17,10 @@ interface TypeFieldProps extends CellContext<TimetableEntry, unknown> {
 
 export function TypeField(props: TypeFieldProps) {
   const formContext = useFormContext<TimetableEntry>();
-  // TODO: Fix this
-  const isEditing = false;
-  const isFocused = false;
-  // const isEditing = timetableStore.editRowInfo.row === props.row.index;
-  // const isFocused =
-  //   props.cell.column.getIndex() === timetableStore.editRowInfo.index;
+  const timetableStore = useTimetableStore();
+  const isEditing = timetableStore.editRowInfo.row === props.row.index;
+  const isFocused =
+    props.cell.column.getIndex() === timetableStore.editRowInfo.index;
 
   if (!isEditing) {
     return <div className="px-2">{props.cell.getValue<string>()}</div>;

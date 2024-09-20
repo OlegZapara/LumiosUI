@@ -27,6 +27,7 @@ import { Row } from "@tanstack/react-table";
 import { useFormContext } from "react-hook-form";
 import { TimetableEntry } from "@/schemas/timetable-schema";
 import { useTimetableSearchParams } from "@/hooks/timetable/useTimetableSearchParams";
+import { useTimetableStore } from "@/state/timetable-state";
 
 type BasicRowActionProps = {
   row: Row<TimetableEntry>;
@@ -36,6 +37,7 @@ export function BasicRowAction({ row }: BasicRowActionProps) {
   const { toast } = useToast();
   const formContext = useFormContext<TimetableEntry>();
   const { dayIndex, weekIndex } = useTimetableSearchParams();
+  const timetableStore = useTimetableStore();
 
   const entryInfo = {
     week: weekIndex,
@@ -55,21 +57,21 @@ export function BasicRowAction({ row }: BasicRowActionProps) {
   }
 
   function startEdit() {
-    // timetableStore.startEdit(entryInfo);
-    // formContext.reset(
-    //   timetableStore.timetable![weekIndex].days[dayIndex].classEntries[
-    //     row.index
-    //   ],
-    // );
+    timetableStore.startEdit(entryInfo);
+    formContext.reset(
+      timetableStore.timetable![weekIndex].days[dayIndex].classEntries[
+        row.index
+      ],
+    );
   }
 
-  function deleteRow() {
-    // timetableStore.removeRow(entryInfo);
-    // const rowName = row.getAllCells()[0].getValue<string>();
-    // toast({
-    //   title: "Row deleted",
-    //   description: `${rowName ? rowName : "Row"} was removed from timetable`,
-    // });
+  async function deleteRow() {
+    await timetableStore.removeRow(entryInfo);
+    const rowName = row.getAllCells()[0].getValue<string>();
+    toast({
+      title: "Row deleted",
+      description: `${rowName ? rowName : "Row"} was removed from timetable`,
+    });
   }
 
   return (

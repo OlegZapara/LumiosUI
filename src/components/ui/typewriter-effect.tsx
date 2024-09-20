@@ -25,7 +25,7 @@ export const TimetableHeaderAnimation = () => {
 
   useEffect(() => {
     setHeaderEnabled(
-      localStorage.getItem("enableTimetableHeader") !== "disabled",
+      localStorage.getItem("enableTimetableHeader") !== "Disabled",
     );
   }, []);
 

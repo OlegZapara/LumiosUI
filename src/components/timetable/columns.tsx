@@ -5,6 +5,7 @@ import { BasicRowAction } from "@/components/timetable/basic-row-action";
 import { TextField } from "@/components/timetable/text-field";
 import { TypeField } from "@/components/timetable/type-field";
 import { TimetableEntry } from "@/schemas/timetable-schema";
+import { useTimetableStore } from "@/state/timetable-state";
 
 export type ColumnType =
   | "className"
@@ -63,10 +64,9 @@ export const columns: ColumnDef<TimetableEntry>[] = [
 ];
 
 function RowAction(props: CellContext<TimetableEntry, unknown>) {
-  // const isEdit = useTimetableStore(
-  //   (state) => state.editRowInfo.row === props.row.index,
-  // );
-  const isEdit = false; //TODO: implement row editing
+  const isEdit = useTimetableStore(
+    (state) => state.editRowInfo.row === props.row.index,
+  );
   return (
     <div className="flex justify-end">
       {isEdit ? <EditRowAction /> : <BasicRowAction row={props.row} />}

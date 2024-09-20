@@ -4,6 +4,7 @@ import { useFormContext } from "react-hook-form";
 import { ColumnType } from "@/components/timetable/columns";
 import Link from "next/link";
 import { TimetableEntry } from "@/schemas/timetable-schema";
+import { useTimetableStore } from "@/state/timetable-state";
 
 const MAX_LENGTH = 30;
 
@@ -14,12 +15,10 @@ interface TextFieldProps extends CellContext<TimetableEntry, unknown> {
 
 export function TextField(props: TextFieldProps) {
   const formContext = useFormContext<TimetableEntry>();
-  // const isEditing = timetableStore.editRowInfo.row === props.row.index;
-  // const isFocused =
-  //   props.cell.column.getIndex() === timetableStore.editRowInfo.index;
-  // TODO: Fix this
-  const isEditing = false;
-  const isFocused = false;
+  const timetableStore = useTimetableStore();
+  const isEditing = timetableStore.editRowInfo.row === props.row.index;
+  const isFocused =
+    props.cell.column.getIndex() === timetableStore.editRowInfo.index;
   const errors =
     formContext.formState.errors[props.column.id as ColumnType] != undefined;
 
