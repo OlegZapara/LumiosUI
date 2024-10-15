@@ -1,87 +1,78 @@
-import React from "react";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useTreeStore } from "@/state/tree-state";
+import { ChangeEvent, FormEvent, useEffect, useState, forwardRef } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { z } from "zod";
 
-const formSchema = z.object({
-  value: z.string().regex(/^[0-9]\d*$/, {
-    message: "Value must a positive number",
-  }),
-});
-
-export default function TreeInputForm() {
+const TreeInputForm = forwardRef<HTMLInputElement>((props, ref) => {
   const state = useTreeStore();
+  const [value, setValue] = useState("");
+  const [error, setError] = useState("");
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    values: {
-      value: state.change == 0 ? "" : Math.abs(state.change).toString(),
-    },
-  });
-
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    if (data.value === "") return;
-    const value = parseInt(data.value);
-    if (value > state.balance) {
-      form.setError("value", {
-        message: "Not enough balance",
-      });
-    }
-    form.setValue("value", value.toString());
-    console.log(data);
+  function onSubmit(event: FormEvent) {
+    event.preventDefault();
+    console.log("working");
   }
 
-  function updateChange(value: string) {
-    try {
-      formSchema.parse({ value });
-    } catch {
+  function updateChange(event: ChangeEvent<HTMLInputElement>) {
+    const inputValue = event.target.value;
+    if (inputValue === "") {
+      setError("");
+      setValue("");
       state.setChange(0);
-      return value;
+      return;
     }
-    const intValue = parseInt(value);
+    try {
+      z.string().regex(/^\d*$/).parse(inputValue);
+      setError("");
+    } catch (e) {
+      setError("Invalid number");
+      setValue(event.target.value);
+      state.setChange(0);
+      return;
+    }
+    const intValue = parseInt(inputValue);
+    const activeNodeValue = parseInt(state.activeNode!.value);
+    if (state.mode == "sub" && activeNodeValue < intValue) {
+      if (state.balance < intValue && activeNodeValue > state.balance) {
+        return;
+      }
+      state.setChange(activeNodeValue);
+      setValue(activeNodeValue.toString());
+      return;
+    }
+    if (state.balance < intValue) {
+      state.setChange(state.balance);
+      setValue(state.balance.toString());
+      return;
+    }
+    if (state.balance < intValue) return;
+    setValue(event.target.value);
     state.setChange(intValue);
-
-    return value;
   }
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="flex w-full flex-col gap-2"
-    >
+    <form onSubmit={onSubmit} className="flex w-full flex-col gap-2">
       <div className="flex w-full flex-row gap-1">
-        <Controller
-          name={"value"}
-          control={form.control}
-          render={({ field }) => (
-            <Input
-              value={field.value}
-              onChange={(event) =>
-                field.onChange(updateChange(event.target.value))
-              }
-              className="focus-visible:ring-0"
-              onBlur={field.onBlur}
-              ref={field.ref}
-              name={field.name}
-              type="text"
-              autoFocus
-              autoComplete="off"
-              placeholder="Enter amount"
-            />
-          )}
+        <Input
+          ref={ref}
+          value={value}
+          onChange={updateChange}
+          className="focus-visible:ring-0"
+          type="text"
+          autoFocus
+          autoComplete="off"
+          placeholder="Enter amount"
         />
         <Button className="h-full" variant="outline" type="submit">
           Submit
         </Button>
       </div>
-      {form.formState.errors.value && (
-        <div className="w-full text-center text-red-500">
-          {form.formState.errors.value.message}
-        </div>
-      )}
+      {error && <div className="w-full text-center text-red-500">{error}</div>}
     </form>
   );
-}
+});
+
+TreeInputForm.displayName = "TreeInputForm";
+
+export default TreeInputForm;

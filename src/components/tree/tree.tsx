@@ -5,7 +5,10 @@ import cytoscape from "cytoscape";
 import dagre from "cytoscape-dagre";
 import gridGuide from "cytoscape-grid-guide";
 import { useTheme } from "next-themes";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { data } from "./data";
+import { v4 as uuid } from "uuid";
+
 // import { ActiveNode, useTreeContext } from "./tree-context";
 
 cytoscape.use(dagre);
@@ -18,25 +21,14 @@ export default function Tree() {
   const treeColor = theme.theme === "dark" ? "#FFF" : "#000";
   const fontColor = theme.theme === "dark" ? "#000" : "#FFF";
 
+  const [newNode, setNewNode] = useState<any>();
+
   useEffect(() => {
     cyRef.current = cytoscape({
       container: document.getElementById("cy"),
       maxZoom: 5,
       minZoom: 0.75,
-      elements: [
-        { data: { id: "a", value: "123123123", displayedValue: "" } },
-        { data: { id: "b", value: "12323", displayedValue: "" } },
-        { data: { id: "c", value: "123", displayedValue: "" } },
-        { data: { id: "d", value: "1232", displayedValue: "" } },
-        { data: { id: "e", value: "123", displayedValue: "" } },
-        { data: { id: "f", value: "123", displayedValue: "" } },
-        { data: { source: "a", target: "b" } },
-        { data: { source: "a", target: "c" } },
-        { data: { source: "b", target: "d" } },
-        { data: { source: "c", target: "e" } },
-        { data: { source: "c", target: "f" } },
-      ],
-
+      elements: data,
       layout: {
         name: "dagre",
       },
@@ -95,6 +87,36 @@ export default function Tree() {
       });
     });
 
+    // cyRef.current.on("mouseover", "node", (event) => {
+    //   const node = event.target;
+    //   const newId = uuid();
+    //   // TODO: display new nodes
+    //   setNewNode(newId);
+    //   const newNode = [
+    //     { data: { id: newId, value: "0", displayedValue: "0" } },
+    //     { data: { source: node.id(), target: newId } },
+    //   ];
+    //   data.push(...newNode);
+
+    //   cyRef.current?.add(newNode);
+
+    //   cyRef.current?.layout({ name: "dagre" }).run();
+
+    //   updateNodeStyles(cyRef, state.activeNode);
+
+    //   node.style("border-color", "#FFD700");
+    // });
+
+    // cyRef.current.on("mouseout", "node", (event) => {
+    //   const node = event.target;
+    //   const nodeToRemove = cyRef.current?.$(`node[id = "${newNode}"]`);
+    //   if (nodeToRemove) {
+    //     cyRef.current?.remove(nodeToRemove);
+    //   }
+    //   setNewNode(null);
+    //   updateNodeStyles(cyRef, state.activeNode);
+    // });
+
     cyRef.current.on("tap", (event) => {
       if (event.target === cyRef.current) {
         console.log("Background clicked");
@@ -112,7 +134,7 @@ export default function Tree() {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [theme.theme]);
+  }, [theme.theme, data]);
 
   useEffect(() => {
     displayChange(cyRef);
@@ -127,12 +149,6 @@ export default function Tree() {
       let change = 0;
       if (node.id() == state.activeNode?.id) {
         change = state.change;
-        if (state.mode === "sub") {
-          change = -change;
-          node.style("color", "#ef4444");
-        } else {
-          node.style("color", "#22c55e");
-        }
       }
       const text = node.data("value");
       const value = parseInt(text);
@@ -171,11 +187,6 @@ export default function Tree() {
         borderColor = "#3b82f6"; // blue-500
       } else if (adjacentCount === 0) {
         borderColor = "#ef4444"; // red-500
-      }
-      if (node.id() == active?.id) {
-        node.style("background-color", "#22c55e");
-      } else {
-        node.style("background-color", treeColor);
       }
       node.style("border-color", borderColor);
     });
