@@ -39,7 +39,6 @@ export async function login(accountId: number): Promise<string> {
   const expires = new Date(Date.now() + week);
   const userResponse = await apiClient.get(`/auth/user/${accountId}`);
   const userData = LoginResponseSchema.parse(userResponse.data);
-  console.log(userData);
   let chatId: number;
   try {
     const chatResponse = await apiClient.get(`/auth/unbind/${accountId}`);
