@@ -37,12 +37,20 @@ export async function decrypt(token: string) {
 
 export async function login(accountId: number): Promise<string> {
   const expires = new Date(Date.now() + week);
-  const [userResponse, chatResponse] = await Promise.all([
-    apiClient.get(`/auth/user/${accountId}`),
-    apiClient.get(`/auth/unbind/${accountId}`),
-  ]);
+  const userResponse = await apiClient.get(`/auth/user/${accountId}`);
   const userData = LoginResponseSchema.parse(userResponse.data);
-  const chatId = parseInt(chatResponse.data);
+  console.log(userData);
+  let chatId: number;
+  try {
+    const chatResponse = await apiClient.get(`/auth/unbind/${accountId}`);
+    chatId = parseInt(chatResponse.data);
+  } catch {
+    if (userData.chats.length === 0) {
+      throw new Error("No chats found");
+    }
+    chatId = userData.chats[0].id;
+    await updateChatId(chatId);
+  }
   const user = TelegramUserSchema.parse({
     ...userData,
     isAdmin: userData.chats.find((x) => x.id == chatId)?.admin ?? false,
@@ -54,7 +62,9 @@ export async function login(accountId: number): Promise<string> {
 }
 
 export async function updateChatId(chatId: number) {
-  const accountId = (await getSession())?.user.accountId;
+  const session = await getSession();
+  if (!session) return;
+  const accountId = session.user.accountId;
   if (!accountId) return;
   await apiClient.post(
     `/auth/bind/${accountId}`,
@@ -65,7 +75,6 @@ export async function updateChatId(chatId: number) {
       },
     },
   );
-  await login(accountId);
 }
 
 export async function logout() {
@@ -98,7 +107,9 @@ export async function updateSession(request: NextRequest) {
 }
 
 export async function getChats() {
-  const accountId = (await getSession())?.user.accountId;
+  const session = await getSession();
+  if (!session) return [];
+  const accountId = session.user.accountId;
   if (!accountId) return [];
   const response = await apiClient.get(`/auth/user/${accountId}`);
   const parsedResponse = LoginResponseSchema.parse(response.data);
