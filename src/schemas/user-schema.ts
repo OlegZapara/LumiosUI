@@ -4,7 +4,7 @@ export const TelegramChatSchema = z.object({
   id: z.number(),
   admin: z.boolean(),
   name: z.string(),
-  description: z.string(),
+  description: z.string().nullish(),
 });
 
 export const TelegramUserSchema = z.object({
